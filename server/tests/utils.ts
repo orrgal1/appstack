@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-
 export function isE2E() {
   return process.env.E2E;
 }
@@ -31,11 +29,6 @@ export async function usePorts() {
     workers: Number(process.env.WORKERS_PORT || 0),
     ws: Number(process.env.WS_PORT || 0),
   };
-  fs.appendFileSync(
-    '/Users/orgal/me/complete-backend/ports',
-    JSON.stringify(ports) + '\n',
-    'utf-8',
-  );
   return ports;
 }
 

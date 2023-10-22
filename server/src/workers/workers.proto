@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message PublishJobInput {
+}
+
+message PublishJobResult {
+  string jobId = 1;
+}
+
+service WorkersService {
+  rpc PublishJob (PublishJobInput) returns (PublishJobResult) {}
+}

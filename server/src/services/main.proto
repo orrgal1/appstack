@@ -1,0 +1,13 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+message IntRange {
+  uint32 min = 1;
+  uint32 max = 2;
+}
+
+enum Maturity {
+  Skeleton = 0;
+  Draft = 1;
+  Solid = 2;
+}

@@ -8,7 +8,7 @@ import {
   UserServiceClient,
   UserServiceDefinition,
 } from '../../../../../libs/client';
-import { isE2E, retry, useHost, usePorts } from '../../../../../../tests/utils';
+import { isE2E, useHost, usePorts } from '../../../../../../tests/utils';
 
 describe('Auth: Local', () => {
   let ports: {
@@ -25,20 +25,14 @@ describe('Auth: Local', () => {
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.pF3q46_CLIyP_1QZPpeccbs-hC4n9YW2VMBjKrSO6Wg',
   );
 
-  beforeAll(
-    retry(
-      async () => {
-        ports = await usePorts();
-        const host = useHost();
-        const channel = createChannel(`${host}:${ports.proto}`);
-        userClient = createClient(UserServiceDefinition, channel);
-        loginClient = createClient(LoginServiceDefinition, channel);
-        if (!isE2E()) await main({ ports });
-      },
-      5,
-      1000,
-    ),
-  );
+  beforeAll(async () => {
+    ports = await usePorts();
+    const host = useHost();
+    const channel = createChannel(`${host}:${ports.proto}`);
+    userClient = createClient(UserServiceDefinition, channel);
+    loginClient = createClient(LoginServiceDefinition, channel);
+    if (!isE2E()) await main({ ports });
+  });
 
   test('Login: exists', async () => {
     const user = await userClient.createOne({ name: uuid() }, { metadata });

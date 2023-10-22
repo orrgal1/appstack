@@ -5,24 +5,18 @@ import {
 } from '../../../libs/client';
 import { main, shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, retry, useHost, usePorts } from '../../../../tests/utils';
+import { isE2E, useHost, usePorts } from '../../../../tests/utils';
 
 describe('Permission', () => {
   let client: PermissionServiceClient;
 
-  beforeAll(
-    retry(
-      async () => {
-        const ports = await usePorts();
-        const host = useHost();
-        const channel = createChannel(`${host}:${ports.protoInternal}`);
-        client = createClient(PermissionServiceDefinition, channel);
-        if (!isE2E()) await main({ ports });
-      },
-      5,
-      1000,
-    ),
-  );
+  beforeAll(async () => {
+    const ports = await usePorts();
+    const host = useHost();
+    const channel = createChannel(`${host}:${ports.protoInternal}`);
+    client = createClient(PermissionServiceDefinition, channel);
+    if (!isE2E()) await main({ ports });
+  });
 
   afterAll(async () => {
     if (!isE2E()) await shutdownComponents();

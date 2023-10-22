@@ -11,11 +11,11 @@ import * as session from 'express-session';
 import { LoggingInterceptorHttp } from '../libs/logging/logging.interceptor.http';
 import { HttpModule } from './http/http.module';
 import { ServicesModule } from '../services/services.module';
-import { PubsubModule } from '../libs/pubsub/pubsub.module';
 import { WorkersModule } from '../workers/workers.module';
 import { RpcAuthExternalInterceptor } from '../libs/auth/rpcAuthExternal.interceptor';
 import { RpcAuthInternalInterceptor } from '../libs/auth/rpcAuthInternal.interceptor';
 import * as process from 'process';
+import { PubsubServerModule } from '../libs/pubsub/pubsub.server.module';
 
 type Component = {
   key: string;
@@ -29,7 +29,12 @@ const addComponent = (component: Component) => {
     !process.env.COMPONENT_TOPOLOGY ||
     process.env[`COMPONENT_${component.key}`]
   ) {
-    components.push(component);
+    components.push({
+      shutdown: async () => {
+        return;
+      },
+      ...component,
+    });
   }
 };
 
@@ -49,7 +54,9 @@ const shutdownComponents = async (exit?: boolean) => {
     process.exit(1);
   }, 30000);
   await Promise.all(components.map((component) => component.shutdown()));
-  if (exit) process.exit();
+  setTimeout(() => {
+    if (exit) process.exit();
+  }, 100);
 };
 
 const main = async (opts: {
@@ -65,7 +72,6 @@ const main = async (opts: {
   addComponent({
     key: 'PROTO',
     init: async () => {
-      process.env.PROTO_PORT = `${opts.ports.proto}`;
       const proto = await NestFactory.createMicroservice<MicroserviceOptions>(
         ServicesModule,
         {
@@ -159,9 +165,12 @@ const main = async (opts: {
   addComponent({
     key: 'PUBSUB',
     init: async () => {
-      const pubsub = await NestFactory.createApplicationContext(PubsubModule, {
-        logger: new JsonLoggerService(),
-      });
+      const pubsub = await NestFactory.createApplicationContext(
+        PubsubServerModule,
+        {
+          logger: new JsonLoggerService(),
+        },
+      );
       await pubsub.init();
       return () => pubsub.close();
     },

@@ -7,13 +7,7 @@ import {
 } from '../../../libs/client';
 import { main, shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
-import {
-  isE2E,
-  retry,
-  sleep,
-  useHost,
-  usePorts,
-} from '../../../../tests/utils';
+import { isE2E, sleep, useHost, usePorts } from '../../../../tests/utils';
 import { MessageCreateOneInput } from '../../../proto/interfaces';
 import { io } from 'socket.io-client';
 
@@ -30,28 +24,17 @@ describe('Message', () => {
     proto: number;
     http: number;
     workers: number;
-    ws: number;
   };
   let host: any;
 
-  beforeAll(
-    retry(
-      async () => {
-        ports = await usePorts();
-        host = useHost();
-        const channel = createChannel(`${host}:${ports.proto}`);
-        client = createClient(MessageServiceDefinition, channel);
-        conversationClient = createClient(
-          ConversationServiceDefinition,
-          channel,
-        );
-        if (!isE2E()) await main({ ports });
-      },
-      5,
-      1000,
-      () => shutdownComponents(),
-    ),
-  );
+  beforeAll(async () => {
+    ports = await usePorts();
+    host = useHost();
+    const channel = createChannel(`${host}:${ports.proto}`);
+    client = createClient(MessageServiceDefinition, channel);
+    conversationClient = createClient(ConversationServiceDefinition, channel);
+    if (!isE2E()) await main({ ports });
+  });
 
   afterAll(async () => {
     if (!isE2E()) await shutdownComponents();
@@ -177,7 +160,7 @@ describe('Message', () => {
 
   test('Publish: message.created+updated', async () => {
     let published;
-    const socket = io(`http://${host}:${ports.ws}`, {
+    const socket = io(`http://${host}:${process.env.WS_PORT}`, {
       query: {
         token:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLzQxMzUyMSIsImlhdCI6MTY5NjA4MzY3OSwiZXhwIjoxNzgyMzk3Mjc5fQ.yHwdm9NCLQNxWHeerOC5GiUCoVi2CExMYmae5OOAJ1E',

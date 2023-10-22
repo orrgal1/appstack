@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MqService } from './mq.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  providers: [MqService],
+  providers: [ConfigService, MqService],
   exports: [MqService],
 })
 export class MqModule {}

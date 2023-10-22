@@ -2,13 +2,13 @@ import { Global, Module } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { MessageController } from './message.controller';
 import { MessageLogic } from './message.logic';
-import { PubsubModule } from '../../../libs/pubsub/pubsub.module';
+import { PubsubService } from '../../../libs/pubsub/pubsub.service';
 
 @Global()
 @Module({
-  imports: [PubsubModule],
+  imports: [],
   controllers: [MessageController],
-  providers: [MessageService, MessageLogic],
+  providers: [MessageService, MessageLogic, PubsubService],
   exports: [],
 })
 export class MessageModule {}

@@ -9,7 +9,7 @@ import {
 } from '../../../../libs/client';
 import { main } from '../../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, retry, useHost, usePorts } from '../../../../../tests/utils';
+import { isE2E, useHost, usePorts } from '../../../../../tests/utils';
 import axios from 'axios';
 import { User } from '../../../../proto/interfaces';
 
@@ -49,21 +49,15 @@ describe('UserFollow', () => {
     return response.data.accessToken;
   };
 
-  beforeAll(
-    retry(
-      async () => {
-        ports = await usePorts();
-        const host = useHost();
-        const channel = createChannel(`${host}:${ports.proto}`);
-        client = createClient(UserFollowServiceDefinition, channel);
-        userClient = createClient(UserServiceDefinition, channel);
-        loginClient = createClient(LoginServiceDefinition, channel);
-        if (!isE2E()) await main({ ports });
-      },
-      5,
-      1000,
-    ),
-  );
+  beforeAll(async () => {
+    ports = await usePorts();
+    const host = useHost();
+    const channel = createChannel(`${host}:${ports.proto}`);
+    client = createClient(UserFollowServiceDefinition, channel);
+    userClient = createClient(UserServiceDefinition, channel);
+    loginClient = createClient(LoginServiceDefinition, channel);
+    if (!isE2E()) await main({ ports });
+  });
 
   test('Follow + Unfollow', async () => {
     const followerUserInput = { name: uuid() };

@@ -1,16 +1,24 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Server, Socket } from 'socket.io';
+import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
-import * as process from 'process';
 
 type Callback<T> = (socket: Socket, data: T) => Promise<void>;
 
 @Injectable()
 export class PubsubService implements OnModuleDestroy, OnModuleInit {
+  private logger: Logger = new Logger(PubsubService.name);
   io: Server;
   callbacks: Map<string, Callback<any>> = new Map();
+
+  constructor(private config: ConfigService) {}
 
   onEvent<T, R>(event: string, cb: (data: T) => Promise<R>) {
     const internalCb: Callback<T> = async (socket: Socket, data: T) => {
@@ -35,24 +43,16 @@ export class PubsubService implements OnModuleDestroy, OnModuleInit {
   }
 
   onModuleDestroy(): any {
-    this.io.close();
+    try {
+      if (this.io) {
+        this.io.close();
+      }
+    } catch (e) {
+      this.logger.warn(e);
+    }
   }
 
-  onModuleInit(): any {
-    const redisOpts = {
-      host: process.env.REDIS_HOST,
-      port: Number(process.env.REDIS_PORT),
-      password: process.env.REDIS_PWD,
-    };
-    this.io = new Server({
-      cors: {
-        origin: '*', // or use "*" to allow all origins
-        methods: ['GET', 'POST'],
-      },
-    });
-    const pubClient = new Redis(redisOpts);
-    const subClient = pubClient.duplicate();
-    this.io.adapter(createAdapter(pubClient, subClient));
+  listen() {
     this.io
       .use(function (socket, next) {
         if (socket.handshake.query && socket.handshake.query.token) {
@@ -82,6 +82,23 @@ export class PubsubService implements OnModuleDestroy, OnModuleInit {
           }
         });
       });
-    this.io.listen(Number(process.env.WS_PORT));
+    this.io.listen(Number(this.config.get('WS_PORT')));
+  }
+
+  onModuleInit(): any {
+    const redisOpts = {
+      host: this.config.get('REDIS_HOST'),
+      port: Number(this.config.get('REDIS_PORT')),
+      password: this.config.get('REDIS_PWD'),
+    };
+    this.io = new Server({
+      cors: {
+        origin: '*', // or use "*" to allow all origins
+        methods: ['GET', 'POST'],
+      },
+    });
+    const pubClient = new Redis(redisOpts);
+    const subClient = pubClient.duplicate();
+    this.io.adapter(createAdapter(pubClient, subClient));
   }
 }

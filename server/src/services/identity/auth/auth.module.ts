@@ -4,7 +4,6 @@ import { LoginModule } from '../login/login.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import * as process from 'process';
 import { LocalController } from './strategies/local/local.controller';
 import { LoginLogic } from '../login/login.logic';
 import { UserLogic } from '../user/user.logic';
@@ -14,6 +13,7 @@ import { JwtStrategy } from './strategies/jwt/jwt.strategy';
 import { StrategyService } from './strategies/strategy.service';
 import { GoogleStrategy } from './strategies/google/google.strategy';
 import { GoogleController } from './strategies/google/google.controller';
+import * as process from 'process';
 
 @Module({
   imports: [

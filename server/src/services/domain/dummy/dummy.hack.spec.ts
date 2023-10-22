@@ -1,7 +1,7 @@
 import { createChannel, createClient, Metadata } from 'nice-grpc';
 import { main, shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, retry, useHost, usePorts } from '../../../../tests/utils';
+import { isE2E, useHost, usePorts } from '../../../../tests/utils';
 import {
   DummyServiceClient,
   DummyServiceDefinition,
@@ -26,19 +26,13 @@ describe('Dummy: Hack Attempts', () => {
     }),
   );
 
-  beforeAll(
-    retry(
-      async () => {
-        const ports = await usePorts();
-        const host = useHost();
-        const channel = createChannel(`${host}:${ports.proto}`);
-        client = createClient(DummyServiceDefinition, channel);
-        if (!isE2E()) await main({ ports });
-      },
-      5,
-      1000,
-    ),
-  );
+  beforeAll(async () => {
+    const ports = await usePorts();
+    const host = useHost();
+    const channel = createChannel(`${host}:${ports.proto}`);
+    client = createClient(DummyServiceDefinition, channel);
+    if (!isE2E()) await main({ ports });
+  });
 
   afterAll(async () => {
     if (!isE2E()) await shutdownComponents();

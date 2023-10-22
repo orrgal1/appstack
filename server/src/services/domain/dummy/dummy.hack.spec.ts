@@ -1,5 +1,5 @@
 import { createChannel, createClient, Metadata } from 'nice-grpc';
-import { main } from '../../../main/main';
+import { main, shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
 import { isE2E, retry, useHost, usePorts } from '../../../../tests/utils';
 import {
@@ -39,6 +39,10 @@ describe('Dummy: Hack Attempts', () => {
       1000,
     ),
   );
+
+  afterAll(async () => {
+    if (!isE2E()) await shutdownComponents();
+  });
 
   test('CreateOne', async () => {
     const input = {

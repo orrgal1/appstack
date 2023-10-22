@@ -3,7 +3,7 @@ import {
   ConversationServiceClient,
   ConversationServiceDefinition,
 } from '../../../libs/client';
-import { main } from '../../../main/main';
+import { main, shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
 import { isE2E, retry, useHost, usePorts } from '../../../../tests/utils';
 import { ConversationCreateOneInput } from '../../../proto/interfaces';
@@ -29,6 +29,10 @@ describe('Conversation', () => {
       1000,
     ),
   );
+
+  afterAll(async () => {
+    if (!isE2E()) await shutdownComponents();
+  });
 
   test('CreateOne + FindOne', async () => {
     const input: ConversationCreateOneInput = {

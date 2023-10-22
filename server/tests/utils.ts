@@ -30,7 +30,12 @@ export async function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-export function retry(fn: () => Promise<void>, times: number, wait: number) {
+export function retry(
+  fn: () => Promise<void>,
+  times: number,
+  wait: number,
+  cleanup?: () => Promise<void>,
+) {
   return async () => {
     let error: Error;
     for (let i = 0; i < times; i++) {
@@ -39,6 +44,7 @@ export function retry(fn: () => Promise<void>, times: number, wait: number) {
         return;
       } catch (e) {
         error = e;
+        if (cleanup) await cleanup();
         await sleep(wait);
       }
     }

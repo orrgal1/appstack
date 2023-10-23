@@ -18,11 +18,6 @@ export async function usePorts() {
     process.env.WS_PORT = String(e);
   }
   const ports = {
-    a,
-    b,
-    c,
-    d,
-    e,
     proto: Number(process.env.PROTO_PORT || 0),
     protoInternal: Number(process.env.PROTO_INTERNAL_PORT || 0),
     http: Number(process.env.HTTP_PORT || 0),

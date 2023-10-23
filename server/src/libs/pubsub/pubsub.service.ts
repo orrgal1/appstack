@@ -7,7 +7,6 @@ import {
 import { Redis } from 'ioredis';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Server, Socket } from 'socket.io';
-import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 
 type Callback<T> = (socket: Socket, data: T) => Promise<void>;
@@ -17,8 +16,6 @@ export class PubsubService implements OnModuleDestroy, OnModuleInit {
   private logger: Logger = new Logger(PubsubService.name);
   io: Server;
   callbacks: Map<string, Callback<any>> = new Map();
-
-  constructor(private config: ConfigService) {}
 
   onEvent<T, R>(event: string, cb: (data: T) => Promise<R>) {
     const internalCb: Callback<T> = async (socket: Socket, data: T) => {
@@ -82,14 +79,14 @@ export class PubsubService implements OnModuleDestroy, OnModuleInit {
           }
         });
       });
-    this.io.listen(Number(this.config.get('WS_PORT')));
+    this.io.listen(Number(process.env.WS_PORT));
   }
 
   onModuleInit(): any {
     const redisOpts = {
-      host: this.config.get('REDIS_HOST'),
-      port: Number(this.config.get('REDIS_PORT')),
-      password: this.config.get('REDIS_PWD'),
+      host: process.env.REDIS_HOST,
+      port: Number(process.env.REDIS_PORT),
+      password: process.env.REDIS_PWD,
     };
     this.io = new Server({
       cors: {

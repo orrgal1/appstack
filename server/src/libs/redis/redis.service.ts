@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import Redlock from 'redlock';
 import BottleNeck from 'bottleneck';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RedisService {
@@ -10,11 +9,11 @@ export class RedisService {
   db: Redis;
   lock: Redlock;
 
-  constructor(private config: ConfigService) {
+  constructor() {
     this.db = new Redis({
-      host: this.config.get('REDIS_HOST'),
-      port: Number(this.config.get('REDIS_PORT')),
-      password: this.config.get('REDIS_PASSWORD'),
+      host: process.env.REDIS_HOST,
+      port: Number(process.env.REDIS_PORT),
+      password: process.env.REDIS_PASSWORD,
     });
     this.lock = new Redlock([this.db]);
     this.lock.on('error', (error) => {

@@ -8,14 +8,9 @@ import { ClientModule } from '../libs/client/client.module';
 import { MessageModule } from './infra/message/message.module';
 import { ConversationModule } from './infra/conversation/conversation.module';
 import { WorkersModule } from '../workers/workers.module';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
-    }),
     UserModule,
     PermissionModule,
     LoginModule,

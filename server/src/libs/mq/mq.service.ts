@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConnectionOptions, Job, Queue, Worker } from 'bullmq';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MqService {
   private queues: Map<string, Queue> = new Map();
-
-  constructor(private config: ConfigService) {}
 
   async startWorker(args: {
     queue: string;
@@ -37,9 +34,9 @@ export class MqService {
 
   private getConnectionOptions(): ConnectionOptions {
     return {
-      host: this.config.get('REDIS_HOST'),
-      port: Number(this.config.get('REDIS_PORT')),
-      password: this.config.get('REDIS_PWD'),
+      host: process.env.REDIS_HOST,
+      port: Number(process.env.REDIS_PORT),
+      password: process.env.REDIS_PWD,
     };
   }
 }

@@ -4,9 +4,10 @@ import '../libs/config';
   const { main } = await import('./main');
   await main({
     ports: {
-      proto: Number(this.config.get('PROTO_PORT')),
-      http: Number(this.config.get('HTTP_PORT')),
-      workers: Number(this.config.get('WORKERS_PORT')),
+      proto: Number(process.env.PROTO_PORT),
+      protoInternal: Number(process.env.PROTO_INTERNAL_PORT),
+      http: Number(process.env.HTTP_PORT),
+      workers: Number(process.env.WORKERS_PORT),
     },
     otel: true,
   });

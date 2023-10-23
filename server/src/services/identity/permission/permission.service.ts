@@ -14,6 +14,7 @@ import {
   PermissionValidateOneResult,
 } from '../../../proto/interfaces';
 
+// TODO: refactor standard functions to be id based and add special functions instead.
 @Injectable()
 export class PermissionService implements OnModuleInit {
   collection: DocumentCollection;

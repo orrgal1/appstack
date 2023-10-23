@@ -158,7 +158,7 @@ describe('Message', () => {
     expect(found.id).toEqual(created.id);
   });
 
-  test('Publish: message.created+updated', async () => {
+  test('Create: Side-effects: Publish + Update conversation', async () => {
     let published;
     const socket = io(`http://${host}:${process.env.WS_PORT}`, {
       query: {
@@ -169,10 +169,7 @@ describe('Message', () => {
     socket.on('message.created', (data) => {
       published = data;
     });
-    socket.on('message.updated', (data) => {
-      published = data;
-    });
-    await sleep(100);
+    await sleep(10);
     const conversation = await conversationClient.createOne(
       {
         participantIds: ['user/413521', '2'],
@@ -186,15 +183,55 @@ describe('Message', () => {
       media: { text: uuid() },
     };
     const created = await client.createOne(input, { metadata });
-    await sleep(100);
+    await sleep(10);
     expect(published.id).toEqual(created.id);
     expect(published.media.text).toEqual(created.media.text);
+
+    const updatedConversation = await conversationClient.findOne(
+      { id: conversation.id },
+      { metadata },
+    );
+    expect(updatedConversation.lastMessageAt).toEqual(created.createdAt);
+  });
+
+  test('Update: Side-effects: Publish + Update conversation', async () => {
+    let published;
+    const socket = io(`http://${host}:${process.env.WS_PORT}`, {
+      query: {
+        token:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLzQxMzUyMSIsImlhdCI6MTY5NjA4MzY3OSwiZXhwIjoxNzgyMzk3Mjc5fQ.yHwdm9NCLQNxWHeerOC5GiUCoVi2CExMYmae5OOAJ1E',
+      },
+    });
+    socket.on('message.updated', (data) => {
+      published = data;
+    });
+    await sleep(10);
+    const conversation = await conversationClient.createOne(
+      {
+        participantIds: ['user/413521', '2'],
+      },
+      { metadata },
+    );
+    const input: MessageCreateOneInput = {
+      conversationId: conversation.id,
+      uniqueness: uuid(),
+      senderId: '',
+      media: { text: uuid() },
+    };
+    const created = await client.createOne(input, { metadata });
 
     const updated = await client.updateOne(
       { id: created.id, media: { text: uuid() } },
       { metadata },
     );
-    await sleep(100);
+
+    const updatedConversation = await conversationClient.findOne(
+      { id: conversation.id },
+      { metadata },
+    );
+    expect(updatedConversation.lastMessageAt).toEqual(updated.updatedAt);
+
+    await sleep(10);
     expect(published.id).toEqual(updated.id);
     expect(published.media.text).toEqual(updated.media.text);
   });

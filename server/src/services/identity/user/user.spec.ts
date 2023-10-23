@@ -6,6 +6,7 @@ import { isE2E, useHost, usePorts } from '../../../../tests/utils';
 
 describe('User', () => {
   let client: UserServiceClient;
+  // TODO: magic jwt. should generate with a util.
   const metadata = new Metadata();
   metadata.set(
     'jwt',

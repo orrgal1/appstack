@@ -37,6 +37,10 @@ export class MessageLogic {
     });
     const { participantIds } = conversation;
     const created = await this.service.createOne(input);
+    await this.conversationServiceClient.updateOne({
+      id: conversation.id,
+      lastMessageAt: created.createdAt,
+    });
     this.pubsub.publishToUsers('message.created', participantIds, created);
     return created;
   }
@@ -55,6 +59,10 @@ export class MessageLogic {
       id: updated.conversationId,
     });
     const { participantIds } = conversation;
+    await this.conversationServiceClient.updateOne({
+      id: conversation.id,
+      lastMessageAt: updated.updatedAt,
+    });
     this.pubsub.publishToUsers('message.updated', participantIds, updated);
     return updated;
   }

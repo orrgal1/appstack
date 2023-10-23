@@ -5,6 +5,7 @@ import { ClientModule } from '../libs/client/client.module';
 import { WorkersController } from './workers.controller';
 import { DummyWorker } from './dummy/dummy.worker';
 
+// TODO: support flows
 @Module({
   imports: [MqModule, ClientModule],
   providers: [MqService, DummyWorker],

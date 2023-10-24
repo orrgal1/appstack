@@ -14,7 +14,7 @@ export class StrategyService {
     user: Partial<User>,
     credentials: Partial<Credentials>,
   ): Promise<Partial<Login>> {
-    const exists = await this.loginLogic.findOneByPlatformId({
+    const exists = await this.loginLogic.findByPlatformId({
       platform,
       platformLoginId,
     });
@@ -43,7 +43,7 @@ export class StrategyService {
     user: Partial<User>,
     credentials: Partial<Credentials>,
   ): Promise<Partial<Login>> {
-    const login = await this.loginLogic.findOne({
+    const login = await this.loginLogic.findWhere({
       platform,
       platformLoginId,
       platformLoginSecret,

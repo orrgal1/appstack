@@ -99,12 +99,16 @@ export interface LoginUpdateOneInput {
 }
 
 export interface LoginFindOneInput {
+  id: string;
+}
+
+export interface LoginFindWhereInput {
   platform: string;
   platformLoginId: string;
   platformLoginSecret: string;
 }
 
-export interface LoginFindOneByPlatformIdInput {
+export interface LoginFindByPlatformIdInput {
   platform: string;
   platformLoginId: string;
 }
@@ -509,8 +513,10 @@ export interface DummyService {
 export interface LoginService {
   CreateOne(request: LoginCreateOneInput): Promise<Login>;
   FindOne(request: LoginFindOneInput): Promise<Login>;
-  FindOneByPlatformId(request: LoginFindOneByPlatformIdInput): Promise<Login>;
-  RemoveOne(request: LoginRemoveOneInput): Promise<Login>;
+  FindWhere(request: LoginFindWhereInput): Promise<Login>;
+  FindByPlatformId(request: LoginFindByPlatformIdInput): Promise<Login>;
+  UpdateOne(request: LoginUpdateOneInput): Promise<Login>;
+  RemoveOne(request: LoginRemoveOneInput): Promise<Empty>;
 }
 
 export interface PermissionService {

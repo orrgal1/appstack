@@ -4,8 +4,9 @@ import * as grpc from '@grpc/grpc-js';
 import {
   Login,
   LoginCreateOneInput,
-  LoginFindOneByPlatformIdInput,
+  LoginFindByPlatformIdInput,
   LoginFindOneInput,
+  LoginFindWhereInput,
   LoginRemoveOneInput,
   LoginUpdateOneInput,
 } from '../../../proto/interfaces';
@@ -32,11 +33,24 @@ export class LoginController {
   }
 
   @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
-  @GrpcMethod('LoginService', 'FindOneByPlatformId')
-  async findOneByPlatformId(
-    @Payload() input: LoginFindOneByPlatformIdInput,
+  @GrpcMethod('LoginService', 'FindWhere')
+  async findWhere(@Payload() input: LoginFindWhereInput): Promise<Login> {
+    const found = await this.logic.findWhere(input);
+    if (!found) {
+      throw new RpcException({
+        message: 'not found',
+        code: grpc.status.NOT_FOUND,
+      });
+    }
+    return found;
+  }
+
+  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @GrpcMethod('LoginService', 'FindByPlatformId')
+  async findByPlatformId(
+    @Payload() input: LoginFindByPlatformIdInput,
   ): Promise<Login> {
-    const found = await this.logic.findOneByPlatformId(input);
+    const found = await this.logic.findByPlatformId(input);
     if (!found) {
       throw new RpcException({
         message: 'not found',
@@ -60,7 +74,7 @@ export class LoginController {
 
   @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
   @GrpcMethod('LoginService', 'RemoveOne')
-  async removeOne(@Payload() input: LoginRemoveOneInput): Promise<Login> {
-    return await this.logic.removeOne(input);
+  async removeOne(@Payload() input: LoginRemoveOneInput): Promise<void> {
+    await this.logic.removeOne(input);
   }
 }

@@ -1,21 +1,32 @@
+import * as detect from 'detect-port';
+
 export function isE2E() {
   return process.env.E2E;
 }
 
+const getPorts = async (): Promise<string[]> => {
+  for (let i = 0; i < 50; i++) {
+    const base = [
+      await detect(Math.floor(2000 + Math.random() * 50000)),
+      await detect(Math.floor(2000 + Math.random() * 50000)),
+      await detect(Math.floor(2000 + Math.random() * 50000)),
+      await detect(Math.floor(2000 + Math.random() * 50000)),
+      await detect(Math.floor(2000 + Math.random() * 50000)),
+    ];
+    const set = new Set(base);
+    if (base.length === set.size) return base;
+  }
+  throw new Error('could not get free ports');
+};
+
 export async function usePorts() {
-  const [a, b, c, d, e] = [
-    Math.floor(2000 + Math.random() * 50000),
-    Math.floor(2000 + Math.random() * 50000),
-    Math.floor(2000 + Math.random() * 50000),
-    Math.floor(2000 + Math.random() * 50000),
-    Math.floor(2000 + Math.random() * 50000),
-  ];
+  const [a, b, c, d, e] = await getPorts();
   if (!isE2E()) {
-    process.env.PROTO_PORT = String(a);
-    process.env.PROTO_INTERNAL_PORT = String(b);
-    process.env.HTTP_PORT = String(c);
-    process.env.WORKERS_PORT = String(d);
-    process.env.WS_PORT = String(e);
+    process.env.PROTO_PORT = a;
+    process.env.PROTO_INTERNAL_PORT = b;
+    process.env.HTTP_PORT = c;
+    process.env.WORKERS_PORT = d;
+    process.env.WS_PORT = e;
   }
   const ports = {
     proto: Number(process.env.PROTO_PORT || 0),

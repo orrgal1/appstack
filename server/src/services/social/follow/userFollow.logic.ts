@@ -7,7 +7,7 @@ import {
   UserFindFollowersResult,
   UserFollowCreateOneInput,
   UserFollowRemoveOneInput,
-} from '../../../../proto/interfaces';
+} from '../../../proto/interfaces';
 import { UserFollowService } from './userFollow.service';
 
 @Injectable()

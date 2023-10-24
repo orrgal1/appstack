@@ -137,12 +137,16 @@ export interface LoginUpdateOneInput {
 }
 
 export interface LoginFindOneInput {
+  id: string;
+}
+
+export interface LoginFindWhereInput {
   platform: string;
   platformLoginId: string;
   platformLoginSecret: string;
 }
 
-export interface LoginFindOneByPlatformIdInput {
+export interface LoginFindByPlatformIdInput {
   platform: string;
   platformLoginId: string;
 }
@@ -1913,11 +1917,69 @@ export const LoginUpdateOneInput = {
 };
 
 function createBaseLoginFindOneInput(): LoginFindOneInput {
-  return { platform: "", platformLoginId: "", platformLoginSecret: "" };
+  return { id: "" };
 }
 
 export const LoginFindOneInput = {
   encode(message: LoginFindOneInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): LoginFindOneInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLoginFindOneInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LoginFindOneInput {
+    return { id: isSet(object.id) ? String(object.id) : "" };
+  },
+
+  toJSON(message: LoginFindOneInput): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<LoginFindOneInput>): LoginFindOneInput {
+    return LoginFindOneInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<LoginFindOneInput>): LoginFindOneInput {
+    const message = createBaseLoginFindOneInput();
+    message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBaseLoginFindWhereInput(): LoginFindWhereInput {
+  return { platform: "", platformLoginId: "", platformLoginSecret: "" };
+}
+
+export const LoginFindWhereInput = {
+  encode(message: LoginFindWhereInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.platform !== "") {
       writer.uint32(10).string(message.platform);
     }
@@ -1930,10 +1992,10 @@ export const LoginFindOneInput = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): LoginFindOneInput {
+  decode(input: _m0.Reader | Uint8Array, length?: number): LoginFindWhereInput {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseLoginFindOneInput();
+    const message = createBaseLoginFindWhereInput();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1967,7 +2029,7 @@ export const LoginFindOneInput = {
     return message;
   },
 
-  fromJSON(object: any): LoginFindOneInput {
+  fromJSON(object: any): LoginFindWhereInput {
     return {
       platform: isSet(object.platform) ? String(object.platform) : "",
       platformLoginId: isSet(object.platformLoginId) ? String(object.platformLoginId) : "",
@@ -1975,7 +2037,7 @@ export const LoginFindOneInput = {
     };
   },
 
-  toJSON(message: LoginFindOneInput): unknown {
+  toJSON(message: LoginFindWhereInput): unknown {
     const obj: any = {};
     if (message.platform !== "") {
       obj.platform = message.platform;
@@ -1989,12 +2051,12 @@ export const LoginFindOneInput = {
     return obj;
   },
 
-  create(base?: DeepPartial<LoginFindOneInput>): LoginFindOneInput {
-    return LoginFindOneInput.fromPartial(base ?? {});
+  create(base?: DeepPartial<LoginFindWhereInput>): LoginFindWhereInput {
+    return LoginFindWhereInput.fromPartial(base ?? {});
   },
 
-  fromPartial(object: DeepPartial<LoginFindOneInput>): LoginFindOneInput {
-    const message = createBaseLoginFindOneInput();
+  fromPartial(object: DeepPartial<LoginFindWhereInput>): LoginFindWhereInput {
+    const message = createBaseLoginFindWhereInput();
     message.platform = object.platform ?? "";
     message.platformLoginId = object.platformLoginId ?? "";
     message.platformLoginSecret = object.platformLoginSecret ?? "";
@@ -2002,12 +2064,12 @@ export const LoginFindOneInput = {
   },
 };
 
-function createBaseLoginFindOneByPlatformIdInput(): LoginFindOneByPlatformIdInput {
+function createBaseLoginFindByPlatformIdInput(): LoginFindByPlatformIdInput {
   return { platform: "", platformLoginId: "" };
 }
 
-export const LoginFindOneByPlatformIdInput = {
-  encode(message: LoginFindOneByPlatformIdInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const LoginFindByPlatformIdInput = {
+  encode(message: LoginFindByPlatformIdInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.platform !== "") {
       writer.uint32(10).string(message.platform);
     }
@@ -2017,10 +2079,10 @@ export const LoginFindOneByPlatformIdInput = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): LoginFindOneByPlatformIdInput {
+  decode(input: _m0.Reader | Uint8Array, length?: number): LoginFindByPlatformIdInput {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseLoginFindOneByPlatformIdInput();
+    const message = createBaseLoginFindByPlatformIdInput();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2047,14 +2109,14 @@ export const LoginFindOneByPlatformIdInput = {
     return message;
   },
 
-  fromJSON(object: any): LoginFindOneByPlatformIdInput {
+  fromJSON(object: any): LoginFindByPlatformIdInput {
     return {
       platform: isSet(object.platform) ? String(object.platform) : "",
       platformLoginId: isSet(object.platformLoginId) ? String(object.platformLoginId) : "",
     };
   },
 
-  toJSON(message: LoginFindOneByPlatformIdInput): unknown {
+  toJSON(message: LoginFindByPlatformIdInput): unknown {
     const obj: any = {};
     if (message.platform !== "") {
       obj.platform = message.platform;
@@ -2065,12 +2127,12 @@ export const LoginFindOneByPlatformIdInput = {
     return obj;
   },
 
-  create(base?: DeepPartial<LoginFindOneByPlatformIdInput>): LoginFindOneByPlatformIdInput {
-    return LoginFindOneByPlatformIdInput.fromPartial(base ?? {});
+  create(base?: DeepPartial<LoginFindByPlatformIdInput>): LoginFindByPlatformIdInput {
+    return LoginFindByPlatformIdInput.fromPartial(base ?? {});
   },
 
-  fromPartial(object: DeepPartial<LoginFindOneByPlatformIdInput>): LoginFindOneByPlatformIdInput {
-    const message = createBaseLoginFindOneByPlatformIdInput();
+  fromPartial(object: DeepPartial<LoginFindByPlatformIdInput>): LoginFindByPlatformIdInput {
+    const message = createBaseLoginFindByPlatformIdInput();
     message.platform = object.platform ?? "";
     message.platformLoginId = object.platformLoginId ?? "";
     return message;
@@ -8013,9 +8075,25 @@ export const LoginServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    findOneByPlatformId: {
-      name: "FindOneByPlatformId",
-      requestType: LoginFindOneByPlatformIdInput,
+    findWhere: {
+      name: "FindWhere",
+      requestType: LoginFindWhereInput,
+      requestStream: false,
+      responseType: Login,
+      responseStream: false,
+      options: {},
+    },
+    findByPlatformId: {
+      name: "FindByPlatformId",
+      requestType: LoginFindByPlatformIdInput,
+      requestStream: false,
+      responseType: Login,
+      responseStream: false,
+      options: {},
+    },
+    updateOne: {
+      name: "UpdateOne",
+      requestType: LoginUpdateOneInput,
       requestStream: false,
       responseType: Login,
       responseStream: false,
@@ -8025,7 +8103,7 @@ export const LoginServiceDefinition = {
       name: "RemoveOne",
       requestType: LoginRemoveOneInput,
       requestStream: false,
-      responseType: Login,
+      responseType: Empty,
       responseStream: false,
       options: {},
     },
@@ -8035,21 +8113,25 @@ export const LoginServiceDefinition = {
 export interface LoginServiceImplementation<CallContextExt = {}> {
   createOne(request: LoginCreateOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Login>>;
   findOne(request: LoginFindOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Login>>;
-  findOneByPlatformId(
-    request: LoginFindOneByPlatformIdInput,
+  findWhere(request: LoginFindWhereInput, context: CallContext & CallContextExt): Promise<DeepPartial<Login>>;
+  findByPlatformId(
+    request: LoginFindByPlatformIdInput,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<Login>>;
-  removeOne(request: LoginRemoveOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Login>>;
+  updateOne(request: LoginUpdateOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Login>>;
+  removeOne(request: LoginRemoveOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Empty>>;
 }
 
 export interface LoginServiceClient<CallOptionsExt = {}> {
   createOne(request: DeepPartial<LoginCreateOneInput>, options?: CallOptions & CallOptionsExt): Promise<Login>;
   findOne(request: DeepPartial<LoginFindOneInput>, options?: CallOptions & CallOptionsExt): Promise<Login>;
-  findOneByPlatformId(
-    request: DeepPartial<LoginFindOneByPlatformIdInput>,
+  findWhere(request: DeepPartial<LoginFindWhereInput>, options?: CallOptions & CallOptionsExt): Promise<Login>;
+  findByPlatformId(
+    request: DeepPartial<LoginFindByPlatformIdInput>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<Login>;
-  removeOne(request: DeepPartial<LoginRemoveOneInput>, options?: CallOptions & CallOptionsExt): Promise<Login>;
+  updateOne(request: DeepPartial<LoginUpdateOneInput>, options?: CallOptions & CallOptionsExt): Promise<Login>;
+  removeOne(request: DeepPartial<LoginRemoveOneInput>, options?: CallOptions & CallOptionsExt): Promise<Empty>;
 }
 
 export type PermissionServiceDefinition = typeof PermissionServiceDefinition;

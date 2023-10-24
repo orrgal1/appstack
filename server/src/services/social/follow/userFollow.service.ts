@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ArangodbService } from '../../../../libs/arangodb/arangodb.service';
+import { ArangodbService } from '../../../libs/arangodb/arangodb.service';
 import { EdgeCollection } from 'arangojs/collection';
 import {
   Follower,
@@ -9,7 +9,7 @@ import {
   UserFindFollowersResult,
   UserFollowCreateOneInput,
   UserFollowRemoveOneInput,
-} from '../../../../proto/interfaces';
+} from '../../../proto/interfaces';
 
 @Injectable()
 export class UserFollowService implements OnModuleInit {

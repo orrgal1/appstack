@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import {
   Login,
   LoginCreateOneInput,
+  LoginFindByPlatformIdInput,
   LoginFindOneInput,
+  LoginFindWhereInput,
   LoginRemoveOneInput,
   LoginUpdateOneInput,
 } from '../../../proto/interfaces';
 import { LoginService } from './login.service';
-import { LoginFindOneByPlatformIdInput } from '../../../libs/client';
 
 @Injectable()
 export class LoginLogic {
@@ -21,17 +22,21 @@ export class LoginLogic {
     return await this.service.findOne(input);
   }
 
+  async findWhere(input: LoginFindWhereInput): Promise<Login | void> {
+    return await this.service.findWhere(input);
+  }
+
   async updateOne(input: Partial<LoginUpdateOneInput>): Promise<Login> {
     return await this.service.updateOne(input);
   }
 
-  async findOneByPlatformId(
-    input: LoginFindOneByPlatformIdInput,
+  async findByPlatformId(
+    input: LoginFindByPlatformIdInput,
   ): Promise<Login | void> {
-    return await this.service.findOneByPlatformId(input);
+    return await this.service.findByPlatformId(input);
   }
 
-  async removeOne(input: LoginRemoveOneInput): Promise<Login> {
-    return await this.service.removeOne(input);
+  async removeOne(input: LoginRemoveOneInput): Promise<void> {
+    await this.service.removeOne(input);
   }
 }

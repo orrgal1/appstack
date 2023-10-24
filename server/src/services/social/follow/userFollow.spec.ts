@@ -6,12 +6,12 @@ import {
   UserFollowServiceDefinition,
   UserServiceClient,
   UserServiceDefinition,
-} from '../../../../libs/client';
-import { main } from '../../../../main/main';
+} from '../../../libs/client';
+import { main } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, useHost, usePorts } from '../../../../../tests/utils';
+import { isE2E, useHost, usePorts } from '../../../../tests/utils';
 import axios from 'axios';
-import { User } from '../../../../proto/interfaces';
+import { User } from '../../../proto/interfaces';
 
 describe('UserFollow', () => {
   let ports: {

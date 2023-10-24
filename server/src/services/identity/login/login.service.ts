@@ -4,11 +4,12 @@ import { DocumentCollection } from 'arangojs/collection';
 import {
   Login,
   LoginCreateOneInput,
+  LoginFindByPlatformIdInput,
   LoginFindOneInput,
+  LoginFindWhereInput,
   LoginRemoveOneInput,
   LoginUpdateOneInput,
 } from '../../../proto/interfaces';
-import { LoginFindOneByPlatformIdInput } from '../../../libs/client';
 
 @Injectable()
 export class LoginService implements OnModuleInit {
@@ -41,6 +42,19 @@ export class LoginService implements OnModuleInit {
   }
 
   async findOne(input: LoginFindOneInput): Promise<Login | void> {
+    try {
+      return this.arangodb.utils.format(
+        await this.collection.document(input.id),
+      );
+    } catch (e) {
+      if (e.message === 'document not found') {
+        return;
+      }
+      throw e;
+    }
+  }
+
+  async findWhere(input: LoginFindWhereInput): Promise<Login | void> {
     const query = `
       FOR doc IN login
       FILTER doc.platform == @platform 
@@ -59,8 +73,8 @@ export class LoginService implements OnModuleInit {
     }
   }
 
-  async findOneByPlatformId(
-    input: LoginFindOneByPlatformIdInput,
+  async findByPlatformId(
+    input: LoginFindByPlatformIdInput,
   ): Promise<Login | void> {
     const query = `
       FOR doc IN login
@@ -79,13 +93,12 @@ export class LoginService implements OnModuleInit {
     }
   }
 
-  async removeOne(input: LoginRemoveOneInput): Promise<Login> {
+  async removeOne(input: LoginRemoveOneInput): Promise<void> {
     const found = this.arangodb.utils.format(
       await this.collection.document(input.id),
     );
     if (found) {
       await this.collection.remove(found.id);
-      return found;
     }
   }
 

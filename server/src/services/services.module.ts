@@ -8,10 +8,12 @@ import { ClientModule } from '../libs/client/client.module';
 import { MessageModule } from './infra/message/message.module';
 import { ConversationModule } from './infra/conversation/conversation.module';
 import { WorkersModule } from '../workers/workers.module';
+import { UserFollowModule } from './social/follow/userFollow.module';
 
 @Module({
   imports: [
     UserModule,
+    UserFollowModule,
     PermissionModule,
     LoginModule,
     DummyModule,

@@ -96,12 +96,16 @@ message LoginUpdateOneInput {
 }
 
 message LoginFindOneInput {
+  string id = 1;
+}
+
+message LoginFindWhereInput {
   string platform = 1;
   string platformLoginId = 2;
   string platformLoginSecret = 3;
 }
 
-message LoginFindOneByPlatformIdInput {
+message LoginFindByPlatformIdInput {
   string platform = 1;
   string platformLoginId = 2;
 }
@@ -506,8 +510,10 @@ service DummyService {
 service LoginService {
   rpc CreateOne (LoginCreateOneInput) returns (Login) {}
   rpc FindOne (LoginFindOneInput) returns (Login) {}
-  rpc FindOneByPlatformId (LoginFindOneByPlatformIdInput) returns (Login) {}
-  rpc RemoveOne (LoginRemoveOneInput) returns (Login) {}
+  rpc FindWhere (LoginFindWhereInput) returns (Login) {}
+  rpc FindByPlatformId (LoginFindByPlatformIdInput) returns (Login) {}
+  rpc UpdateOne (LoginUpdateOneInput) returns (Login) {}
+  rpc RemoveOne (LoginRemoveOneInput) returns (google.protobuf.Empty) {}
 }
 
 service PermissionService {

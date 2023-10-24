@@ -8,13 +8,13 @@ import {
   UserFindFollowersResult,
   UserFollowCreateOneInput,
   UserFollowRemoveOneInput,
-} from '../../../../proto/interfaces';
+} from '../../../proto/interfaces';
 import { UserFollowLogic } from './userFollow.logic';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../../libs/auth/rpcAuthEntityCreateOwnership.interceptor';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../../libs/auth/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../../libs/auth/rpcAuthRequired.interceptor';
-import { GrpcAuthenticatedUserId } from '../../../../libs/auth/rpcAuthenticatedUserId.decorator';
-import { RpcPermissionDeniedException } from '../../../../libs/auth/rpcPermissionDeniedException';
+import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../libs/auth/rpcAuthEntityCreateOwnership.interceptor';
+import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpcAuthEntityAssertWriteable.interceptor';
+import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpcAuthRequired.interceptor';
+import { GrpcAuthenticatedUserId } from '../../../libs/auth/rpcAuthenticatedUserId.decorator';
+import { RpcPermissionDeniedException } from '../../../libs/auth/rpcPermissionDeniedException';
 
 @Controller()
 export class UserFollowController {

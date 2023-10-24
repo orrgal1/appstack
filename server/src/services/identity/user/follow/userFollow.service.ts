@@ -120,10 +120,8 @@ export class UserFollowService implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    try {
-      await this.arangodb.db.createEdgeCollection('followers', {});
-    } catch (e) {
-      if (e.message.indexOf('duplicate name') < 0) throw e;
-    }
+    await this.arangodb.utils.tryDdl(() =>
+      this.arangodb.db.createEdgeCollection('followers', {}),
+    );
   }
 }

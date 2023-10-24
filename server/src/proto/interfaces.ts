@@ -133,6 +133,10 @@ export interface PermissionCreateOneInput {
 }
 
 export interface PermissionFindOneInput {
+  id: string;
+}
+
+export interface PermissionFindWhereInput {
   entity: string;
   entityId: string;
   permittedEntity: string;
@@ -140,7 +144,7 @@ export interface PermissionFindOneInput {
   action: string;
 }
 
-export interface PermissionFindOneOrStarInput {
+export interface PermissionFindWhereOrStarInput {
   entity: string;
   entityId: string;
   permittedEntity: string;
@@ -165,6 +169,10 @@ export interface PermissionValidateOneResult {
 }
 
 export interface PermissionRemoveOneInput {
+  id: string;
+}
+
+export interface PermissionRemoveWhereInput {
   entity: string;
   entityId: string;
   permittedEntity: string;
@@ -508,17 +516,19 @@ export interface LoginService {
 export interface PermissionService {
   CreateOne(request: PermissionCreateOneInput): Promise<Permission>;
   FindOne(request: PermissionFindOneInput): Promise<Permission>;
-  FindOneOrStar(request: PermissionFindOneOrStarInput): Promise<Permission>;
-  ValidateOne(
-    request: PermissionValidateOneInput,
-  ): Promise<PermissionValidateOneResult>;
-  RemoveOne(request: PermissionRemoveOneInput): Promise<Permission>;
+  FindWhere(request: PermissionFindWhereInput): Promise<Permission>;
+  FindWhereOrStar(request: PermissionFindWhereOrStarInput): Promise<Permission>;
   FindByPermitted(
     request: PermissionFindByPermittedInput,
   ): Promise<PermissionFindByPermittedResult>;
   FindAllActions(
     request: PermissionFindAllActionsInput,
   ): Promise<PermissionFindAllActionsResult>;
+  ValidateOne(
+    request: PermissionValidateOneInput,
+  ): Promise<PermissionValidateOneResult>;
+  RemoveOne(request: PermissionRemoveOneInput): Promise<Empty>;
+  RemoveWhere(request: PermissionRemoveWhereInput): Promise<Empty>;
   RemoveAllActions(request: PermissionRemoveAllActionsInput): Promise<Empty>;
 }
 

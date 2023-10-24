@@ -171,6 +171,10 @@ export interface PermissionCreateOneInput {
 }
 
 export interface PermissionFindOneInput {
+  id: string;
+}
+
+export interface PermissionFindWhereInput {
   entity: string;
   entityId: string;
   permittedEntity: string;
@@ -178,7 +182,7 @@ export interface PermissionFindOneInput {
   action: string;
 }
 
-export interface PermissionFindOneOrStarInput {
+export interface PermissionFindWhereOrStarInput {
   entity: string;
   entityId: string;
   permittedEntity: string;
@@ -203,6 +207,10 @@ export interface PermissionValidateOneResult {
 }
 
 export interface PermissionRemoveOneInput {
+  id: string;
+}
+
+export interface PermissionRemoveWhereInput {
   entity: string;
   entityId: string;
   permittedEntity: string;
@@ -2422,25 +2430,13 @@ export const PermissionCreateOneInput = {
 };
 
 function createBasePermissionFindOneInput(): PermissionFindOneInput {
-  return { entity: "", entityId: "", permittedEntity: "", permittedEntityId: "", action: "" };
+  return { id: "" };
 }
 
 export const PermissionFindOneInput = {
   encode(message: PermissionFindOneInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.entity !== "") {
-      writer.uint32(10).string(message.entity);
-    }
-    if (message.entityId !== "") {
-      writer.uint32(18).string(message.entityId);
-    }
-    if (message.permittedEntity !== "") {
-      writer.uint32(26).string(message.permittedEntity);
-    }
-    if (message.permittedEntityId !== "") {
-      writer.uint32(34).string(message.permittedEntityId);
-    }
-    if (message.action !== "") {
-      writer.uint32(42).string(message.action);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     return writer;
   },
@@ -2457,35 +2453,7 @@ export const PermissionFindOneInput = {
             break;
           }
 
-          message.entity = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.entityId = reader.string();
-          continue;
-        case 3:
-          if (tag !== 26) {
-            break;
-          }
-
-          message.permittedEntity = reader.string();
-          continue;
-        case 4:
-          if (tag !== 34) {
-            break;
-          }
-
-          message.permittedEntityId = reader.string();
-          continue;
-        case 5:
-          if (tag !== 42) {
-            break;
-          }
-
-          message.action = reader.string();
+          message.id = reader.string();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -2497,31 +2465,13 @@ export const PermissionFindOneInput = {
   },
 
   fromJSON(object: any): PermissionFindOneInput {
-    return {
-      entity: isSet(object.entity) ? String(object.entity) : "",
-      entityId: isSet(object.entityId) ? String(object.entityId) : "",
-      permittedEntity: isSet(object.permittedEntity) ? String(object.permittedEntity) : "",
-      permittedEntityId: isSet(object.permittedEntityId) ? String(object.permittedEntityId) : "",
-      action: isSet(object.action) ? String(object.action) : "",
-    };
+    return { id: isSet(object.id) ? String(object.id) : "" };
   },
 
   toJSON(message: PermissionFindOneInput): unknown {
     const obj: any = {};
-    if (message.entity !== "") {
-      obj.entity = message.entity;
-    }
-    if (message.entityId !== "") {
-      obj.entityId = message.entityId;
-    }
-    if (message.permittedEntity !== "") {
-      obj.permittedEntity = message.permittedEntity;
-    }
-    if (message.permittedEntityId !== "") {
-      obj.permittedEntityId = message.permittedEntityId;
-    }
-    if (message.action !== "") {
-      obj.action = message.action;
+    if (message.id !== "") {
+      obj.id = message.id;
     }
     return obj;
   },
@@ -2532,21 +2482,17 @@ export const PermissionFindOneInput = {
 
   fromPartial(object: DeepPartial<PermissionFindOneInput>): PermissionFindOneInput {
     const message = createBasePermissionFindOneInput();
-    message.entity = object.entity ?? "";
-    message.entityId = object.entityId ?? "";
-    message.permittedEntity = object.permittedEntity ?? "";
-    message.permittedEntityId = object.permittedEntityId ?? "";
-    message.action = object.action ?? "";
+    message.id = object.id ?? "";
     return message;
   },
 };
 
-function createBasePermissionFindOneOrStarInput(): PermissionFindOneOrStarInput {
+function createBasePermissionFindWhereInput(): PermissionFindWhereInput {
   return { entity: "", entityId: "", permittedEntity: "", permittedEntityId: "", action: "" };
 }
 
-export const PermissionFindOneOrStarInput = {
-  encode(message: PermissionFindOneOrStarInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const PermissionFindWhereInput = {
+  encode(message: PermissionFindWhereInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.entity !== "") {
       writer.uint32(10).string(message.entity);
     }
@@ -2565,10 +2511,10 @@ export const PermissionFindOneOrStarInput = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionFindOneOrStarInput {
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionFindWhereInput {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePermissionFindOneOrStarInput();
+    const message = createBasePermissionFindWhereInput();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2616,7 +2562,7 @@ export const PermissionFindOneOrStarInput = {
     return message;
   },
 
-  fromJSON(object: any): PermissionFindOneOrStarInput {
+  fromJSON(object: any): PermissionFindWhereInput {
     return {
       entity: isSet(object.entity) ? String(object.entity) : "",
       entityId: isSet(object.entityId) ? String(object.entityId) : "",
@@ -2626,7 +2572,7 @@ export const PermissionFindOneOrStarInput = {
     };
   },
 
-  toJSON(message: PermissionFindOneOrStarInput): unknown {
+  toJSON(message: PermissionFindWhereInput): unknown {
     const obj: any = {};
     if (message.entity !== "") {
       obj.entity = message.entity;
@@ -2646,12 +2592,132 @@ export const PermissionFindOneOrStarInput = {
     return obj;
   },
 
-  create(base?: DeepPartial<PermissionFindOneOrStarInput>): PermissionFindOneOrStarInput {
-    return PermissionFindOneOrStarInput.fromPartial(base ?? {});
+  create(base?: DeepPartial<PermissionFindWhereInput>): PermissionFindWhereInput {
+    return PermissionFindWhereInput.fromPartial(base ?? {});
   },
 
-  fromPartial(object: DeepPartial<PermissionFindOneOrStarInput>): PermissionFindOneOrStarInput {
-    const message = createBasePermissionFindOneOrStarInput();
+  fromPartial(object: DeepPartial<PermissionFindWhereInput>): PermissionFindWhereInput {
+    const message = createBasePermissionFindWhereInput();
+    message.entity = object.entity ?? "";
+    message.entityId = object.entityId ?? "";
+    message.permittedEntity = object.permittedEntity ?? "";
+    message.permittedEntityId = object.permittedEntityId ?? "";
+    message.action = object.action ?? "";
+    return message;
+  },
+};
+
+function createBasePermissionFindWhereOrStarInput(): PermissionFindWhereOrStarInput {
+  return { entity: "", entityId: "", permittedEntity: "", permittedEntityId: "", action: "" };
+}
+
+export const PermissionFindWhereOrStarInput = {
+  encode(message: PermissionFindWhereOrStarInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.entity !== "") {
+      writer.uint32(10).string(message.entity);
+    }
+    if (message.entityId !== "") {
+      writer.uint32(18).string(message.entityId);
+    }
+    if (message.permittedEntity !== "") {
+      writer.uint32(26).string(message.permittedEntity);
+    }
+    if (message.permittedEntityId !== "") {
+      writer.uint32(34).string(message.permittedEntityId);
+    }
+    if (message.action !== "") {
+      writer.uint32(42).string(message.action);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionFindWhereOrStarInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePermissionFindWhereOrStarInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.entity = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.entityId = reader.string();
+          continue;
+        case 3:
+          if (tag !== 26) {
+            break;
+          }
+
+          message.permittedEntity = reader.string();
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.permittedEntityId = reader.string();
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.action = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PermissionFindWhereOrStarInput {
+    return {
+      entity: isSet(object.entity) ? String(object.entity) : "",
+      entityId: isSet(object.entityId) ? String(object.entityId) : "",
+      permittedEntity: isSet(object.permittedEntity) ? String(object.permittedEntity) : "",
+      permittedEntityId: isSet(object.permittedEntityId) ? String(object.permittedEntityId) : "",
+      action: isSet(object.action) ? String(object.action) : "",
+    };
+  },
+
+  toJSON(message: PermissionFindWhereOrStarInput): unknown {
+    const obj: any = {};
+    if (message.entity !== "") {
+      obj.entity = message.entity;
+    }
+    if (message.entityId !== "") {
+      obj.entityId = message.entityId;
+    }
+    if (message.permittedEntity !== "") {
+      obj.permittedEntity = message.permittedEntity;
+    }
+    if (message.permittedEntityId !== "") {
+      obj.permittedEntityId = message.permittedEntityId;
+    }
+    if (message.action !== "") {
+      obj.action = message.action;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<PermissionFindWhereOrStarInput>): PermissionFindWhereOrStarInput {
+    return PermissionFindWhereOrStarInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<PermissionFindWhereOrStarInput>): PermissionFindWhereOrStarInput {
+    const message = createBasePermissionFindWhereOrStarInput();
     message.entity = object.entity ?? "";
     message.entityId = object.entityId ?? "";
     message.permittedEntity = object.permittedEntity ?? "";
@@ -2900,11 +2966,69 @@ export const PermissionValidateOneResult = {
 };
 
 function createBasePermissionRemoveOneInput(): PermissionRemoveOneInput {
-  return { entity: "", entityId: "", permittedEntity: "", permittedEntityId: "", action: "" };
+  return { id: "" };
 }
 
 export const PermissionRemoveOneInput = {
   encode(message: PermissionRemoveOneInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionRemoveOneInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePermissionRemoveOneInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PermissionRemoveOneInput {
+    return { id: isSet(object.id) ? String(object.id) : "" };
+  },
+
+  toJSON(message: PermissionRemoveOneInput): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<PermissionRemoveOneInput>): PermissionRemoveOneInput {
+    return PermissionRemoveOneInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<PermissionRemoveOneInput>): PermissionRemoveOneInput {
+    const message = createBasePermissionRemoveOneInput();
+    message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBasePermissionRemoveWhereInput(): PermissionRemoveWhereInput {
+  return { entity: "", entityId: "", permittedEntity: "", permittedEntityId: "", action: "" };
+}
+
+export const PermissionRemoveWhereInput = {
+  encode(message: PermissionRemoveWhereInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.entity !== "") {
       writer.uint32(10).string(message.entity);
     }
@@ -2923,10 +3047,10 @@ export const PermissionRemoveOneInput = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionRemoveOneInput {
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionRemoveWhereInput {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePermissionRemoveOneInput();
+    const message = createBasePermissionRemoveWhereInput();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2974,7 +3098,7 @@ export const PermissionRemoveOneInput = {
     return message;
   },
 
-  fromJSON(object: any): PermissionRemoveOneInput {
+  fromJSON(object: any): PermissionRemoveWhereInput {
     return {
       entity: isSet(object.entity) ? String(object.entity) : "",
       entityId: isSet(object.entityId) ? String(object.entityId) : "",
@@ -2984,7 +3108,7 @@ export const PermissionRemoveOneInput = {
     };
   },
 
-  toJSON(message: PermissionRemoveOneInput): unknown {
+  toJSON(message: PermissionRemoveWhereInput): unknown {
     const obj: any = {};
     if (message.entity !== "") {
       obj.entity = message.entity;
@@ -3004,12 +3128,12 @@ export const PermissionRemoveOneInput = {
     return obj;
   },
 
-  create(base?: DeepPartial<PermissionRemoveOneInput>): PermissionRemoveOneInput {
-    return PermissionRemoveOneInput.fromPartial(base ?? {});
+  create(base?: DeepPartial<PermissionRemoveWhereInput>): PermissionRemoveWhereInput {
+    return PermissionRemoveWhereInput.fromPartial(base ?? {});
   },
 
-  fromPartial(object: DeepPartial<PermissionRemoveOneInput>): PermissionRemoveOneInput {
-    const message = createBasePermissionRemoveOneInput();
+  fromPartial(object: DeepPartial<PermissionRemoveWhereInput>): PermissionRemoveWhereInput {
+    const message = createBasePermissionRemoveWhereInput();
     message.entity = object.entity ?? "";
     message.entityId = object.entityId ?? "";
     message.permittedEntity = object.permittedEntity ?? "";
@@ -7949,25 +8073,17 @@ export const PermissionServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    findOneOrStar: {
-      name: "FindOneOrStar",
-      requestType: PermissionFindOneOrStarInput,
+    findWhere: {
+      name: "FindWhere",
+      requestType: PermissionFindWhereInput,
       requestStream: false,
       responseType: Permission,
       responseStream: false,
       options: {},
     },
-    validateOne: {
-      name: "ValidateOne",
-      requestType: PermissionValidateOneInput,
-      requestStream: false,
-      responseType: PermissionValidateOneResult,
-      responseStream: false,
-      options: {},
-    },
-    removeOne: {
-      name: "RemoveOne",
-      requestType: PermissionRemoveOneInput,
+    findWhereOrStar: {
+      name: "FindWhereOrStar",
+      requestType: PermissionFindWhereOrStarInput,
       requestStream: false,
       responseType: Permission,
       responseStream: false,
@@ -7989,6 +8105,30 @@ export const PermissionServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    validateOne: {
+      name: "ValidateOne",
+      requestType: PermissionValidateOneInput,
+      requestStream: false,
+      responseType: PermissionValidateOneResult,
+      responseStream: false,
+      options: {},
+    },
+    removeOne: {
+      name: "RemoveOne",
+      requestType: PermissionRemoveOneInput,
+      requestStream: false,
+      responseType: Empty,
+      responseStream: false,
+      options: {},
+    },
+    removeWhere: {
+      name: "RemoveWhere",
+      requestType: PermissionRemoveWhereInput,
+      requestStream: false,
+      responseType: Empty,
+      responseStream: false,
+      options: {},
+    },
     removeAllActions: {
       name: "RemoveAllActions",
       requestType: PermissionRemoveAllActionsInput,
@@ -8003,15 +8143,11 @@ export const PermissionServiceDefinition = {
 export interface PermissionServiceImplementation<CallContextExt = {}> {
   createOne(request: PermissionCreateOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Permission>>;
   findOne(request: PermissionFindOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Permission>>;
-  findOneOrStar(
-    request: PermissionFindOneOrStarInput,
+  findWhere(request: PermissionFindWhereInput, context: CallContext & CallContextExt): Promise<DeepPartial<Permission>>;
+  findWhereOrStar(
+    request: PermissionFindWhereOrStarInput,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<Permission>>;
-  validateOne(
-    request: PermissionValidateOneInput,
-    context: CallContext & CallContextExt,
-  ): Promise<DeepPartial<PermissionValidateOneResult>>;
-  removeOne(request: PermissionRemoveOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Permission>>;
   findByPermitted(
     request: PermissionFindByPermittedInput,
     context: CallContext & CallContextExt,
@@ -8020,6 +8156,12 @@ export interface PermissionServiceImplementation<CallContextExt = {}> {
     request: PermissionFindAllActionsInput,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<PermissionFindAllActionsResult>>;
+  validateOne(
+    request: PermissionValidateOneInput,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<PermissionValidateOneResult>>;
+  removeOne(request: PermissionRemoveOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Empty>>;
+  removeWhere(request: PermissionRemoveWhereInput, context: CallContext & CallContextExt): Promise<DeepPartial<Empty>>;
   removeAllActions(
     request: PermissionRemoveAllActionsInput,
     context: CallContext & CallContextExt,
@@ -8032,16 +8174,12 @@ export interface PermissionServiceClient<CallOptionsExt = {}> {
     options?: CallOptions & CallOptionsExt,
   ): Promise<Permission>;
   findOne(request: DeepPartial<PermissionFindOneInput>, options?: CallOptions & CallOptionsExt): Promise<Permission>;
-  findOneOrStar(
-    request: DeepPartial<PermissionFindOneOrStarInput>,
+  findWhere(
+    request: DeepPartial<PermissionFindWhereInput>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<Permission>;
-  validateOne(
-    request: DeepPartial<PermissionValidateOneInput>,
-    options?: CallOptions & CallOptionsExt,
-  ): Promise<PermissionValidateOneResult>;
-  removeOne(
-    request: DeepPartial<PermissionRemoveOneInput>,
+  findWhereOrStar(
+    request: DeepPartial<PermissionFindWhereOrStarInput>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<Permission>;
   findByPermitted(
@@ -8052,6 +8190,12 @@ export interface PermissionServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<PermissionFindAllActionsInput>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<PermissionFindAllActionsResult>;
+  validateOne(
+    request: DeepPartial<PermissionValidateOneInput>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<PermissionValidateOneResult>;
+  removeOne(request: DeepPartial<PermissionRemoveOneInput>, options?: CallOptions & CallOptionsExt): Promise<Empty>;
+  removeWhere(request: DeepPartial<PermissionRemoveWhereInput>, options?: CallOptions & CallOptionsExt): Promise<Empty>;
   removeAllActions(
     request: DeepPartial<PermissionRemoveAllActionsInput>,
     options?: CallOptions & CallOptionsExt,

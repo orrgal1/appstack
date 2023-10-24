@@ -86,18 +86,14 @@ export class ConversationService implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    try {
-      await this.arangodb.db.createCollection('conversation', {});
-      const collection = this.arangodb.db.collection('conversation');
-      try {
-        await collection.ensureIndex({
-          name: 'idx-conversation-v2',
+    await this.arangodb.utils.tryDdl(
+      () => this.arangodb.db.createCollection('conversation', {}),
+      () =>
+        this.arangodb.db.collection('conversation').ensureIndex({
+          name: 'idx-conversation-v3',
           type: 'persistent',
-          fields: ['participantIds[*]', 'fromMessageAt'],
-        });
-      } catch (e) {
-        if (e.conversation.indexOf('duplicate name') < 0) throw e;
-      }
-    } catch (e) {}
+          fields: ['participantIds[*]', 'lastMessageAt'],
+        }),
+    );
   }
 }

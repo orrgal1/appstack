@@ -8,9 +8,11 @@ import {
   PermissionFindByPermittedInput,
   PermissionFindByPermittedResult,
   PermissionFindOneInput,
-  PermissionFindOneOrStarInput,
+  PermissionFindWhereInput,
+  PermissionFindWhereOrStarInput,
   PermissionRemoveAllActionsInput,
   PermissionRemoveOneInput,
+  PermissionRemoveWhereInput,
   PermissionValidateOneInput,
   PermissionValidateOneResult,
 } from '../../../proto/interfaces';
@@ -36,11 +38,26 @@ export class PermissionController {
   }
 
   @UseInterceptors(RpcAuthAssertInternalInterceptor)
-  @GrpcMethod('PermissionService', 'FindOneOrStar')
-  async findOneOrStar(
-    @Payload() input: PermissionFindOneOrStarInput,
+  @GrpcMethod('PermissionService', 'FindWhere')
+  async findWhere(
+    @Payload() input: PermissionFindWhereInput,
   ): Promise<Permission> {
-    const found = await this.logic.findOneOrStar(input);
+    const found = await this.logic.findWhere(input);
+    if (!found) {
+      throw new RpcException({
+        message: 'not found',
+        code: grpc.status.NOT_FOUND,
+      });
+    }
+    return found;
+  }
+
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('PermissionService', 'FindWhereOrStar')
+  async findWhereOrStar(
+    @Payload() input: PermissionFindWhereOrStarInput,
+  ): Promise<Permission> {
+    const found = await this.logic.findWhereOrStar(input);
     if (!found) {
       throw new RpcException({
         message: 'not found',
@@ -70,17 +87,16 @@ export class PermissionController {
 
   @UseInterceptors(RpcAuthAssertInternalInterceptor)
   @GrpcMethod('PermissionService', 'RemoveOne')
-  async removeOne(
-    @Payload() input: PermissionRemoveOneInput,
-  ): Promise<Permission> {
-    const removed = await this.logic.removeOne(input);
-    if (!removed) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
-    }
-    return removed;
+  async removeOne(@Payload() input: PermissionRemoveOneInput): Promise<void> {
+    await this.logic.removeOne(input);
+  }
+
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('PermissionService', 'RemoveWhere')
+  async removeWhere(
+    @Payload() input: PermissionRemoveWhereInput,
+  ): Promise<void> {
+    await this.logic.removeWhere(input);
   }
 
   @UseInterceptors(RpcAuthAssertInternalInterceptor)

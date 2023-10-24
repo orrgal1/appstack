@@ -81,30 +81,23 @@ export class DummyService implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    try {
-      await this.arangodb.db.createCollection('dummy', {});
-    } catch (e) {
-      if (e.message.indexOf('duplicate name') < 0) throw e;
-    }
-
-    try {
-      const view = this.arangodb.db.view('dummySearch');
-      await view.create({
-        type: 'arangosearch',
-        links: {
-          dummy: {
-            analyzers: ['text_en'],
-            fields: {
-              text: {},
+    await this.arangodb.utils.tryDdl(
+      () => this.arangodb.db.createCollection('dummy', {}),
+      () =>
+        this.arangodb.db.view('dummySearch').create({
+          type: 'arangosearch',
+          links: {
+            dummy: {
+              analyzers: ['text_en'],
+              fields: {
+                text: {},
+              },
+              includeAllFields: false,
+              storeValues: 'none',
+              trackListPositions: false,
             },
-            includeAllFields: false,
-            storeValues: 'none',
-            trackListPositions: false,
           },
-        },
-      });
-    } catch (e) {
-      if (e.message.indexOf('duplicate name') < 0) throw e;
-    }
+        }),
+    );
   }
 }

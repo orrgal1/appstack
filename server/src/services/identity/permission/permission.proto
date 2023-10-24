@@ -1,132 +1,142 @@
 syntax = "proto3";
 
 message Permission {
-    string id = 1;
-    uint64 createdAt = 2;
-    uint64 updatedAt = 3;
-    string entity = 4;
-    string entityId = 5;
-    string permittedEntity = 6;
-    string permittedEntityId = 7;
-    string action = 8;
+  string id = 1;
+  uint64 createdAt = 2;
+  uint64 updatedAt = 3;
+  string entity = 4;
+  string entityId = 5;
+  string permittedEntity = 6;
+  string permittedEntityId = 7;
+  string action = 8;
 }
 
 message PermissionCreateOneInput {
-    string entity = 4;
-    string entityId = 5;
-    string permittedEntity = 6;
-    string permittedEntityId = 7;
-    string action = 8;
+  string entity = 4;
+  string entityId = 5;
+  string permittedEntity = 6;
+  string permittedEntityId = 7;
+  string action = 8;
 }
 
 message PermissionFindOneInput {
-    string entity = 1;
-    string entityId = 2;
-    string permittedEntity = 3;
-    string permittedEntityId = 4;
-    string action = 5;
+  string id = 1;
 }
 
-message PermissionFindOneOrStarInput {
-    string entity = 1;
-    string entityId = 2;
-    string permittedEntity = 3;
-    string permittedEntityId = 4;
-    string action = 5;
+message PermissionFindWhereInput {
+  string entity = 1;
+  string entityId = 2;
+  string permittedEntity = 3;
+  string permittedEntityId = 4;
+  string action = 5;
+}
+
+message PermissionFindWhereOrStarInput {
+  string entity = 1;
+  string entityId = 2;
+  string permittedEntity = 3;
+  string permittedEntityId = 4;
+  string action = 5;
 }
 
 message Permitted {
-    string permittedEntity = 1;
-    string permittedEntityId = 2;
+  string permittedEntity = 1;
+  string permittedEntityId = 2;
 }
 
 message PermissionValidateOneInput {
-    string entity = 1;
-    string entityId = 2;
-    string action = 3;
-    repeated Permitted permitted = 4;
+  string entity = 1;
+  string entityId = 2;
+  string action = 3;
+  repeated Permitted permitted = 4;
 }
 
 message PermissionValidateOneResult {
-    bool validated = 1;
+  bool validated = 1;
 }
 
 message PermissionRemoveOneInput {
-    string entity = 1;
-    string entityId = 2;
-    string permittedEntity = 3;
-    string permittedEntityId = 4;
-    string action = 5;
+  string id = 1;
+}
+
+message PermissionRemoveWhereInput {
+  string entity = 1;
+  string entityId = 2;
+  string permittedEntity = 3;
+  string permittedEntityId = 4;
+  string action = 5;
 }
 
 message PermissionFindByPermittedFilter {
-    string permittedEntity = 6;
-    string permittedEntityId = 7;
+  string permittedEntity = 6;
+  string permittedEntityId = 7;
 }
 
 message PermissionFindByPermittedOpts {
-    uint64 limit = 1;
-    uint64 offset = 2;
+  uint64 limit = 1;
+  uint64 offset = 2;
 }
 
 message PermissionFindByPermittedInput {
-    PermissionFindByPermittedFilter filter = 1;
-    PermissionFindByPermittedOpts opts = 2;
+  PermissionFindByPermittedFilter filter = 1;
+  PermissionFindByPermittedOpts opts = 2;
 }
 
 message PermissionFindByPermittedResultMeta {
-    uint64 offset = 1;
+  uint64 offset = 1;
 }
 
 message PermissionFindByPermittedResult {
-    PermissionFindByPermittedResultMeta meta = 1;
-    repeated Permission results = 2;
+  PermissionFindByPermittedResultMeta meta = 1;
+  repeated Permission results = 2;
 }
 
 message PermissionFindAllActionsFilter {
-    string entity = 1;
-    string entityId = 2;
-    string permittedEntity = 3;
-    string permittedEntityId = 4;
+  string entity = 1;
+  string entityId = 2;
+  string permittedEntity = 3;
+  string permittedEntityId = 4;
 }
 
 message PermissionFindAllActionsOpts {
-    uint64 limit = 1;
-    uint64 offset = 2;
+  uint64 limit = 1;
+  uint64 offset = 2;
 }
 
 message PermissionFindAllActionsInput {
-    PermissionFindAllActionsFilter filter = 1;
-    PermissionFindAllActionsOpts opts = 2;
+  PermissionFindAllActionsFilter filter = 1;
+  PermissionFindAllActionsOpts opts = 2;
 }
 
 message PermissionFindAllActionsResultMeta {
-    uint64 offset = 1;
+  uint64 offset = 1;
 }
 
 message PermissionFindAllActionsResult {
-    PermissionFindAllActionsResultMeta meta = 1;
-    repeated Permission results = 2;
+  PermissionFindAllActionsResultMeta meta = 1;
+  repeated Permission results = 2;
 }
 
 message PermissionRemoveAllActionsFilter {
-    string entity = 1;
-    string entityId = 2;
-    string permittedEntity = 3;
-    string permittedEntityId = 4;
+  string entity = 1;
+  string entityId = 2;
+  string permittedEntity = 3;
+  string permittedEntityId = 4;
 }
 
 message PermissionRemoveAllActionsInput {
-    PermissionRemoveAllActionsFilter filter = 1;
+  PermissionRemoveAllActionsFilter filter = 1;
 }
 
 service PermissionService {
-    rpc CreateOne (PermissionCreateOneInput) returns (Permission) {}
-    rpc FindOne (PermissionFindOneInput) returns (Permission) {}
-    rpc FindOneOrStar (PermissionFindOneOrStarInput) returns (Permission) {}
-    rpc ValidateOne (PermissionValidateOneInput) returns (PermissionValidateOneResult) {}
-    rpc RemoveOne (PermissionRemoveOneInput) returns (Permission) {}
-    rpc FindByPermitted (PermissionFindByPermittedInput) returns (PermissionFindByPermittedResult) {}
-    rpc FindAllActions (PermissionFindAllActionsInput) returns (PermissionFindAllActionsResult) {}
-    rpc RemoveAllActions (PermissionRemoveAllActionsInput) returns (google.protobuf.Empty) {}
+  rpc CreateOne (PermissionCreateOneInput) returns (Permission) {}
+  rpc FindOne (PermissionFindOneInput) returns (Permission) {}
+  rpc FindWhere (PermissionFindWhereInput) returns (Permission) {}
+  rpc FindWhereOrStar (PermissionFindWhereOrStarInput) returns (Permission) {}
+  rpc FindByPermitted (PermissionFindByPermittedInput) returns (PermissionFindByPermittedResult) {}
+  rpc FindAllActions (PermissionFindAllActionsInput) returns (PermissionFindAllActionsResult) {}
+  rpc ValidateOne (PermissionValidateOneInput) returns (PermissionValidateOneResult) {}
+  rpc RemoveOne (PermissionRemoveOneInput) returns (google.protobuf.Empty) {}
+  rpc RemoveWhere (PermissionRemoveWhereInput) returns (google.protobuf.Empty) {}
+  rpc RemoveAllActions (PermissionRemoveAllActionsInput) returns (google.protobuf.Empty) {}
 }

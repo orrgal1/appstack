@@ -31,7 +31,20 @@ describe('Permission', () => {
       action: '*',
     };
     const created = await client.createOne(input);
-    const found = await client.findOne(input);
+    const found = await client.findOne({ id: created.id });
+    expect(found).toEqual(created);
+  });
+
+  test('FindWhere', async () => {
+    const input = {
+      entity: uuid(),
+      entityId: uuid(),
+      permittedEntity: uuid(),
+      permittedEntityId: uuid(),
+      action: '*',
+    };
+    const created = await client.createOne(input);
+    const found = await client.findWhere(input);
     expect(found).toEqual(created);
   });
 
@@ -43,9 +56,24 @@ describe('Permission', () => {
       permittedEntityId: uuid(),
       action: '*',
     };
+    const created = await client.createOne(input);
+    await client.removeOne({ id: created.id });
+    await expect(client.findOne({ id: created.id })).rejects.toThrow(
+      'not found',
+    );
+  });
+
+  test('RemoveWhere', async () => {
+    const input = {
+      entity: uuid(),
+      entityId: uuid(),
+      permittedEntity: uuid(),
+      permittedEntityId: uuid(),
+      action: '*',
+    };
     await client.createOne(input);
-    await client.removeOne(input);
-    await expect(client.findOne(input)).rejects.toThrow('not found');
+    await client.removeWhere(input);
+    await expect(client.findWhere(input)).rejects.toThrow('not found');
   });
 
   test('FindByPermitted', async () => {

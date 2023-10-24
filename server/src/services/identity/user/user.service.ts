@@ -82,30 +82,23 @@ export class UserService implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    try {
-      await this.arangodb.db.createCollection('user', {});
-    } catch (e) {
-      if (e.message.indexOf('duplicate name') < 0) throw e;
-    }
-
-    try {
-      const view = this.arangodb.db.view('userSearch');
-      await view.create({
-        type: 'arangosearch',
-        links: {
-          user: {
-            analyzers: ['text_en'],
-            fields: {
-              name: {},
+    await this.arangodb.utils.tryDdl(
+      () => this.arangodb.db.createCollection('user', {}),
+      () =>
+        this.arangodb.db.view('userSearch').create({
+          type: 'arangosearch',
+          links: {
+            user: {
+              analyzers: ['text_en'],
+              fields: {
+                name: {},
+              },
+              includeAllFields: false,
+              storeValues: 'none',
+              trackListPositions: false,
             },
-            includeAllFields: false,
-            storeValues: 'none',
-            trackListPositions: false,
           },
-        },
-      });
-    } catch (e) {
-      if (e.message.indexOf('duplicate name') < 0) throw e;
-    }
+        }),
+    );
   }
 }

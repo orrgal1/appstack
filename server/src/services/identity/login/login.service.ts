@@ -90,16 +90,14 @@ export class LoginService implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    try {
-      await this.arangodb.db.createCollection('login', {});
-      const collection = this.arangodb.db.collection('login');
-      await collection.ensureIndex({
-        name: 'idx-login-user',
-        type: 'persistent',
-        fields: ['platform', 'platformLoginId', 'platformLoginSecret'],
-      });
-    } catch (e) {
-      if (e.message.indexOf('duplicate name') < 0) throw e;
-    }
+    await this.arangodb.utils.tryDdl(
+      () => this.arangodb.db.createCollection('login', {}),
+      () =>
+        this.arangodb.db.collection('login').ensureIndex({
+          name: 'idx-login-user',
+          type: 'persistent',
+          fields: ['platform', 'platformLoginId', 'platformLoginSecret'],
+        }),
+    );
   }
 }

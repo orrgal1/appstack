@@ -5,9 +5,11 @@ import {
   PermissionFindAllActionsInput,
   PermissionFindByPermittedInput,
   PermissionFindOneInput,
-  PermissionFindOneOrStarInput,
+  PermissionFindWhereInput,
+  PermissionFindWhereOrStarInput,
   PermissionRemoveAllActionsInput,
   PermissionRemoveOneInput,
+  PermissionRemoveWhereInput,
   PermissionValidateOneInput,
   PermissionValidateOneResult,
 } from '../../../proto/interfaces';
@@ -25,10 +27,14 @@ export class PermissionLogic {
     return await this.service.findOne(input);
   }
 
-  async findOneOrStar(
-    input: PermissionFindOneOrStarInput,
+  async findWhere(input: PermissionFindWhereInput): Promise<Permission | void> {
+    return await this.service.findWhere(input);
+  }
+
+  async findWhereOrStar(
+    input: PermissionFindWhereOrStarInput,
   ): Promise<Permission | void> {
-    return await this.service.findOneOrStar(input);
+    return await this.service.findWhereOrStar(input);
   }
 
   async validateOne(
@@ -37,8 +43,14 @@ export class PermissionLogic {
     return await this.service.validateOne(input);
   }
 
-  async removeOne(input: PermissionRemoveOneInput): Promise<Permission | void> {
-    return await this.service.removeOne(input);
+  async removeOne(input: PermissionRemoveOneInput): Promise<void> {
+    await this.service.removeOne(input);
+  }
+
+  async removeWhere(
+    input: PermissionRemoveWhereInput,
+  ): Promise<Permission | void> {
+    return await this.service.removeWhere(input);
   }
 
   async findByPermitted(

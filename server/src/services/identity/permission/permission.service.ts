@@ -7,12 +7,14 @@ import {
   PermissionFindAllActionsInput,
   PermissionFindByPermittedInput,
   PermissionFindOneInput,
-  PermissionFindOneOrStarInput,
+  PermissionFindWhereInput,
+  PermissionFindWhereOrStarInput,
   PermissionRemoveAllActionsInput,
   PermissionRemoveOneInput,
+  PermissionRemoveWhereInput,
   PermissionValidateOneInput,
   PermissionValidateOneResult,
-} from '../../../proto/interfaces';
+} from '../../../proto/interfaces'; // TODO: refactor standard functions to be id based and add special functions instead.
 
 // TODO: refactor standard functions to be id based and add special functions instead.
 @Injectable()
@@ -34,6 +36,19 @@ export class PermissionService implements OnModuleInit {
   }
 
   async findOne(input: PermissionFindOneInput): Promise<Permission | void> {
+    try {
+      return this.arangodb.utils.format(
+        await this.collection.document(input.id),
+      );
+    } catch (e) {
+      if (e.message === 'document not found') {
+        return;
+      }
+      throw e;
+    }
+  }
+
+  async findWhere(input: PermissionFindWhereInput): Promise<Permission | void> {
     const query = `
       FOR doc IN permission
       FILTER doc.entity == @entity 
@@ -54,8 +69,8 @@ export class PermissionService implements OnModuleInit {
     }
   }
 
-  async findOneOrStar(
-    input: PermissionFindOneOrStarInput,
+  async findWhereOrStar(
+    input: PermissionFindWhereOrStarInput,
   ): Promise<Permission | void> {
     const query = `
       FOR doc IN permission
@@ -84,7 +99,7 @@ export class PermissionService implements OnModuleInit {
     const results = await Promise.all(
       permitted.map(async (p) => {
         const { permittedEntity, permittedEntityId } = p;
-        const found = await this.findOneOrStar({
+        const found = await this.findWhereOrStar({
           entity,
           entityId,
           action,
@@ -98,11 +113,17 @@ export class PermissionService implements OnModuleInit {
     return { validated };
   }
 
-  async removeOne(input: PermissionRemoveOneInput): Promise<Permission | void> {
+  async removeOne(input: PermissionRemoveOneInput): Promise<void> {
     const found = await this.findOne(input);
     if (found) {
       await this.collection.remove(found.id);
-      return found;
+    }
+  }
+
+  async removeWhere(input: PermissionRemoveWhereInput): Promise<void> {
+    const found = await this.findWhere(input);
+    if (found) {
+      await this.collection.remove(found.id);
     }
   }
 
@@ -161,11 +182,10 @@ export class PermissionService implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
-    try {
-      await this.arangodb.db.createCollection('permission', {});
-      const collection = this.arangodb.db.collection('permission');
-      try {
-        await collection.ensureIndex({
+    await this.arangodb.utils.tryDdl(
+      () => this.arangodb.db.createCollection('permission', {}),
+      () =>
+        this.arangodb.db.collection('permission').ensureIndex({
           name: 'idx-permission-v0',
           type: 'persistent',
           fields: [
@@ -175,10 +195,7 @@ export class PermissionService implements OnModuleInit {
             'permittedEntityId',
             'action',
           ],
-        });
-      } catch (e) {
-        if (e.message.indexOf('duplicate name') < 0) throw e;
-      }
-    } catch (e) {}
+        }),
+    );
   }
 }

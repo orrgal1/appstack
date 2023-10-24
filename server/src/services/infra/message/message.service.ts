@@ -11,6 +11,8 @@ import {
   MessageUpdateOneInput,
 } from '../../../proto/interfaces';
 
+// TODO: implement seenBy etc.
+
 @Injectable()
 export class MessageService implements OnModuleInit {
   collection: DocumentCollection;

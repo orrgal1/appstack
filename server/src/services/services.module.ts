@@ -1,27 +1,15 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './identity/user/user.module';
-import { ArangodbModule } from '../libs/arangodb/arangodb.module';
-import { PermissionModule } from './identity/permission/permission.module';
-import { LoginModule } from './identity/login/login.module';
-import { DummyModule } from './domain/dummy/dummy.module';
-import { ClientModule } from '../libs/client/client.module';
-import { MessageModule } from './infra/message/message.module';
-import { ConversationModule } from './infra/conversation/conversation.module';
-import { WorkersModule } from '../workers/workers.module';
-import { UserFollowModule } from './social/follow/userFollow.module';
+import { DomainServicesModule } from './domain/domain.services.module';
+import { IdentityServicesModule } from './identity/identity.services.module';
+import { InfraServicesModule } from './infra/infra.services.module';
+import { SocialServicesModule } from './social/social.services.module';
 
 @Module({
   imports: [
-    UserModule,
-    UserFollowModule,
-    PermissionModule,
-    LoginModule,
-    DummyModule,
-    MessageModule,
-    ConversationModule,
-    WorkersModule,
-    ArangodbModule,
-    ClientModule,
+    DomainServicesModule,
+    IdentityServicesModule,
+    InfraServicesModule,
+    SocialServicesModule,
   ],
 })
 export class ServicesModule {}

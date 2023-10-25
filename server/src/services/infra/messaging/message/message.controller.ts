@@ -10,12 +10,12 @@ import {
   MessageFindUniqueInput,
   MessageRemoveOneInput,
   MessageUpdateOneInput,
-} from '../../../proto/interfaces';
+} from '../../../../proto/interfaces';
 import { MessageLogic } from './message.logic';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../libs/auth/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpcAuthRequired.interceptor';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../libs/auth/rpcAuthEntityCreateOwnership.interceptor';
+import { RpcAuthEntityAssertWriteableInterceptor } from '../../../../libs/auth/rpcAuthEntityAssertWriteable.interceptor';
+import { RpcAuthEntityAssertReadableInterceptor } from '../../../../libs/auth/rpcAuthEntityAssertReadable.interceptor';
+import { RpcAuthRequiredInterceptor } from '../../../../libs/auth/rpcAuthRequired.interceptor';
+import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../../libs/auth/rpcAuthEntityCreateOwnership.interceptor';
 
 @Controller()
 export class MessageController {

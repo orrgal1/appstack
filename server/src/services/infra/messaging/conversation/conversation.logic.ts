@@ -6,7 +6,7 @@ import {
   ConversationFindOneInput,
   ConversationRemoveOneInput,
   ConversationUpdateOneInput,
-} from '../../../proto/interfaces';
+} from '../../../../proto/interfaces';
 import { ConversationService } from './conversation.service';
 
 @Injectable()

@@ -10,11 +10,11 @@ import {
   ConversationFindOneInput,
   ConversationRemoveOneInput,
   ConversationUpdateOneInput,
-} from '../../../proto/interfaces';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../libs/auth/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpcAuthRequired.interceptor';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../libs/auth/rpcAuthEntityCreateOwnership.interceptor';
+} from '../../../../proto/interfaces';
+import { RpcAuthEntityAssertWriteableInterceptor } from '../../../../libs/auth/rpcAuthEntityAssertWriteable.interceptor';
+import { RpcAuthEntityAssertReadableInterceptor } from '../../../../libs/auth/rpcAuthEntityAssertReadable.interceptor';
+import { RpcAuthRequiredInterceptor } from '../../../../libs/auth/rpcAuthRequired.interceptor';
+import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../../libs/auth/rpcAuthEntityCreateOwnership.interceptor';
 
 @Controller()
 export class ConversationController {

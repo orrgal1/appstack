@@ -2,11 +2,11 @@ import { createChannel, createClient, Metadata } from 'nice-grpc';
 import {
   ConversationServiceClient,
   ConversationServiceDefinition,
-} from '../../../libs/client';
-import { main, shutdownComponents } from '../../../main/main';
+} from '../../../../libs/client';
+import { main, shutdownComponents } from '../../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, useHost, usePorts } from '../../../../tests/utils';
-import { ConversationCreateOneInput } from '../../../proto/interfaces';
+import { isE2E, useHost, usePorts } from '../../../../../tests/utils';
+import { ConversationCreateOneInput } from '../../../../proto/interfaces';
 
 describe('Conversation', () => {
   let client: ConversationServiceClient;

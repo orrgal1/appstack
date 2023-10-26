@@ -27,4 +27,11 @@ export class RedisService {
       Redis: this.db,
     });
   }
+
+  getGroupLimiter(opts: BottleNeck.ConstructorOptions): BottleNeck.Group {
+    return new BottleNeck.Group({
+      ...opts,
+      Redis: this.db,
+    });
+  }
 }

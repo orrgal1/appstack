@@ -67,7 +67,7 @@ export class AuthUtils {
     }
   }
 
-  getAuthData(context: ExecutionContext) {
+  getAuthData(context: ExecutionContext): AuthData {
     const rpcContext = context.switchToRpc().getContext();
     if (this.isAuth(context)) return rpcContext.get('authData')[0];
     throw new RpcPermissionDeniedException();

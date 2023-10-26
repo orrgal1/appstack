@@ -9,11 +9,9 @@ import {
 @Injectable()
 export class HttpAuthExternalInterceptor implements NestInterceptor {
   async intercept(context: ExecutionContext, next: CallHandler): Promise<any> {
-    try {
-      const httpContext = context.switchToHttp().getRequest();
-      httpContext.external = true;
-      httpContext.noAuth = true;
-    } catch (e) {}
+    const httpContext = context.switchToHttp().getRequest();
+    httpContext.external = true;
+    httpContext.noAuth = true;
     return next.handle();
   }
 }

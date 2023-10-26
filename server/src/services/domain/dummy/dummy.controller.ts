@@ -15,12 +15,16 @@ import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpc/
 import { RpcAuthEntityAssertReadableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertReadable.interceptor';
 import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityCreateOwnership.interceptor';
 import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpc/rpcAuthRequired.interceptor';
+import { RpcRateLimitReadInterceptor } from '../../../libs/gateway/rpc/rpcRateLimitRead.interceptor';
 
 @Controller()
 export class DummyController {
   constructor(private logic: DummyLogic) {}
 
-  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertReadableInterceptor,
+    RpcRateLimitReadInterceptor,
+  )
   @GrpcMethod('DummyService', 'FindOne')
   async findOne(@Payload() input: DummyFindOneInput): Promise<Dummy> {
     const found = await this.logic.findOne(input);

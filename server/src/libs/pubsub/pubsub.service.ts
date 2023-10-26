@@ -86,7 +86,7 @@ export class PubsubService implements OnModuleDestroy, OnModuleInit {
     const redisOpts = {
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT),
-      password: process.env.REDIS_PWD,
+      password: process.env.REDIS_PASSWORD,
     };
     this.io = new Server({
       cors: {
@@ -95,6 +95,9 @@ export class PubsubService implements OnModuleDestroy, OnModuleInit {
       },
     });
     const pubClient = new Redis(redisOpts);
+    pubClient.on('error', (error) => {
+      this.logger.error({ error: error.message }, error.stack);
+    });
     const subClient = pubClient.duplicate();
     this.io.adapter(createAdapter(pubClient, subClient));
   }

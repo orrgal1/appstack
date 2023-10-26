@@ -3,9 +3,10 @@ import { DummyController } from './dummy.controller';
 import { DummyService } from './dummy.service';
 import { DummyLogic } from './dummy.logic';
 import { ClientModule } from '../../../libs/client/client.module';
+import { RpcGatewayModule } from '../../../libs/gateway/rpc/rpcGateway.module';
 
 @Module({
-  imports: [ClientModule],
+  imports: [ClientModule, RpcGatewayModule],
   controllers: [DummyController],
   providers: [DummyService, DummyLogic],
   exports: [],

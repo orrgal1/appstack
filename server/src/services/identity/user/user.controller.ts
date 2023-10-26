@@ -11,16 +11,25 @@ import {
   UserUpdateOneInput,
 } from '../../../proto/interfaces';
 import { UserLogic } from './user.logic';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpc/rpcAuthRequired.interceptor';
-import { RpcAuthAssertInternalInterceptor } from '../../../libs/auth/rpc/rpcAuthAssertInternal.interceptor';
+import {
+  RpcAuthAssertInternalInterceptor,
+  RpcAuthEntityAssertReadableInterceptor,
+  RpcAuthEntityAssertWriteableInterceptor,
+  RpcAuthRequiredInterceptor,
+} from '../../../libs/auth/rpc/rpcAuth.module';
+import {
+  RpcRateLimitReadInterceptor,
+  RpcRateLimitWriteInterceptor,
+} from '../../../libs/gateway/rpc/rpcGateway.module';
 
 @Controller()
 export class UserController {
   constructor(private logic: UserLogic) {}
 
-  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertReadableInterceptor,
+    RpcRateLimitReadInterceptor,
+  )
   @GrpcMethod('UserService', 'FindOne')
   async findOne(@Payload() input: UserFindOneInput): Promise<User> {
     const found = await this.logic.findOne(input);
@@ -33,26 +42,35 @@ export class UserController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @UseInterceptors(
+    RpcAuthAssertInternalInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('UserService', 'CreateOne')
   async createOne(@Payload() input: UserCreateOneInput): Promise<User> {
     return await this.logic.createOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('UserService', 'UpdateOne')
   async updateOne(@Payload() input: UserUpdateOneInput): Promise<User> {
     return await this.logic.updateOne(input);
   }
 
-  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @UseInterceptors(
+    RpcAuthAssertInternalInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('UserService', 'RemoveOne')
   async removeOne(@Payload() input: UserRemoveOneInput): Promise<void> {
     await this.logic.removeOne(input);
   }
 
   // TODO: all searches should filter according to current uesr
-  @UseInterceptors(RpcAuthRequiredInterceptor)
+  @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('UserService', 'Search')
   async search(@Payload() input: UserSearchInput): Promise<UserSearchResult> {
     const users = await this.logic.search(input);

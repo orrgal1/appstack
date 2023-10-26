@@ -12,16 +12,25 @@ import {
   MessageUpdateOneInput,
 } from '../../../../proto/interfaces';
 import { MessageLogic } from './message.logic';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../../libs/auth/rpc/rpcAuthRequired.interceptor';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityCreateOwnership.interceptor';
+import {
+  RpcAuthEntityAssertReadableInterceptor,
+  RpcAuthEntityAssertWriteableInterceptor,
+  RpcAuthEntityCreateOwnershipInterceptor,
+  RpcAuthRequiredInterceptor,
+} from '../../../../libs/auth/rpc/rpcAuth.module';
+import {
+  RpcRateLimitReadInterceptor,
+  RpcRateLimitWriteInterceptor,
+} from '../../../../libs/gateway/rpc/rpcGateway.module';
 
 @Controller()
 export class MessageController {
   constructor(private logic: MessageLogic) {}
 
-  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertReadableInterceptor,
+    RpcRateLimitReadInterceptor,
+  )
   @GrpcMethod('MessageService', 'FindOne')
   async findOne(@Payload() input: MessageFindOneInput): Promise<Message> {
     const found = await this.logic.findOne(input);
@@ -34,7 +43,10 @@ export class MessageController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertReadableInterceptor,
+    RpcRateLimitReadInterceptor,
+  )
   @GrpcMethod('MessageService', 'FindUnique')
   async findUnique(@Payload() input: MessageFindUniqueInput): Promise<Message> {
     const found = await this.logic.findUnique(input);
@@ -47,19 +59,28 @@ export class MessageController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthEntityCreateOwnershipInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityCreateOwnershipInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('MessageService', 'CreateOne')
   async createOne(@Payload() input: MessageCreateOneInput): Promise<Message> {
     return await this.logic.createOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('MessageService', 'UpdateOne')
   async updateOne(@Payload() input: MessageUpdateOneInput): Promise<Message> {
     return await this.logic.updateOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('MessageService', 'RemoveOne')
   async removeOne(@Payload() input: MessageRemoveOneInput): Promise<Message> {
     const removed = await this.logic.removeOne(input);
@@ -72,7 +93,7 @@ export class MessageController {
     return removed;
   }
 
-  @UseInterceptors(RpcAuthRequiredInterceptor)
+  @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('MessageService', 'FindByConversation')
   async search(
     @Payload() input: MessageFindByConversationInput,

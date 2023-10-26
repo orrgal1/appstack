@@ -11,15 +11,24 @@ import {
   LoginUpdateOneInput,
 } from '../../../proto/interfaces';
 import { LoginLogic } from './login.logic';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityCreateOwnership.interceptor';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertWriteable.interceptor';
+import {
+  RpcAuthEntityAssertReadableInterceptor,
+  RpcAuthEntityAssertWriteableInterceptor,
+  RpcAuthEntityCreateOwnershipInterceptor,
+} from '../../../libs/auth/rpc/rpcAuth.module';
+import {
+  RpcRateLimitReadInterceptor,
+  RpcRateLimitWriteInterceptor,
+} from '../../../libs/gateway/rpc/rpcGateway.module';
 
 @Controller()
 export class LoginController {
   constructor(private logic: LoginLogic) {}
 
-  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertReadableInterceptor,
+    RpcRateLimitReadInterceptor,
+  )
   @GrpcMethod('LoginService', 'FindOne')
   async findOne(@Payload() input: LoginFindOneInput): Promise<Login> {
     const found = await this.logic.findOne(input);
@@ -32,7 +41,10 @@ export class LoginController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertReadableInterceptor,
+    RpcRateLimitReadInterceptor,
+  )
   @GrpcMethod('LoginService', 'FindWhere')
   async findWhere(@Payload() input: LoginFindWhereInput): Promise<Login> {
     const found = await this.logic.findWhere(input);
@@ -45,7 +57,10 @@ export class LoginController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertReadableInterceptor,
+    RpcRateLimitReadInterceptor,
+  )
   @GrpcMethod('LoginService', 'FindByPlatformId')
   async findByPlatformId(
     @Payload() input: LoginFindByPlatformIdInput,
@@ -60,19 +75,28 @@ export class LoginController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthEntityCreateOwnershipInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityCreateOwnershipInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('LoginService', 'CreateOne')
   async createOne(@Payload() input: LoginCreateOneInput): Promise<Login> {
     return await this.logic.createOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('LoginService', 'UpdateOne')
   async updateOne(@Payload() input: LoginUpdateOneInput): Promise<Login> {
     return await this.logic.updateOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('LoginService', 'RemoveOne')
   async removeOne(@Payload() input: LoginRemoveOneInput): Promise<void> {
     await this.logic.removeOne(input);

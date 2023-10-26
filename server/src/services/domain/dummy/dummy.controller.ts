@@ -11,11 +11,16 @@ import {
   DummySearchResult,
   DummyUpdateOneInput,
 } from '../../../proto/interfaces';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityCreateOwnership.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpc/rpcAuthRequired.interceptor';
-import { RpcRateLimitReadInterceptor } from '../../../libs/gateway/rpc/rpcRateLimitRead.interceptor';
+import {
+  RpcAuthEntityAssertReadableInterceptor,
+  RpcAuthEntityAssertWriteableInterceptor,
+  RpcAuthEntityCreateOwnershipInterceptor,
+  RpcAuthRequiredInterceptor,
+} from '../../../libs/auth/rpc/rpcAuth.module';
+import {
+  RpcRateLimitReadInterceptor,
+  RpcRateLimitWriteInterceptor,
+} from '../../../libs/gateway/rpc/rpcGateway.module';
 
 @Controller()
 export class DummyController {
@@ -37,25 +42,34 @@ export class DummyController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthEntityCreateOwnershipInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityCreateOwnershipInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('DummyService', 'CreateOne')
   async createOne(@Payload() input: DummyCreateOneInput): Promise<Dummy> {
     return await this.logic.createOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('DummyService', 'UpdateOne')
   async updateOne(@Payload() input: DummyUpdateOneInput): Promise<Dummy> {
     return await this.logic.updateOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('DummyService', 'RemoveOne')
   async removeOne(@Payload() input: DummyRemoveOneInput): Promise<void> {
     await this.logic.removeOne(input);
   }
 
-  @UseInterceptors(RpcAuthRequiredInterceptor)
+  @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('DummyService', 'Search')
   async search(@Payload() input: DummySearchInput): Promise<DummySearchResult> {
     const results = await this.logic.search(input);

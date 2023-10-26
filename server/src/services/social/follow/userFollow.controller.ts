@@ -10,17 +10,26 @@ import {
   UserFollowRemoveOneInput,
 } from '../../../proto/interfaces';
 import { UserFollowLogic } from './userFollow.logic';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityCreateOwnership.interceptor';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpc/rpcAuthRequired.interceptor';
+import {
+  RpcAuthEntityAssertWriteableInterceptor,
+  RpcAuthEntityCreateOwnershipInterceptor,
+  RpcAuthRequiredInterceptor,
+} from '../../../libs/auth/rpc/rpcAuth.module';
 import { GrpcAuthenticatedUserId } from '../../../libs/auth/rpc/rpcAuthenticatedUserId.decorator';
 import { RpcPermissionDeniedException } from '../../../libs/auth/rpc/rpcPermissionDeniedException';
+import {
+  RpcRateLimitReadInterceptor,
+  RpcRateLimitWriteInterceptor,
+} from '../../../libs/gateway/rpc/rpcGateway.module';
 
 @Controller()
 export class UserFollowController {
   constructor(private logic: UserFollowLogic) {}
 
-  @UseInterceptors(RpcAuthEntityCreateOwnershipInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityCreateOwnershipInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('UserFollowService', 'CreateOne')
   async createOne(
     @Payload() input: UserFollowCreateOneInput,
@@ -28,7 +37,10 @@ export class UserFollowController {
     return await this.logic.createOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('UserFollowService', 'RemoveOne')
   async removeOne(
     @Payload() input: UserFollowRemoveOneInput,
@@ -36,7 +48,7 @@ export class UserFollowController {
     return await this.logic.removeOne(input);
   }
 
-  @UseInterceptors(RpcAuthRequiredInterceptor)
+  @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('UserFollowService', 'FindFollowers')
   async findFollowers(
     @GrpcAuthenticatedUserId() userId: string,
@@ -48,7 +60,7 @@ export class UserFollowController {
     throw new RpcPermissionDeniedException();
   }
 
-  @UseInterceptors(RpcAuthRequiredInterceptor)
+  @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('UserFollowService', 'FindFollowees')
   async findFollowees(
     @GrpcAuthenticatedUserId() userId: string,

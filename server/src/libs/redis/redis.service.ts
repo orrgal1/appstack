@@ -15,6 +15,9 @@ export class RedisService {
       port: Number(process.env.REDIS_PORT),
       password: process.env.REDIS_PASSWORD,
     });
+    this.db.on('error', (error) => {
+      this.logger.error({ error: error.message }, error.stack);
+    });
     this.lock = new Redlock([this.db]);
     this.lock.on('error', (error) => {
       this.logger.error({ error: error.message }, error.stack);
@@ -24,14 +27,29 @@ export class RedisService {
   getLimiter(opts: BottleNeck.ConstructorOptions): BottleNeck {
     return new BottleNeck({
       ...opts,
-      Redis: this.db,
+      datastore: 'ioredis',
+      clearDatastore: false,
+      clientOptions: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+        password: process.env.REDIS_PASSWORD,
+      },
     });
   }
 
-  getGroupLimiter(opts: BottleNeck.ConstructorOptions): BottleNeck.Group {
+  getGroupLimiter(
+    key: string,
+    opts: BottleNeck.ConstructorOptions,
+  ): BottleNeck {
     return new BottleNeck.Group({
       ...opts,
-      Redis: this.db,
-    });
+      datastore: 'ioredis',
+      clearDatastore: false,
+      clientOptions: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+        password: process.env.REDIS_PASSWORD,
+      },
+    }).key(key);
   }
 }

@@ -16,6 +16,7 @@ import {
 } from '../../../../../tests/utils';
 import { MessageCreateOneInput } from '../../../../proto/interfaces';
 import { io } from 'socket.io-client';
+import * as process from 'process';
 
 describe('Message', () => {
   let client: MessageServiceClient;
@@ -116,7 +117,7 @@ describe('Message', () => {
       senderId: '',
       media: { text: uuid() },
     };
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 3; i++) {
       await client.createOne({ ...input, uniqueness: uuid() }, { metadata });
     }
     const all = await client.findByConversation(
@@ -128,7 +129,7 @@ describe('Message', () => {
       },
       { metadata },
     );
-    expect(all.results.length).toEqual(7);
+    expect(all.results.length).toEqual(3);
 
     function assertSortedDesc() {
       expect(

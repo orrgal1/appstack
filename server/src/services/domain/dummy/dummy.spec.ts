@@ -6,12 +6,17 @@ import {
   DummyServiceClient,
   DummyServiceDefinition,
 } from '../../../libs/client';
+import * as process from 'process';
+
+jest.setTimeout(10000);
 
 describe('Dummy', () => {
   let client: DummyServiceClient;
   const metadata = new Metadata();
+  const rpmLimit = process.env.WRITE_RPM_LIMIT;
 
   beforeAll(async () => {
+    process.env.WRITE_RPM_LIMIT = '10';
     const ports = await usePorts();
     const host = useHost();
     const channel = createChannel(`${host}:${ports.proto}`);
@@ -22,6 +27,7 @@ describe('Dummy', () => {
   });
 
   afterAll(async () => {
+    process.env.WRITE_RPM_LIMIT = rpmLimit;
     if (!isE2E()) await shutdownComponents();
   });
 
@@ -59,7 +65,7 @@ describe('Dummy', () => {
   test('Search', async () => {
     const input = { text: uuid().replace(/-/g, ' ') };
     const token = input.text.split(' ')[0];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 4; i++) {
       await client.createOne(
         { ...input, text: `${input.text} ${i}` },
         { metadata },
@@ -72,7 +78,7 @@ describe('Dummy', () => {
       },
       { metadata },
     );
-    expect(all.results.length).toEqual(7);
+    expect(all.results.length).toEqual(4);
 
     const page1 = await client.search(
       {
@@ -92,5 +98,21 @@ describe('Dummy', () => {
       { metadata },
     );
     expect(page2.results).toEqual(all.results.slice(3, 6));
+  });
+
+  test('Exceed rate limit', async () => {
+    const input = {
+      text: uuid(),
+    };
+    const bombard = async () => {
+      const requests = [];
+      for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
+        requests.push(client.createOne(input, { metadata }));
+      }
+      return await Promise.all(requests);
+    };
+    await expect(bombard()).rejects.toThrow(
+      '/main.DummyService/CreateOne UNKNOWN: rate limit exceeded',
+    );
   });
 });

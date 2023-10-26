@@ -11,16 +11,25 @@ import {
   ConversationRemoveOneInput,
   ConversationUpdateOneInput,
 } from '../../../../proto/interfaces';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../../libs/auth/rpc/rpcAuthRequired.interceptor';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityCreateOwnership.interceptor';
+import {
+  RpcAuthEntityAssertReadableInterceptor,
+  RpcAuthEntityAssertWriteableInterceptor,
+  RpcAuthEntityCreateOwnershipInterceptor,
+  RpcAuthRequiredInterceptor,
+} from '../../../../libs/auth/rpc/rpcAuth.module';
+import {
+  RpcRateLimitReadInterceptor,
+  RpcRateLimitWriteInterceptor,
+} from '../../../../libs/gateway/rpc/rpcGateway.module';
 
 @Controller()
 export class ConversationController {
   constructor(private logic: ConversationLogic) {}
 
-  @UseInterceptors(RpcAuthEntityAssertReadableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertReadableInterceptor,
+    RpcRateLimitReadInterceptor,
+  )
   @GrpcMethod('ConversationService', 'FindOne')
   async findOne(
     @Payload() input: ConversationFindOneInput,
@@ -35,7 +44,10 @@ export class ConversationController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthEntityCreateOwnershipInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityCreateOwnershipInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('ConversationService', 'CreateOne')
   async createOne(
     @Payload() input: ConversationCreateOneInput,
@@ -43,7 +55,10 @@ export class ConversationController {
     return await this.logic.createOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('ConversationService', 'UpdateOne')
   async updateOne(
     @Payload() input: ConversationUpdateOneInput,
@@ -51,7 +66,10 @@ export class ConversationController {
     return await this.logic.updateOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(
+    RpcAuthEntityAssertWriteableInterceptor,
+    RpcRateLimitWriteInterceptor,
+  )
   @GrpcMethod('ConversationService', 'RemoveOne')
   async removeOne(
     @Payload() input: ConversationRemoveOneInput,
@@ -66,7 +84,7 @@ export class ConversationController {
     return removed;
   }
 
-  @UseInterceptors(RpcAuthRequiredInterceptor)
+  @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('ConversationService', 'FindByParticipant')
   async search(
     @Payload() input: ConversationFindByParticipantInput,

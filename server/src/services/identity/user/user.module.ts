@@ -3,9 +3,10 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { UserLogic } from './user.logic';
 import { PermissionModule } from '../permission/permission.module';
+import { RpcGatewayModule } from '../../../libs/gateway/rpc/rpcGateway.module';
 
 @Module({
-  imports: [PermissionModule],
+  imports: [PermissionModule, RpcGatewayModule],
   controllers: [UserController],
   providers: [UserService, UserLogic],
   exports: [],

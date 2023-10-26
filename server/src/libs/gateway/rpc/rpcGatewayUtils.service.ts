@@ -1,0 +1,64 @@
+import { CallHandler, ExecutionContext, Injectable } from '@nestjs/common';
+import BottleNeck from 'bottleneck';
+import { RpcException } from '@nestjs/microservices';
+import * as grpc from '@grpc/grpc-js';
+import { AuthUtils } from '../../auth/authUtils';
+import { RedisService } from '../../redis/redis.service';
+
+@Injectable()
+export class RpcGatewayUtils {
+  private authUtils: AuthUtils = new AuthUtils();
+
+  constructor(private redis: RedisService) {}
+
+  async intercept(
+    key: string,
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<any> {
+    const authData = this.authUtils.getAuthData(context);
+    if (!this.authUtils.rpcIsExternal(context)) {
+      return next.handle();
+    }
+    try {
+      const {
+        decoded: { sub: userId },
+      } = authData;
+      const limit = Number(process.env[key] || 1);
+      const limiter = this.redis.getGroupLimiter(
+        `${key.toLowerCase()}/${userId}`,
+        {
+          reservoir: limit,
+          reservoirRefreshAmount: limit,
+          reservoirRefreshInterval: 60000,
+          reservoirIncreaseMaximum: limit,
+          minTime: 1,
+          maxConcurrent: limit,
+          highWater: limit,
+          strategy: BottleNeck.strategy.BLOCK,
+        },
+      );
+      const timed = async () => {
+        const result = await Promise.race([
+          limiter.schedule(async () => {
+            return 1;
+          }),
+          new Promise((r) => setTimeout(() => r(0), 60000 / limit)),
+        ]);
+        return result;
+      };
+      if ((await timed()) !== 1) {
+        throw new Error('timeout');
+      }
+      return next.handle();
+    } catch (e) {
+      if (e.message === 'timeout') {
+        throw new RpcException({
+          message: 'rate limit exceeded',
+          code: grpc.status.RESOURCE_EXHAUSTED,
+        });
+      }
+      throw e;
+    }
+  }
+}

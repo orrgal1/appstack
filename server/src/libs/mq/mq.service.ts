@@ -36,7 +36,7 @@ export class MqService {
     return {
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT),
-      password: process.env.REDIS_PWD,
+      password: process.env.REDIS_PASSWORD,
     };
   }
 }

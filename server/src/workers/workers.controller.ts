@@ -1,7 +1,8 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseInterceptors } from '@nestjs/common';
 import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { PublishJobInput, PublishJobResult } from '../proto/interfaces';
 import { MqService } from '../libs/mq/mq.service';
+import { RpcAuthAssertInternalInterceptor } from '../libs/auth/rpc/rpcAuth.module';
 
 @Controller()
 export class WorkersController {
@@ -17,6 +18,7 @@ export class WorkersController {
     throw new Error(`no valid payload key in any of ${keys.join(',')}`);
   }
 
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
   @GrpcMethod('WorkersService', 'PublishJob')
   async publishJob(
     @Payload() input: PublishJobInput,

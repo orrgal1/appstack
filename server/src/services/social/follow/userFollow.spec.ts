@@ -1,17 +1,12 @@
 import { createChannel, createClient, Metadata } from 'nice-grpc';
 import {
-  LoginServiceClient,
-  LoginServiceDefinition,
   UserFollowServiceClient,
   UserFollowServiceDefinition,
   UserServiceClient,
   UserServiceDefinition,
 } from '../../../libs/client';
 import { main } from '../../../main/main';
-import { v4 as uuid } from 'uuid';
-import { isE2E, useHost, usePorts } from '../../../../tests/utils';
-import axios from 'axios';
-import { User } from '../../../proto/interfaces';
+import { isE2E, login, useHost, usePorts } from '../../../../tests/utils';
 
 describe('UserFollow', () => {
   let ports: {
@@ -22,68 +17,38 @@ describe('UserFollow', () => {
   };
   let client: UserFollowServiceClient;
   let userClient: UserServiceClient;
-  let loginClient: LoginServiceClient;
   const metadata = new Metadata();
-  metadata.set(
-    'jwt',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.pF3q46_CLIyP_1QZPpeccbs-hC4n9YW2VMBjKrSO6Wg',
-  );
-
-  const getAccessToken = async (user: User) => {
-    const loginInput = {
-      platform: 'local',
-      platformLoginId: uuid(),
-      platformLoginSecret: uuid(),
-      userId: user.id,
-    };
-    await loginClient.createOne(loginInput, { metadata });
-
-    const input = {
-      username: loginInput.platformLoginId,
-      password: loginInput.platformLoginSecret,
-    };
-    const response = await axios.post(
-      `http://localhost:${ports.http}/auth/local/login`,
-      input,
-    );
-    return response.data.accessToken;
-  };
 
   beforeAll(async () => {
     ports = await usePorts();
     const host = useHost();
     const channel = createChannel(`${host}:${ports.proto}`);
+    const channelInternal = createChannel(`${host}:${ports.protoInternal}`);
     client = createClient(UserFollowServiceDefinition, channel);
-    userClient = createClient(UserServiceDefinition, channel);
-    loginClient = createClient(LoginServiceDefinition, channel);
+    userClient = createClient(UserServiceDefinition, channelInternal);
     if (!isE2E()) await main({ ports });
+    const { accessToken } = await login(ports);
+    metadata.set('jwt', accessToken);
   });
 
   test('Follow + Unfollow', async () => {
-    const followerUserInput = { name: uuid() };
-    const followeeUserInput = { name: uuid() };
-    const followerUser = await userClient.createOne(followerUserInput, {
-      metadata,
-    });
-    const followeeUser = await userClient.createOne(followeeUserInput, {
-      metadata,
-    });
-
-    const followerAccessToken = await getAccessToken(followerUser);
+    const { accessToken: followerAccessToken, userId: followerUserId } =
+      await login(ports);
     const followerMetadata = new Metadata({ jwt: followerAccessToken });
-    const followeeAccessToken = await getAccessToken(followeeUser);
+    const { accessToken: followeeAccessToken, userId: followeeUserId } =
+      await login(ports);
     const followeeMetadata = new Metadata({ jwt: followeeAccessToken });
 
     const created = await client.createOne(
       {
-        followerId: followerUser.id,
-        followeeId: followeeUser.id,
+        followerId: followerUserId,
+        followeeId: followeeUserId,
       },
       { metadata: followerMetadata },
     );
     const followers = await client.findFollowers(
       {
-        filter: { followeeId: followeeUser.id },
+        filter: { followeeId: followeeUserId },
         opts: { limit: 10 },
       },
       { metadata: followeeMetadata },
@@ -91,15 +56,15 @@ describe('UserFollow', () => {
     expect(followers.followers).toEqual([
       {
         createdAt: expect.any(Number),
-        followeeId: followeeUser.id,
-        followerId: followerUser.id,
+        followeeId: followeeUserId,
+        followerId: followerUserId,
         id: expect.any(String),
         updatedAt: expect.any(Number),
       },
     ]);
     const followees = await client.findFollowees(
       {
-        filter: { followerId: followerUser.id },
+        filter: { followerId: followerUserId },
         opts: { limit: 10 },
       },
       { metadata: followerMetadata },
@@ -107,8 +72,8 @@ describe('UserFollow', () => {
     expect(followees.followees).toEqual([
       {
         createdAt: expect.any(Number),
-        followeeId: followeeUser.id,
-        followerId: followerUser.id,
+        followeeId: followeeUserId,
+        followerId: followerUserId,
         id: expect.any(String),
         updatedAt: expect.any(Number),
       },
@@ -123,7 +88,7 @@ describe('UserFollow', () => {
 
     const noFollowers = await client.findFollowers(
       {
-        filter: { followeeId: followeeUser.id },
+        filter: { followeeId: followeeUserId },
         opts: { limit: 10 },
       },
       { metadata: followeeMetadata },
@@ -131,7 +96,7 @@ describe('UserFollow', () => {
     expect(noFollowers.followers).toEqual([]);
     const noFollowees = await client.findFollowees(
       {
-        filter: { followerId: followerUser.id },
+        filter: { followerId: followerUserId },
         opts: { limit: 10 },
       },
       { metadata: followerMetadata },
@@ -140,21 +105,15 @@ describe('UserFollow', () => {
   });
 
   test('FindFollowees: Paging', async () => {
-    const followerUserInput = { name: uuid() };
-    const followeeUserInput = { name: uuid() };
-    const followerUser = await userClient.createOne(followerUserInput, {
-      metadata,
-    });
-    const followerAccessToken = await getAccessToken(followerUser);
+    const { accessToken: followerAccessToken, userId: followerUserId } =
+      await login(ports);
     const followerMetadata = new Metadata({ jwt: followerAccessToken });
 
     for (let i = 0; i < 10; i++) {
-      const followeeUser = await userClient.createOne(followeeUserInput, {
-        metadata,
-      });
+      const followeeUser = await userClient.createOne({});
       await client.createOne(
         {
-          followerId: followerUser.id,
+          followerId: followerUserId,
           followeeId: followeeUser.id,
         },
         { metadata: followerMetadata },
@@ -162,7 +121,7 @@ describe('UserFollow', () => {
     }
     const followees0 = await client.findFollowees(
       {
-        filter: { followerId: followerUser.id },
+        filter: { followerId: followerUserId },
         opts: { limit: 6 },
       },
       { metadata: followerMetadata },
@@ -170,7 +129,7 @@ describe('UserFollow', () => {
     expect(followees0.followees.length).toEqual(6);
     const followees1 = await client.findFollowees(
       {
-        filter: { followerId: followerUser.id },
+        filter: { followerId: followerUserId },
         opts: { limit: 6, offset: followees0.meta.offset },
       },
       { metadata: followerMetadata },
@@ -179,21 +138,15 @@ describe('UserFollow', () => {
   });
 
   test('FindFollowers: Paging', async () => {
-    const followeeUserInput = { name: uuid() };
-    const followerUserInput = { name: uuid() };
-    const followeeUser = await userClient.createOne(followeeUserInput, {
-      metadata,
-    });
-    const followeeAccessToken = await getAccessToken(followeeUser);
+    const { accessToken: followeeAccessToken, userId: followeeUserId } =
+      await login(ports);
     const followeeMetadata = new Metadata({ jwt: followeeAccessToken });
 
     for (let i = 0; i < 10; i++) {
-      const followerUser = await userClient.createOne(followerUserInput, {
-        metadata,
-      });
+      const followerUser = await userClient.createOne({});
       await client.createOne(
         {
-          followeeId: followeeUser.id,
+          followeeId: followeeUserId,
           followerId: followerUser.id,
         },
         { metadata: followeeMetadata },
@@ -201,7 +154,7 @@ describe('UserFollow', () => {
     }
     const followers0 = await client.findFollowers(
       {
-        filter: { followeeId: followeeUser.id },
+        filter: { followeeId: followeeUserId },
         opts: { limit: 6 },
       },
       { metadata: followeeMetadata },
@@ -209,7 +162,7 @@ describe('UserFollow', () => {
     expect(followers0.followers.length).toEqual(6);
     const followers1 = await client.findFollowers(
       {
-        filter: { followeeId: followeeUser.id },
+        filter: { followeeId: followeeUserId },
         opts: { limit: 6, offset: followers0.meta.offset },
       },
       { metadata: followeeMetadata },

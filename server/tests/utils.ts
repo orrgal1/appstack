@@ -1,7 +1,23 @@
 import * as detect from 'detect-port';
+import axios from 'axios';
+import { v4 as uuid } from 'uuid';
 
 export function isE2E() {
   return process.env.E2E;
+}
+
+export async function login(ports: {
+  http: number;
+}): Promise<{ accessToken: string; userId: string }> {
+  const input = {
+    username: uuid(),
+    password: uuid(),
+  };
+  const response = await axios.post(
+    `http://localhost:${ports.http}/auth/local/login`,
+    input,
+  );
+  return response.data;
 }
 
 const getPorts = async (): Promise<string[]> => {

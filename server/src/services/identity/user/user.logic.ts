@@ -8,13 +8,25 @@ import {
   UserUpdateOneInput,
 } from '../../../proto/interfaces';
 import { UserService } from './user.service';
+import { PermissionService } from '../permission/permission.service';
 
 @Injectable()
 export class UserLogic {
-  constructor(private service: UserService) {}
+  constructor(
+    private service: UserService,
+    private permissionService: PermissionService,
+  ) {}
 
   async createOne(input: Partial<UserCreateOneInput>): Promise<User> {
-    return await this.service.createOne(input);
+    const created = await this.service.createOne(input);
+    await this.permissionService.createOne({
+      permittedEntityId: created.id,
+      permittedEntity: 'user',
+      entity: 'user',
+      entityId: created.id,
+      action: '*',
+    });
+    return created;
   }
 
   async findOne(input: UserFindOneInput): Promise<User | void> {

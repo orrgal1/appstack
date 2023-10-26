@@ -17,8 +17,8 @@ import {
   PermissionValidateOneResult,
 } from '../../../proto/interfaces';
 import { PermissionLogic } from './permission.logic';
-import { RpcAuthAssertInternalInterceptor } from '../../../libs/auth/rpcAuthAssertInternal.interceptor';
-import { RpcPermissionDeniedException } from '../../../libs/auth/rpcPermissionDeniedException';
+import { RpcAuthAssertInternalInterceptor } from '../../../libs/auth/rpc/rpcAuthAssertInternal.interceptor';
+import { RpcPermissionDeniedException } from '../../../libs/auth/rpc/rpcPermissionDeniedException';
 
 @Controller()
 export class PermissionController {

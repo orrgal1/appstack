@@ -11,10 +11,10 @@ import {
   UserUpdateOneInput,
 } from '../../../proto/interfaces';
 import { UserLogic } from './user.logic';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../libs/auth/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../libs/auth/rpcAuthEntityCreateOwnership.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpcAuthRequired.interceptor';
+import { RpcAuthEntityAssertWriteableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertWriteable.interceptor';
+import { RpcAuthEntityAssertReadableInterceptor } from '../../../libs/auth/rpc/rpcAuthEntityAssertReadable.interceptor';
+import { RpcAuthRequiredInterceptor } from '../../../libs/auth/rpc/rpcAuthRequired.interceptor';
+import { RpcAuthAssertInternalInterceptor } from '../../../libs/auth/rpc/rpcAuthAssertInternal.interceptor';
 
 @Controller()
 export class UserController {
@@ -33,7 +33,7 @@ export class UserController {
     return found;
   }
 
-  @UseInterceptors(RpcAuthEntityCreateOwnershipInterceptor)
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
   @GrpcMethod('UserService', 'CreateOne')
   async createOne(@Payload() input: UserCreateOneInput): Promise<User> {
     return await this.logic.createOne(input);
@@ -45,12 +45,13 @@ export class UserController {
     return await this.logic.updateOne(input);
   }
 
-  @UseInterceptors(RpcAuthEntityAssertWriteableInterceptor)
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
   @GrpcMethod('UserService', 'RemoveOne')
   async removeOne(@Payload() input: UserRemoveOneInput): Promise<void> {
     await this.logic.removeOne(input);
   }
 
+  // TODO: all searches should filter according to current uesr
   @UseInterceptors(RpcAuthRequiredInterceptor)
   @GrpcMethod('UserService', 'Search')
   async search(@Payload() input: UserSearchInput): Promise<UserSearchResult> {

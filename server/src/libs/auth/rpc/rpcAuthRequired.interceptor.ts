@@ -4,7 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { AuthUtils } from './authUtils';
+import { AuthUtils } from '../authUtils';
 import { RpcPermissionDeniedException } from './rpcPermissionDeniedException';
 
 @Injectable()

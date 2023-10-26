@@ -7,13 +7,13 @@ import {
 import {
   PermissionServiceClient,
   PermissionServiceDefinition,
-} from '../client';
-import { ClientService } from '../client/client.service';
+} from '../../client';
+import { ClientService } from '../../client/client.service';
 import { RpcException } from '@nestjs/microservices';
 import * as grpc from '@grpc/grpc-js';
 import { Metadata } from 'nice-grpc';
 import { map } from 'rxjs';
-import { AuthUtils } from './authUtils';
+import { AuthUtils } from '../authUtils';
 import { RpcPermissionDeniedException } from './rpcPermissionDeniedException';
 
 @Injectable()

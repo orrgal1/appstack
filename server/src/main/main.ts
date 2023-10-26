@@ -12,8 +12,8 @@ import { LoggingInterceptorHttp } from '../libs/logging/logging.interceptor.http
 import { HttpModule } from './http/http.module';
 import { ServicesModule } from '../services/services.module';
 import { WorkersModule } from '../workers/workers.module';
-import { RpcAuthExternalInterceptor } from '../libs/auth/rpcAuthExternal.interceptor';
-import { RpcAuthInternalInterceptor } from '../libs/auth/rpcAuthInternal.interceptor';
+import { RpcAuthExternalInterceptor } from '../libs/auth/rpc/rpcAuthExternal.interceptor';
+import { RpcAuthInternalInterceptor } from '../libs/auth/rpc/rpcAuthInternal.interceptor';
 import * as process from 'process';
 import { PubsubServerModule } from '../libs/pubsub/pubsub.server.module';
 

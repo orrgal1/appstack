@@ -7,7 +7,13 @@ import {
 } from '../../../../libs/client';
 import { main, shutdownComponents } from '../../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, sleep, useHost, usePorts } from '../../../../../tests/utils';
+import {
+  isE2E,
+  login,
+  sleep,
+  useHost,
+  usePorts,
+} from '../../../../../tests/utils';
 import { MessageCreateOneInput } from '../../../../proto/interfaces';
 import { io } from 'socket.io-client';
 
@@ -15,10 +21,6 @@ describe('Message', () => {
   let client: MessageServiceClient;
   let conversationClient: ConversationServiceClient;
   const metadata = new Metadata();
-  metadata.set(
-    'jwt',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.pF3q46_CLIyP_1QZPpeccbs-hC4n9YW2VMBjKrSO6Wg',
-  );
   let ports: {
     protoInternal: number;
     proto: number;
@@ -26,6 +28,7 @@ describe('Message', () => {
     workers: number;
   };
   let host: any;
+  let loggedInUserId;
 
   beforeAll(async () => {
     ports = await usePorts();
@@ -34,6 +37,9 @@ describe('Message', () => {
     client = createClient(MessageServiceDefinition, channel);
     conversationClient = createClient(ConversationServiceDefinition, channel);
     if (!isE2E()) await main({ ports });
+    const { accessToken, userId } = await login(ports);
+    metadata.set('jwt', accessToken);
+    loggedInUserId = userId;
   });
 
   afterAll(async () => {
@@ -162,8 +168,7 @@ describe('Message', () => {
     let published;
     const socket = io(`http://${host}:${process.env.WS_PORT}`, {
       query: {
-        token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLzQxMzUyMSIsImlhdCI6MTY5NjA4MzY3OSwiZXhwIjoxNzgyMzk3Mjc5fQ.yHwdm9NCLQNxWHeerOC5GiUCoVi2CExMYmae5OOAJ1E',
+        token: metadata.get('jwt'),
       },
     });
     socket.on('message.created', (data) => {
@@ -172,7 +177,7 @@ describe('Message', () => {
     await sleep(10);
     const conversation = await conversationClient.createOne(
       {
-        participantIds: ['user/413521', '2'],
+        participantIds: [loggedInUserId, '2'],
       },
       { metadata },
     );
@@ -198,8 +203,7 @@ describe('Message', () => {
     let published;
     const socket = io(`http://${host}:${process.env.WS_PORT}`, {
       query: {
-        token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLzQxMzUyMSIsImlhdCI6MTY5NjA4MzY3OSwiZXhwIjoxNzgyMzk3Mjc5fQ.yHwdm9NCLQNxWHeerOC5GiUCoVi2CExMYmae5OOAJ1E',
+        token: metadata.get('jwt'),
       },
     });
     socket.on('message.updated', (data) => {
@@ -208,7 +212,7 @@ describe('Message', () => {
     await sleep(10);
     const conversation = await conversationClient.createOne(
       {
-        participantIds: ['user/413521', '2'],
+        participantIds: [loggedInUserId, '2'],
       },
       { metadata },
     );

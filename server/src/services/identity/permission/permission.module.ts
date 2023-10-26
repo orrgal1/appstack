@@ -8,6 +8,6 @@ import { PermissionLogic } from './permission.logic';
   imports: [],
   controllers: [PermissionController],
   providers: [PermissionService, PermissionLogic],
-  exports: [],
+  exports: [PermissionService],
 })
 export class PermissionModule {}

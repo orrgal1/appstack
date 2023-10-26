@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AuthUtils } from './authUtils';
+import { AuthUtils } from '../authUtils';
 
 const authUtils = new AuthUtils();
 

@@ -12,10 +12,10 @@ import {
   MessageUpdateOneInput,
 } from '../../../../proto/interfaces';
 import { MessageLogic } from './message.logic';
-import { RpcAuthEntityAssertWriteableInterceptor } from '../../../../libs/auth/rpcAuthEntityAssertWriteable.interceptor';
-import { RpcAuthEntityAssertReadableInterceptor } from '../../../../libs/auth/rpcAuthEntityAssertReadable.interceptor';
-import { RpcAuthRequiredInterceptor } from '../../../../libs/auth/rpcAuthRequired.interceptor';
-import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../../libs/auth/rpcAuthEntityCreateOwnership.interceptor';
+import { RpcAuthEntityAssertWriteableInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityAssertWriteable.interceptor';
+import { RpcAuthEntityAssertReadableInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityAssertReadable.interceptor';
+import { RpcAuthRequiredInterceptor } from '../../../../libs/auth/rpc/rpcAuthRequired.interceptor';
+import { RpcAuthEntityCreateOwnershipInterceptor } from '../../../../libs/auth/rpc/rpcAuthEntityCreateOwnership.interceptor';
 
 @Controller()
 export class MessageController {

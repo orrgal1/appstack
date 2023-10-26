@@ -6,15 +6,11 @@ import {
 import { main, shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
 import { LoginCreateOneInput } from '../../../proto/interfaces';
-import { isE2E, useHost, usePorts } from '../../../../tests/utils';
+import { isE2E, login, useHost, usePorts } from '../../../../tests/utils';
 
 describe('Login', () => {
   let client: LoginServiceClient;
   const metadata = new Metadata();
-  metadata.set(
-    'jwt',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.pF3q46_CLIyP_1QZPpeccbs-hC4n9YW2VMBjKrSO6Wg',
-  );
 
   beforeAll(async () => {
     const ports = await usePorts();
@@ -22,6 +18,8 @@ describe('Login', () => {
     const channel = createChannel(`${host}:${ports.proto}`);
     client = createClient(LoginServiceDefinition, channel);
     if (!isE2E()) await main({ ports });
+    const { accessToken } = await login(ports);
+    metadata.set('jwt', accessToken);
   });
 
   afterAll(async () => {

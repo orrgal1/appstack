@@ -29,13 +29,14 @@ describe('Auth: Local', () => {
     ports = await usePorts();
     const host = useHost();
     const channel = createChannel(`${host}:${ports.proto}`);
-    userClient = createClient(UserServiceDefinition, channel);
+    const channelInternal = createChannel(`${host}:${ports.protoInternal}`);
+    userClient = createClient(UserServiceDefinition, channelInternal);
     loginClient = createClient(LoginServiceDefinition, channel);
     if (!isE2E()) await main({ ports });
   });
 
   test('Login: exists', async () => {
-    const user = await userClient.createOne({ name: uuid() }, { metadata });
+    const user = await userClient.createOne({ name: uuid() });
     const loginInput = {
       platform: 'local',
       platformLoginId: uuid(),

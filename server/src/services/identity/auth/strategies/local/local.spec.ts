@@ -15,6 +15,7 @@ describe('Auth: Local', () => {
     protoInternal: number;
     proto: number;
     http: number;
+    httpInternal: number;
     workers: number;
   };
   let userClient: UserServiceClient;
@@ -35,6 +36,25 @@ describe('Auth: Local', () => {
     if (!isE2E()) await main({ ports });
   });
 
+  test('Login: Fail external', async () => {
+    const user = await userClient.createOne({ name: uuid() });
+    const loginInput = {
+      platform: 'local',
+      platformLoginId: uuid(),
+      platformLoginSecret: uuid(),
+      userId: user.id,
+    };
+    await loginClient.createOne(loginInput, { metadata });
+
+    const input = {
+      username: loginInput.platformLoginId,
+      password: loginInput.platformLoginSecret,
+    };
+    await expect(
+      axios.post(`http://localhost:${ports.http}/auth/local/login`, input),
+    ).rejects.toThrow('Request failed with status code 403');
+  });
+
   test('Login: exists', async () => {
     const user = await userClient.createOne({ name: uuid() });
     const loginInput = {
@@ -50,7 +70,7 @@ describe('Auth: Local', () => {
       password: loginInput.platformLoginSecret,
     };
     const response = await axios.post(
-      `http://localhost:${ports.http}/auth/local/login`,
+      `http://localhost:${ports.httpInternal}/auth/local/login`,
       input,
     );
     expect(response.data).toEqual({
@@ -65,7 +85,7 @@ describe('Auth: Local', () => {
       password: uuid(),
     };
     const response = await axios.post(
-      `http://localhost:${ports.http}/auth/local/login`,
+      `http://localhost:${ports.httpInternal}/auth/local/login`,
       input,
     );
     expect(response.data).toEqual({

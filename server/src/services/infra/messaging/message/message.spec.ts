@@ -25,6 +25,7 @@ describe('Message', () => {
     protoInternal: number;
     proto: number;
     http: number;
+    httpInternal: number;
     workers: number;
   };
   let host: any;

@@ -7,14 +7,14 @@ export function isE2E() {
 }
 
 export async function login(ports: {
-  http: number;
+  httpInternal: number;
 }): Promise<{ accessToken: string; userId: string }> {
   const input = {
     username: uuid(),
     password: uuid(),
   };
   const response = await axios.post(
-    `http://localhost:${ports.http}/auth/local/login`,
+    `http://localhost:${ports.httpInternal}/auth/local/login`,
     input,
   );
   return response.data;

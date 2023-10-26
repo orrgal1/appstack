@@ -16,6 +16,9 @@ import { RpcAuthExternalInterceptor } from '../libs/auth/rpc/rpcAuthExternal.int
 import { RpcAuthInternalInterceptor } from '../libs/auth/rpc/rpcAuthInternal.interceptor';
 import * as process from 'process';
 import { PubsubServerModule } from '../libs/pubsub/pubsub.server.module';
+import { HttpAuthExternalInterceptor } from '../libs/auth/http/httpAuthExternal.interceptor';
+import { HttpAuthInternalInterceptor } from '../libs/auth/http/httpAuthInternal.interceptor';
+import { AllExceptionsFilter } from '../libs/exceptions/global.exception.filter';
 
 type Component = {
   key: string;
@@ -135,7 +138,11 @@ const main = async (opts: {
         }),
       );
       http.use(passport.session());
-      http.useGlobalInterceptors(new LoggingInterceptorHttp());
+      http.useGlobalFilters(new AllExceptionsFilter());
+      http.useGlobalInterceptors(
+        new LoggingInterceptorHttp(),
+        new HttpAuthExternalInterceptor(),
+      );
       await http.listen(opts.ports.http);
       return () => http.close();
     },
@@ -155,7 +162,11 @@ const main = async (opts: {
         }),
       );
       http.use(passport.session());
-      http.useGlobalInterceptors(new LoggingInterceptorHttp());
+      http.useGlobalFilters(new AllExceptionsFilter());
+      http.useGlobalInterceptors(
+        new LoggingInterceptorHttp(),
+        new HttpAuthInternalInterceptor(),
+      );
       await http.listen(opts.ports.httpInternal);
       return () => http.close();
     },

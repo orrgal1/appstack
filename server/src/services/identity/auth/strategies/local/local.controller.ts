@@ -1,13 +1,20 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Request,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from '../../auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { HttpAuthAssertInternalInterceptor } from '../../../../../libs/auth/http/httpAuthAssertInternal.interceptor';
 
 @Controller('auth')
 export class LocalController {
   constructor(private authService: AuthService) {}
 
-  // TODO: make internal
   @UseGuards(AuthGuard('local'))
+  @UseInterceptors(HttpAuthAssertInternalInterceptor)
   @Post('local/login')
   async login(@Request() req) {
     const jwt = await this.authService.login(req.user);

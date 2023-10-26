@@ -13,6 +13,7 @@ describe('UserFollow', () => {
     protoInternal: number;
     proto: number;
     http: number;
+    httpInternal: number;
     workers: number;
   };
   let client: UserFollowServiceClient;

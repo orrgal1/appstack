@@ -21,7 +21,7 @@ export type AuthData = {
 export class AuthUtils {
   extractAuth(context: ExecutionContext): AuthData {
     try {
-      const external = this.isExternal(context);
+      const external = this.rpcIsExternal(context);
       if (!external)
         return {
           decoded: { sub: '' },
@@ -73,11 +73,17 @@ export class AuthUtils {
     throw new RpcPermissionDeniedException();
   }
 
-  isExternal(context: ExecutionContext): boolean {
+  rpcIsExternal(context: ExecutionContext): boolean {
     const rpcContext = context.switchToRpc().getContext();
     const external = rpcContext
       .get('external')
       .some((value) => Boolean(value) === true);
+    return external;
+  }
+
+  httpIsExternal(context: ExecutionContext): boolean {
+    const httpContext = context.switchToHttp().getRequest();
+    const external = httpContext.external;
     return external;
   }
 

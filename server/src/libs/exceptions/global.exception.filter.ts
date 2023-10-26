@@ -18,6 +18,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       message = exception.getResponse() as string;
+    } else if (exception instanceof Error) {
+      if (exception.message === 'permission denied') {
+        status = 403;
+        message = exception.message;
+      }
     }
 
     response.status(status).json({

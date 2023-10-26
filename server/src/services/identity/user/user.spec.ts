@@ -11,6 +11,7 @@ describe('User', () => {
     protoInternal: number;
     proto: number;
     http: number;
+    httpInternal: number;
     ws: number;
     workers: number;
   };

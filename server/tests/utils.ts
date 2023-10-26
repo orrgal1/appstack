@@ -28,6 +28,7 @@ const getPorts = async (): Promise<string[]> => {
       await detect(Math.floor(2000 + Math.random() * 50000)),
       await detect(Math.floor(2000 + Math.random() * 50000)),
       await detect(Math.floor(2000 + Math.random() * 50000)),
+      await detect(Math.floor(2000 + Math.random() * 50000)),
     ];
     const set = new Set(base);
     if (base.length === set.size) return base;
@@ -36,18 +37,20 @@ const getPorts = async (): Promise<string[]> => {
 };
 
 export async function usePorts() {
-  const [a, b, c, d, e] = await getPorts();
+  const [a, b, c, d, e, f] = await getPorts();
   if (!isE2E()) {
     process.env.PROTO_PORT = a;
     process.env.PROTO_INTERNAL_PORT = b;
     process.env.HTTP_PORT = c;
-    process.env.WORKERS_PORT = d;
-    process.env.WS_PORT = e;
+    process.env.HTTP_INTERNAL_PORT = d;
+    process.env.WORKERS_PORT = e;
+    process.env.WS_PORT = f;
   }
   const ports = {
     proto: Number(process.env.PROTO_PORT || 0),
     protoInternal: Number(process.env.PROTO_INTERNAL_PORT || 0),
     http: Number(process.env.HTTP_PORT || 0),
+    httpInternal: Number(process.env.HTTP_INTERNAL_PORT || 0),
     workers: Number(process.env.WORKERS_PORT || 0),
     ws: Number(process.env.WS_PORT || 0),
   };

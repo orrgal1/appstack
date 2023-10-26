@@ -64,6 +64,7 @@ const main = async (opts: {
     proto: number;
     protoInternal: number;
     http: number;
+    httpInternal: number;
     workers: number;
   };
   otel?: boolean;
@@ -136,6 +137,26 @@ const main = async (opts: {
       http.use(passport.session());
       http.useGlobalInterceptors(new LoggingInterceptorHttp());
       await http.listen(opts.ports.http);
+      return () => http.close();
+    },
+  });
+
+  addComponent({
+    key: 'HTTP_INTERNAL',
+    init: async () => {
+      const http = await NestFactory.create(HttpModule, {
+        logger: new JsonLoggerService(),
+      });
+      http.use(
+        session({
+          secret: process.env.SESSION_SECRET,
+          resave: false,
+          saveUninitialized: false,
+        }),
+      );
+      http.use(passport.session());
+      http.useGlobalInterceptors(new LoggingInterceptorHttp());
+      await http.listen(opts.ports.httpInternal);
       return () => http.close();
     },
   });

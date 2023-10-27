@@ -8,6 +8,8 @@ export class RedisService {
   private logger: Logger = new Logger(RedisService.name);
   db: Redis;
   lock: Redlock;
+  private limiterCache: Map<string, BottleNeck> = new Map();
+  private groupLimiterCache: Map<string, BottleNeck.Group> = new Map();
 
   constructor() {
     this.db = new Redis({
@@ -25,7 +27,11 @@ export class RedisService {
   }
 
   getLimiter(opts: BottleNeck.ConstructorOptions): BottleNeck {
-    return new BottleNeck({
+    const { id } = opts;
+    if (!id) throw new Error('must supply id in opts');
+    const cached = this.limiterCache.get(id);
+    if (cached) return cached;
+    const limiter = new BottleNeck({
       ...opts,
       datastore: 'ioredis',
       clearDatastore: false,
@@ -35,13 +41,19 @@ export class RedisService {
         password: process.env.REDIS_PASSWORD,
       },
     });
+    this.limiterCache.set(id, limiter);
+    return limiter;
   }
 
   getGroupLimiter(
     key: string,
     opts: BottleNeck.ConstructorOptions,
   ): BottleNeck {
-    return new BottleNeck.Group({
+    const { id } = opts;
+    if (!id) throw new Error('must supply id in opts');
+    const cached = this.groupLimiterCache.get(id);
+    if (cached) return cached.key(key);
+    const group = new BottleNeck.Group({
       ...opts,
       datastore: 'ioredis',
       clearDatastore: false,
@@ -50,6 +62,8 @@ export class RedisService {
         port: Number(process.env.REDIS_PORT),
         password: process.env.REDIS_PASSWORD,
       },
-    }).key(key);
+    });
+    this.groupLimiterCache.set(id, group);
+    return group.key(key);
   }
 }

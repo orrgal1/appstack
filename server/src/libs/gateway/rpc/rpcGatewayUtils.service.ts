@@ -28,6 +28,7 @@ export class RpcGatewayUtils {
       const limiter = this.redis.getGroupLimiter(
         `${key.toLowerCase()}/${userId}`,
         {
+          id: key.toLowerCase(),
           reservoir: limit,
           reservoirRefreshAmount: limit,
           reservoirRefreshInterval: 60000,
@@ -52,7 +53,7 @@ export class RpcGatewayUtils {
       }
       return next.handle();
     } catch (e) {
-      if (e.message === 'timeout') {
+      if (e.message === 'timeout' || e instanceof BottleNeck.BottleneckError) {
         throw new RpcException({
           message: 'rate limit exceeded',
           code: grpc.status.RESOURCE_EXHAUSTED,

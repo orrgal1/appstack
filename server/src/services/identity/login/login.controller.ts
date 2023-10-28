@@ -1,6 +1,5 @@
 import { Controller, UseInterceptors } from '@nestjs/common';
-import { GrpcMethod, Payload, RpcException } from '@nestjs/microservices';
-import * as grpc from '@grpc/grpc-js';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import {
   Login,
   LoginCreateOneInput,
@@ -20,6 +19,7 @@ import {
   RpcRateLimitReadInterceptor,
   RpcRateLimitWriteInterceptor,
 } from '../../../libs/gateway/rpc/rpcGateway.module';
+import { RpcNotFoundException } from '../../../libs/exceptions/rpcNotFoundException';
 
 @Controller()
 export class LoginController {
@@ -33,10 +33,7 @@ export class LoginController {
   async findOne(@Payload() input: LoginFindOneInput): Promise<Login> {
     const found = await this.logic.findOne(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }
@@ -49,10 +46,7 @@ export class LoginController {
   async findWhere(@Payload() input: LoginFindWhereInput): Promise<Login> {
     const found = await this.logic.findWhere(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }
@@ -67,10 +61,7 @@ export class LoginController {
   ): Promise<Login> {
     const found = await this.logic.findByPlatformId(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }

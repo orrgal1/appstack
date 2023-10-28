@@ -53,9 +53,16 @@ export class RpcAuthEntityCreateOwnershipInterceptor
     try {
       return next.handle().pipe(
         map(async (result) => {
-          const { id } = result;
+          const { id, isPublic } = result;
           const metadata = new Metadata();
           metadata.set('jwt', jwt);
+
+          if (isPublic) {
+            permitted.push({
+              permittedEntity: 'user',
+              permittedEntityId: 'public',
+            });
+          }
           await Promise.all(
             permitted.map(async (p) => {
               const { permittedEntityId, permittedEntity } = p;

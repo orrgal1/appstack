@@ -28,3 +28,4 @@ export * from './rpcAuthEntityCreateOwnership.interceptor';
 export * from './rpcAuthExternal.interceptor';
 export * from './rpcAuthRequired.interceptor';
 export * from './rpcPermissionDeniedException';
+export * from './rpcAuthenticatedUserId.decorator';

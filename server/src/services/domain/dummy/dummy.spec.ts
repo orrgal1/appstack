@@ -13,11 +13,17 @@ jest.setTimeout(10000);
 describe('Dummy', () => {
   let client: DummyServiceClient;
   const metadata = new Metadata();
-  const rpmLimit = process.env.WRITE_RPM_LIMIT;
+  let ports: {
+    protoInternal: number;
+    proto: number;
+    http: number;
+    httpInternal: number;
+    ws: number;
+    workers: number;
+  };
 
   beforeAll(async () => {
-    process.env.WRITE_RPM_LIMIT = '10';
-    const ports = await usePorts();
+    ports = await usePorts();
     const host = useHost();
     const channel = createChannel(`${host}:${ports.proto}`);
     client = createClient(DummyServiceDefinition, channel);
@@ -27,7 +33,6 @@ describe('Dummy', () => {
   });
 
   afterAll(async () => {
-    process.env.WRITE_RPM_LIMIT = rpmLimit;
     if (!isE2E()) await shutdownComponents();
   });
 
@@ -37,6 +42,39 @@ describe('Dummy', () => {
     };
     const created = await client.createOne(input, { metadata });
     const found = await client.findOne({ id: created.id }, { metadata });
+    expect(found).toEqual(created);
+  });
+
+  test('CreateOne + FindOne: Non Public', async () => {
+    const input = {
+      text: uuid(),
+    };
+    const created = await client.createOne(input, { metadata });
+
+    const { accessToken } = await login(ports);
+    const otherMetadata = new Metadata();
+    otherMetadata.set('jwt', accessToken);
+
+    await expect(
+      client.findOne({ id: created.id }, { metadata: otherMetadata }),
+    ).rejects.toThrow('permission denied');
+  });
+
+  test('CreateOne + FindOne: Public', async () => {
+    const input = {
+      text: uuid(),
+      isPublic: true,
+    };
+    const created = await client.createOne(input, { metadata });
+
+    const { accessToken } = await login(ports);
+    const otherMetadata = new Metadata();
+    otherMetadata.set('jwt', accessToken);
+
+    const found = await client.findOne(
+      { id: created.id },
+      { metadata: otherMetadata },
+    );
     expect(found).toEqual(created);
   });
 
@@ -100,19 +138,30 @@ describe('Dummy', () => {
     expect(page2.results).toEqual(all.results.slice(3, 6));
   });
 
-  test('Exceed rate limit', async () => {
-    const input = {
-      text: uuid(),
-    };
-    const bombard = async () => {
-      const requests = [];
-      for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
-        requests.push(client.createOne(input, { metadata }));
-      }
-      return await Promise.all(requests);
-    };
-    await expect(bombard()).rejects.toThrow(
-      '/main.DummyService/CreateOne UNKNOWN: rate limit exceeded',
-    );
+  describe('Rate limits', () => {
+    const rpmLimit = process.env.WRITE_RPM_LIMIT;
+    beforeAll(() => {
+      process.env.WRITE_RPM_LIMIT = '10';
+    });
+
+    afterAll(() => {
+      process.env.WRITE_RPM_LIMIT = rpmLimit;
+    });
+
+    test('Exceed write rate limit', async () => {
+      const input = {
+        text: uuid(),
+      };
+      const bombard = async () => {
+        const requests = [];
+        for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
+          requests.push(client.createOne(input, { metadata }));
+        }
+        return await Promise.all(requests);
+      };
+      await expect(bombard()).rejects.toThrow(
+        '/main.DummyService/CreateOne UNKNOWN: rate limit exceeded',
+      );
+    });
   });
 });

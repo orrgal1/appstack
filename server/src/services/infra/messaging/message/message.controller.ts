@@ -1,6 +1,5 @@
 import { Controller, UseInterceptors } from '@nestjs/common';
-import { GrpcMethod, Payload, RpcException } from '@nestjs/microservices';
-import * as grpc from '@grpc/grpc-js';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import {
   Message,
   MessageCreateOneInput,
@@ -22,6 +21,7 @@ import {
   RpcRateLimitReadInterceptor,
   RpcRateLimitWriteInterceptor,
 } from '../../../../libs/gateway/rpc/rpcGateway.module';
+import { RpcNotFoundException } from '../../../../libs/exceptions/rpcNotFoundException';
 
 @Controller()
 export class MessageController {
@@ -35,10 +35,7 @@ export class MessageController {
   async findOne(@Payload() input: MessageFindOneInput): Promise<Message> {
     const found = await this.logic.findOne(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }
@@ -51,10 +48,7 @@ export class MessageController {
   async findUnique(@Payload() input: MessageFindUniqueInput): Promise<Message> {
     const found = await this.logic.findUnique(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }
@@ -85,10 +79,7 @@ export class MessageController {
   async removeOne(@Payload() input: MessageRemoveOneInput): Promise<Message> {
     const removed = await this.logic.removeOne(input);
     if (!removed) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return removed;
   }

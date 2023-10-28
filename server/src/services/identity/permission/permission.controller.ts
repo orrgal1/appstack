@@ -1,6 +1,5 @@
 import { Controller, UseInterceptors } from '@nestjs/common';
-import { GrpcMethod, Payload, RpcException } from '@nestjs/microservices';
-import * as grpc from '@grpc/grpc-js';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import {
   Permission,
   PermissionCreateOneInput,
@@ -21,6 +20,7 @@ import {
   RpcAuthAssertInternalInterceptor,
   RpcPermissionDeniedException,
 } from '../../../libs/auth/rpc/rpcAuth.module';
+import { RpcNotFoundException } from '../../../libs/exceptions/rpcNotFoundException';
 
 @Controller()
 export class PermissionController {
@@ -31,10 +31,7 @@ export class PermissionController {
   async findOne(@Payload() input: PermissionFindOneInput): Promise<Permission> {
     const found = await this.logic.findOne(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }
@@ -46,10 +43,7 @@ export class PermissionController {
   ): Promise<Permission> {
     const found = await this.logic.findWhere(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }
@@ -61,10 +55,7 @@ export class PermissionController {
   ): Promise<Permission> {
     const found = await this.logic.findWhereOrStar(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }

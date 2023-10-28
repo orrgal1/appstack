@@ -74,9 +74,9 @@ export class PermissionService implements OnModuleInit {
     const query = `
       FOR doc IN permission
       FILTER doc.entity == @entity 
-      AND doc.entityId == @entityId
+      AND (doc.entityId == @entityId)
       AND doc.permittedEntity == @permittedEntity
-      AND doc.permittedEntityId == @permittedEntityId
+      AND (doc.permittedEntityId == @permittedEntityId OR doc.permittedEntityId == 'public')
       AND (doc.action == @action OR doc.action == '*')
       LIMIT 1
       RETURN doc

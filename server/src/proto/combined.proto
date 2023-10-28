@@ -7,10 +7,12 @@ message Dummy {
   uint64 createdAt = 2;
   uint64 updatedAt = 3;
   string text = 4;
+  bool isPublic = 5;
 }
 
 message DummyCreateOneInput {
   string text = 2;
+  bool isPublic = 5;
 }
 
 message DummyUpdateOneInput {
@@ -242,77 +244,6 @@ message PermissionRemoveAllActionsInput {
   PermissionRemoveAllActionsFilter filter = 1;
 }
 
-message UserFollowCreateOneInput {
-    string followerId = 1;
-    string followeeId = 2;
-}
-
-message UserFollowRemoveOneInput {
-    string id = 1;
-}
-
-message UserFindFollowersFilter {
-    string followeeId = 1;
-}
-
-message UserFindFollowersOpts {
-    uint64 limit = 1;
-    uint64 offset = 2;
-}
-
-message UserFindFollowersInput {
-    UserFindFollowersFilter filter = 1;
-    UserFindFollowersOpts opts = 2;
-}
-
-message UserFindFollowersResultMeta {
-    uint64 offset = 1;
-}
-
-message UserFindFollowersResult {
-    UserFindFollowersResultMeta meta = 1;
-    repeated Follower followers = 2;
-}
-
-message Follower {
-    string id = 1;
-    uint64 createdAt = 2;
-    uint64 updatedAt = 3;
-    string followeeId = 4;
-    string followerId = 5;
-}
-
-message UserFindFolloweesFilter {
-    string followerId = 1;
-}
-
-message UserFindFolloweesOpts {
-    uint64 limit = 1;
-    uint64 offset = 2;
-}
-
-message UserFindFolloweesInput {
-    UserFindFolloweesFilter filter = 1;
-    UserFindFolloweesOpts opts = 2;
-}
-
-message UserFindFolloweesResultMeta {
-    uint64 offset = 1;
-}
-
-message UserFindFolloweesResult {
-    UserFindFolloweesResultMeta meta = 1;
-    repeated Followee followees = 2;
-}
-
-message Followee {
-    string id = 1;
-    uint64 createdAt = 2;
-    uint64 updatedAt = 3;
-    string followerId = 4;
-    string followeeId = 5;
-}
-
 message User {
     string id = 1;
     uint64 createdAt = 2;
@@ -487,6 +418,77 @@ message IntRange {
   uint32 max = 2;
 }
 
+message UserFollowCreateOneInput {
+    string followerId = 1;
+    string followeeId = 2;
+}
+
+message UserFollowRemoveOneInput {
+    string id = 1;
+}
+
+message UserFindFollowersFilter {
+    string followeeId = 1;
+}
+
+message UserFindFollowersOpts {
+    uint64 limit = 1;
+    uint64 offset = 2;
+}
+
+message UserFindFollowersInput {
+    UserFindFollowersFilter filter = 1;
+    UserFindFollowersOpts opts = 2;
+}
+
+message UserFindFollowersResultMeta {
+    uint64 offset = 1;
+}
+
+message UserFindFollowersResult {
+    UserFindFollowersResultMeta meta = 1;
+    repeated Follower followers = 2;
+}
+
+message Follower {
+    string id = 1;
+    uint64 createdAt = 2;
+    uint64 updatedAt = 3;
+    string followeeId = 4;
+    string followerId = 5;
+}
+
+message UserFindFolloweesFilter {
+    string followerId = 1;
+}
+
+message UserFindFolloweesOpts {
+    uint64 limit = 1;
+    uint64 offset = 2;
+}
+
+message UserFindFolloweesInput {
+    UserFindFolloweesFilter filter = 1;
+    UserFindFolloweesOpts opts = 2;
+}
+
+message UserFindFolloweesResultMeta {
+    uint64 offset = 1;
+}
+
+message UserFindFolloweesResult {
+    UserFindFolloweesResultMeta meta = 1;
+    repeated Followee followees = 2;
+}
+
+message Followee {
+    string id = 1;
+    uint64 createdAt = 2;
+    uint64 updatedAt = 3;
+    string followerId = 4;
+    string followeeId = 5;
+}
+
 message DummyJobPayload {
   string id = 1;
 }
@@ -529,13 +531,6 @@ service PermissionService {
   rpc RemoveAllActions (PermissionRemoveAllActionsInput) returns (google.protobuf.Empty) {}
 }
 
-service UserFollowService {
-    rpc CreateOne (UserFollowCreateOneInput) returns (Follower) {}
-    rpc RemoveOne (UserFollowRemoveOneInput) returns (Follower) {}
-    rpc FindFollowers (UserFindFollowersInput) returns (UserFindFollowersResult) {}
-    rpc FindFollowees (UserFindFolloweesInput) returns (UserFindFolloweesResult) {}
-}
-
 service UserService {
     rpc CreateOne (UserCreateOneInput) returns (User) {}
     rpc UpdateOne (UserUpdateOneInput) returns (User) {}
@@ -559,6 +554,13 @@ service MessageService {
     rpc FindUnique (MessageFindUniqueInput) returns (Message) {}
     rpc RemoveOne (MessageRemoveOneInput) returns (Message) {}
     rpc FindByConversation (MessageFindByConversationInput) returns (MessageFindByConversationResult) {}
+}
+
+service UserFollowService {
+    rpc CreateOne (UserFollowCreateOneInput) returns (Follower) {}
+    rpc RemoveOne (UserFollowRemoveOneInput) returns (Follower) {}
+    rpc FindFollowers (UserFindFollowersInput) returns (UserFindFollowersResult) {}
+    rpc FindFollowees (UserFindFolloweesInput) returns (UserFindFolloweesResult) {}
 }
 
 service WorkersService {

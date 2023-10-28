@@ -5,10 +5,12 @@ message Dummy {
   uint64 createdAt = 2;
   uint64 updatedAt = 3;
   string text = 4;
+  bool isPublic = 5;
 }
 
 message DummyCreateOneInput {
   string text = 2;
+  bool isPublic = 5;
 }
 
 message DummyUpdateOneInput {

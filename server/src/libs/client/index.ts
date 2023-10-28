@@ -50,10 +50,12 @@ export interface Dummy {
   createdAt: number;
   updatedAt: number;
   text: string;
+  isPublic: boolean;
 }
 
 export interface DummyCreateOneInput {
   text: string;
+  isPublic: boolean;
 }
 
 export interface DummyUpdateOneInput {
@@ -283,77 +285,6 @@ export interface PermissionRemoveAllActionsInput {
   filter: PermissionRemoveAllActionsFilter | undefined;
 }
 
-export interface UserFollowCreateOneInput {
-  followerId: string;
-  followeeId: string;
-}
-
-export interface UserFollowRemoveOneInput {
-  id: string;
-}
-
-export interface UserFindFollowersFilter {
-  followeeId: string;
-}
-
-export interface UserFindFollowersOpts {
-  limit: number;
-  offset: number;
-}
-
-export interface UserFindFollowersInput {
-  filter: UserFindFollowersFilter | undefined;
-  opts: UserFindFollowersOpts | undefined;
-}
-
-export interface UserFindFollowersResultMeta {
-  offset: number;
-}
-
-export interface UserFindFollowersResult {
-  meta: UserFindFollowersResultMeta | undefined;
-  followers: Follower[];
-}
-
-export interface Follower {
-  id: string;
-  createdAt: number;
-  updatedAt: number;
-  followeeId: string;
-  followerId: string;
-}
-
-export interface UserFindFolloweesFilter {
-  followerId: string;
-}
-
-export interface UserFindFolloweesOpts {
-  limit: number;
-  offset: number;
-}
-
-export interface UserFindFolloweesInput {
-  filter: UserFindFolloweesFilter | undefined;
-  opts: UserFindFolloweesOpts | undefined;
-}
-
-export interface UserFindFolloweesResultMeta {
-  offset: number;
-}
-
-export interface UserFindFolloweesResult {
-  meta: UserFindFolloweesResultMeta | undefined;
-  followees: Followee[];
-}
-
-export interface Followee {
-  id: string;
-  createdAt: number;
-  updatedAt: number;
-  followerId: string;
-  followeeId: string;
-}
-
 export interface User {
   id: string;
   createdAt: number;
@@ -528,6 +459,77 @@ export interface IntRange {
   max: number;
 }
 
+export interface UserFollowCreateOneInput {
+  followerId: string;
+  followeeId: string;
+}
+
+export interface UserFollowRemoveOneInput {
+  id: string;
+}
+
+export interface UserFindFollowersFilter {
+  followeeId: string;
+}
+
+export interface UserFindFollowersOpts {
+  limit: number;
+  offset: number;
+}
+
+export interface UserFindFollowersInput {
+  filter: UserFindFollowersFilter | undefined;
+  opts: UserFindFollowersOpts | undefined;
+}
+
+export interface UserFindFollowersResultMeta {
+  offset: number;
+}
+
+export interface UserFindFollowersResult {
+  meta: UserFindFollowersResultMeta | undefined;
+  followers: Follower[];
+}
+
+export interface Follower {
+  id: string;
+  createdAt: number;
+  updatedAt: number;
+  followeeId: string;
+  followerId: string;
+}
+
+export interface UserFindFolloweesFilter {
+  followerId: string;
+}
+
+export interface UserFindFolloweesOpts {
+  limit: number;
+  offset: number;
+}
+
+export interface UserFindFolloweesInput {
+  filter: UserFindFolloweesFilter | undefined;
+  opts: UserFindFolloweesOpts | undefined;
+}
+
+export interface UserFindFolloweesResultMeta {
+  offset: number;
+}
+
+export interface UserFindFolloweesResult {
+  meta: UserFindFolloweesResultMeta | undefined;
+  followees: Followee[];
+}
+
+export interface Followee {
+  id: string;
+  createdAt: number;
+  updatedAt: number;
+  followerId: string;
+  followeeId: string;
+}
+
 export interface DummyJobPayload {
   id: string;
 }
@@ -541,7 +543,7 @@ export interface PublishJobResult {
 }
 
 function createBaseDummy(): Dummy {
-  return { id: "", createdAt: 0, updatedAt: 0, text: "" };
+  return { id: "", createdAt: 0, updatedAt: 0, text: "", isPublic: false };
 }
 
 export const Dummy = {
@@ -557,6 +559,9 @@ export const Dummy = {
     }
     if (message.text !== "") {
       writer.uint32(34).string(message.text);
+    }
+    if (message.isPublic === true) {
+      writer.uint32(40).bool(message.isPublic);
     }
     return writer;
   },
@@ -596,6 +601,13 @@ export const Dummy = {
 
           message.text = reader.string();
           continue;
+        case 5:
+          if (tag !== 40) {
+            break;
+          }
+
+          message.isPublic = reader.bool();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -611,6 +623,7 @@ export const Dummy = {
       createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
       updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
       text: isSet(object.text) ? String(object.text) : "",
+      isPublic: isSet(object.isPublic) ? Boolean(object.isPublic) : false,
     };
   },
 
@@ -628,6 +641,9 @@ export const Dummy = {
     if (message.text !== "") {
       obj.text = message.text;
     }
+    if (message.isPublic === true) {
+      obj.isPublic = message.isPublic;
+    }
     return obj;
   },
 
@@ -641,18 +657,22 @@ export const Dummy = {
     message.createdAt = object.createdAt ?? 0;
     message.updatedAt = object.updatedAt ?? 0;
     message.text = object.text ?? "";
+    message.isPublic = object.isPublic ?? false;
     return message;
   },
 };
 
 function createBaseDummyCreateOneInput(): DummyCreateOneInput {
-  return { text: "" };
+  return { text: "", isPublic: false };
 }
 
 export const DummyCreateOneInput = {
   encode(message: DummyCreateOneInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.text !== "") {
       writer.uint32(18).string(message.text);
+    }
+    if (message.isPublic === true) {
+      writer.uint32(40).bool(message.isPublic);
     }
     return writer;
   },
@@ -671,6 +691,13 @@ export const DummyCreateOneInput = {
 
           message.text = reader.string();
           continue;
+        case 5:
+          if (tag !== 40) {
+            break;
+          }
+
+          message.isPublic = reader.bool();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -681,13 +708,19 @@ export const DummyCreateOneInput = {
   },
 
   fromJSON(object: any): DummyCreateOneInput {
-    return { text: isSet(object.text) ? String(object.text) : "" };
+    return {
+      text: isSet(object.text) ? String(object.text) : "",
+      isPublic: isSet(object.isPublic) ? Boolean(object.isPublic) : false,
+    };
   },
 
   toJSON(message: DummyCreateOneInput): unknown {
     const obj: any = {};
     if (message.text !== "") {
       obj.text = message.text;
+    }
+    if (message.isPublic === true) {
+      obj.isPublic = message.isPublic;
     }
     return obj;
   },
@@ -699,6 +732,7 @@ export const DummyCreateOneInput = {
   fromPartial(object: DeepPartial<DummyCreateOneInput>): DummyCreateOneInput {
     const message = createBaseDummyCreateOneInput();
     message.text = object.text ?? "";
+    message.isPublic = object.isPublic ?? false;
     return message;
   },
 };
@@ -4128,1073 +4162,6 @@ export const PermissionRemoveAllActionsInput = {
   },
 };
 
-function createBaseUserFollowCreateOneInput(): UserFollowCreateOneInput {
-  return { followerId: "", followeeId: "" };
-}
-
-export const UserFollowCreateOneInput = {
-  encode(message: UserFollowCreateOneInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.followerId !== "") {
-      writer.uint32(10).string(message.followerId);
-    }
-    if (message.followeeId !== "") {
-      writer.uint32(18).string(message.followeeId);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFollowCreateOneInput {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFollowCreateOneInput();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.followerId = reader.string();
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.followeeId = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFollowCreateOneInput {
-    return {
-      followerId: isSet(object.followerId) ? String(object.followerId) : "",
-      followeeId: isSet(object.followeeId) ? String(object.followeeId) : "",
-    };
-  },
-
-  toJSON(message: UserFollowCreateOneInput): unknown {
-    const obj: any = {};
-    if (message.followerId !== "") {
-      obj.followerId = message.followerId;
-    }
-    if (message.followeeId !== "") {
-      obj.followeeId = message.followeeId;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFollowCreateOneInput>): UserFollowCreateOneInput {
-    return UserFollowCreateOneInput.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFollowCreateOneInput>): UserFollowCreateOneInput {
-    const message = createBaseUserFollowCreateOneInput();
-    message.followerId = object.followerId ?? "";
-    message.followeeId = object.followeeId ?? "";
-    return message;
-  },
-};
-
-function createBaseUserFollowRemoveOneInput(): UserFollowRemoveOneInput {
-  return { id: "" };
-}
-
-export const UserFollowRemoveOneInput = {
-  encode(message: UserFollowRemoveOneInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFollowRemoveOneInput {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFollowRemoveOneInput();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFollowRemoveOneInput {
-    return { id: isSet(object.id) ? String(object.id) : "" };
-  },
-
-  toJSON(message: UserFollowRemoveOneInput): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFollowRemoveOneInput>): UserFollowRemoveOneInput {
-    return UserFollowRemoveOneInput.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFollowRemoveOneInput>): UserFollowRemoveOneInput {
-    const message = createBaseUserFollowRemoveOneInput();
-    message.id = object.id ?? "";
-    return message;
-  },
-};
-
-function createBaseUserFindFollowersFilter(): UserFindFollowersFilter {
-  return { followeeId: "" };
-}
-
-export const UserFindFollowersFilter = {
-  encode(message: UserFindFollowersFilter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.followeeId !== "") {
-      writer.uint32(10).string(message.followeeId);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersFilter {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFollowersFilter();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.followeeId = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFollowersFilter {
-    return { followeeId: isSet(object.followeeId) ? String(object.followeeId) : "" };
-  },
-
-  toJSON(message: UserFindFollowersFilter): unknown {
-    const obj: any = {};
-    if (message.followeeId !== "") {
-      obj.followeeId = message.followeeId;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFollowersFilter>): UserFindFollowersFilter {
-    return UserFindFollowersFilter.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFollowersFilter>): UserFindFollowersFilter {
-    const message = createBaseUserFindFollowersFilter();
-    message.followeeId = object.followeeId ?? "";
-    return message;
-  },
-};
-
-function createBaseUserFindFollowersOpts(): UserFindFollowersOpts {
-  return { limit: 0, offset: 0 };
-}
-
-export const UserFindFollowersOpts = {
-  encode(message: UserFindFollowersOpts, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.limit !== 0) {
-      writer.uint32(8).uint64(message.limit);
-    }
-    if (message.offset !== 0) {
-      writer.uint32(16).uint64(message.offset);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersOpts {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFollowersOpts();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.limit = longToNumber(reader.uint64() as Long);
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.offset = longToNumber(reader.uint64() as Long);
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFollowersOpts {
-    return {
-      limit: isSet(object.limit) ? Number(object.limit) : 0,
-      offset: isSet(object.offset) ? Number(object.offset) : 0,
-    };
-  },
-
-  toJSON(message: UserFindFollowersOpts): unknown {
-    const obj: any = {};
-    if (message.limit !== 0) {
-      obj.limit = Math.round(message.limit);
-    }
-    if (message.offset !== 0) {
-      obj.offset = Math.round(message.offset);
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFollowersOpts>): UserFindFollowersOpts {
-    return UserFindFollowersOpts.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFollowersOpts>): UserFindFollowersOpts {
-    const message = createBaseUserFindFollowersOpts();
-    message.limit = object.limit ?? 0;
-    message.offset = object.offset ?? 0;
-    return message;
-  },
-};
-
-function createBaseUserFindFollowersInput(): UserFindFollowersInput {
-  return { filter: undefined, opts: undefined };
-}
-
-export const UserFindFollowersInput = {
-  encode(message: UserFindFollowersInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.filter !== undefined) {
-      UserFindFollowersFilter.encode(message.filter, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.opts !== undefined) {
-      UserFindFollowersOpts.encode(message.opts, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersInput {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFollowersInput();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.filter = UserFindFollowersFilter.decode(reader, reader.uint32());
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.opts = UserFindFollowersOpts.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFollowersInput {
-    return {
-      filter: isSet(object.filter) ? UserFindFollowersFilter.fromJSON(object.filter) : undefined,
-      opts: isSet(object.opts) ? UserFindFollowersOpts.fromJSON(object.opts) : undefined,
-    };
-  },
-
-  toJSON(message: UserFindFollowersInput): unknown {
-    const obj: any = {};
-    if (message.filter !== undefined) {
-      obj.filter = UserFindFollowersFilter.toJSON(message.filter);
-    }
-    if (message.opts !== undefined) {
-      obj.opts = UserFindFollowersOpts.toJSON(message.opts);
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFollowersInput>): UserFindFollowersInput {
-    return UserFindFollowersInput.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFollowersInput>): UserFindFollowersInput {
-    const message = createBaseUserFindFollowersInput();
-    message.filter = (object.filter !== undefined && object.filter !== null)
-      ? UserFindFollowersFilter.fromPartial(object.filter)
-      : undefined;
-    message.opts = (object.opts !== undefined && object.opts !== null)
-      ? UserFindFollowersOpts.fromPartial(object.opts)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseUserFindFollowersResultMeta(): UserFindFollowersResultMeta {
-  return { offset: 0 };
-}
-
-export const UserFindFollowersResultMeta = {
-  encode(message: UserFindFollowersResultMeta, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.offset !== 0) {
-      writer.uint32(8).uint64(message.offset);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersResultMeta {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFollowersResultMeta();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.offset = longToNumber(reader.uint64() as Long);
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFollowersResultMeta {
-    return { offset: isSet(object.offset) ? Number(object.offset) : 0 };
-  },
-
-  toJSON(message: UserFindFollowersResultMeta): unknown {
-    const obj: any = {};
-    if (message.offset !== 0) {
-      obj.offset = Math.round(message.offset);
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFollowersResultMeta>): UserFindFollowersResultMeta {
-    return UserFindFollowersResultMeta.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFollowersResultMeta>): UserFindFollowersResultMeta {
-    const message = createBaseUserFindFollowersResultMeta();
-    message.offset = object.offset ?? 0;
-    return message;
-  },
-};
-
-function createBaseUserFindFollowersResult(): UserFindFollowersResult {
-  return { meta: undefined, followers: [] };
-}
-
-export const UserFindFollowersResult = {
-  encode(message: UserFindFollowersResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.meta !== undefined) {
-      UserFindFollowersResultMeta.encode(message.meta, writer.uint32(10).fork()).ldelim();
-    }
-    for (const v of message.followers) {
-      Follower.encode(v!, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersResult {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFollowersResult();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.meta = UserFindFollowersResultMeta.decode(reader, reader.uint32());
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.followers.push(Follower.decode(reader, reader.uint32()));
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFollowersResult {
-    return {
-      meta: isSet(object.meta) ? UserFindFollowersResultMeta.fromJSON(object.meta) : undefined,
-      followers: Array.isArray(object?.followers) ? object.followers.map((e: any) => Follower.fromJSON(e)) : [],
-    };
-  },
-
-  toJSON(message: UserFindFollowersResult): unknown {
-    const obj: any = {};
-    if (message.meta !== undefined) {
-      obj.meta = UserFindFollowersResultMeta.toJSON(message.meta);
-    }
-    if (message.followers?.length) {
-      obj.followers = message.followers.map((e) => Follower.toJSON(e));
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFollowersResult>): UserFindFollowersResult {
-    return UserFindFollowersResult.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFollowersResult>): UserFindFollowersResult {
-    const message = createBaseUserFindFollowersResult();
-    message.meta = (object.meta !== undefined && object.meta !== null)
-      ? UserFindFollowersResultMeta.fromPartial(object.meta)
-      : undefined;
-    message.followers = object.followers?.map((e) => Follower.fromPartial(e)) || [];
-    return message;
-  },
-};
-
-function createBaseFollower(): Follower {
-  return { id: "", createdAt: 0, updatedAt: 0, followeeId: "", followerId: "" };
-}
-
-export const Follower = {
-  encode(message: Follower, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.createdAt !== 0) {
-      writer.uint32(16).uint64(message.createdAt);
-    }
-    if (message.updatedAt !== 0) {
-      writer.uint32(24).uint64(message.updatedAt);
-    }
-    if (message.followeeId !== "") {
-      writer.uint32(34).string(message.followeeId);
-    }
-    if (message.followerId !== "") {
-      writer.uint32(42).string(message.followerId);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Follower {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseFollower();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.createdAt = longToNumber(reader.uint64() as Long);
-          continue;
-        case 3:
-          if (tag !== 24) {
-            break;
-          }
-
-          message.updatedAt = longToNumber(reader.uint64() as Long);
-          continue;
-        case 4:
-          if (tag !== 34) {
-            break;
-          }
-
-          message.followeeId = reader.string();
-          continue;
-        case 5:
-          if (tag !== 42) {
-            break;
-          }
-
-          message.followerId = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Follower {
-    return {
-      id: isSet(object.id) ? String(object.id) : "",
-      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
-      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
-      followeeId: isSet(object.followeeId) ? String(object.followeeId) : "",
-      followerId: isSet(object.followerId) ? String(object.followerId) : "",
-    };
-  },
-
-  toJSON(message: Follower): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.createdAt !== 0) {
-      obj.createdAt = Math.round(message.createdAt);
-    }
-    if (message.updatedAt !== 0) {
-      obj.updatedAt = Math.round(message.updatedAt);
-    }
-    if (message.followeeId !== "") {
-      obj.followeeId = message.followeeId;
-    }
-    if (message.followerId !== "") {
-      obj.followerId = message.followerId;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<Follower>): Follower {
-    return Follower.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<Follower>): Follower {
-    const message = createBaseFollower();
-    message.id = object.id ?? "";
-    message.createdAt = object.createdAt ?? 0;
-    message.updatedAt = object.updatedAt ?? 0;
-    message.followeeId = object.followeeId ?? "";
-    message.followerId = object.followerId ?? "";
-    return message;
-  },
-};
-
-function createBaseUserFindFolloweesFilter(): UserFindFolloweesFilter {
-  return { followerId: "" };
-}
-
-export const UserFindFolloweesFilter = {
-  encode(message: UserFindFolloweesFilter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.followerId !== "") {
-      writer.uint32(10).string(message.followerId);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesFilter {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFolloweesFilter();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.followerId = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFolloweesFilter {
-    return { followerId: isSet(object.followerId) ? String(object.followerId) : "" };
-  },
-
-  toJSON(message: UserFindFolloweesFilter): unknown {
-    const obj: any = {};
-    if (message.followerId !== "") {
-      obj.followerId = message.followerId;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFolloweesFilter>): UserFindFolloweesFilter {
-    return UserFindFolloweesFilter.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFolloweesFilter>): UserFindFolloweesFilter {
-    const message = createBaseUserFindFolloweesFilter();
-    message.followerId = object.followerId ?? "";
-    return message;
-  },
-};
-
-function createBaseUserFindFolloweesOpts(): UserFindFolloweesOpts {
-  return { limit: 0, offset: 0 };
-}
-
-export const UserFindFolloweesOpts = {
-  encode(message: UserFindFolloweesOpts, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.limit !== 0) {
-      writer.uint32(8).uint64(message.limit);
-    }
-    if (message.offset !== 0) {
-      writer.uint32(16).uint64(message.offset);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesOpts {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFolloweesOpts();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.limit = longToNumber(reader.uint64() as Long);
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.offset = longToNumber(reader.uint64() as Long);
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFolloweesOpts {
-    return {
-      limit: isSet(object.limit) ? Number(object.limit) : 0,
-      offset: isSet(object.offset) ? Number(object.offset) : 0,
-    };
-  },
-
-  toJSON(message: UserFindFolloweesOpts): unknown {
-    const obj: any = {};
-    if (message.limit !== 0) {
-      obj.limit = Math.round(message.limit);
-    }
-    if (message.offset !== 0) {
-      obj.offset = Math.round(message.offset);
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFolloweesOpts>): UserFindFolloweesOpts {
-    return UserFindFolloweesOpts.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFolloweesOpts>): UserFindFolloweesOpts {
-    const message = createBaseUserFindFolloweesOpts();
-    message.limit = object.limit ?? 0;
-    message.offset = object.offset ?? 0;
-    return message;
-  },
-};
-
-function createBaseUserFindFolloweesInput(): UserFindFolloweesInput {
-  return { filter: undefined, opts: undefined };
-}
-
-export const UserFindFolloweesInput = {
-  encode(message: UserFindFolloweesInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.filter !== undefined) {
-      UserFindFolloweesFilter.encode(message.filter, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.opts !== undefined) {
-      UserFindFolloweesOpts.encode(message.opts, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesInput {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFolloweesInput();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.filter = UserFindFolloweesFilter.decode(reader, reader.uint32());
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.opts = UserFindFolloweesOpts.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFolloweesInput {
-    return {
-      filter: isSet(object.filter) ? UserFindFolloweesFilter.fromJSON(object.filter) : undefined,
-      opts: isSet(object.opts) ? UserFindFolloweesOpts.fromJSON(object.opts) : undefined,
-    };
-  },
-
-  toJSON(message: UserFindFolloweesInput): unknown {
-    const obj: any = {};
-    if (message.filter !== undefined) {
-      obj.filter = UserFindFolloweesFilter.toJSON(message.filter);
-    }
-    if (message.opts !== undefined) {
-      obj.opts = UserFindFolloweesOpts.toJSON(message.opts);
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFolloweesInput>): UserFindFolloweesInput {
-    return UserFindFolloweesInput.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFolloweesInput>): UserFindFolloweesInput {
-    const message = createBaseUserFindFolloweesInput();
-    message.filter = (object.filter !== undefined && object.filter !== null)
-      ? UserFindFolloweesFilter.fromPartial(object.filter)
-      : undefined;
-    message.opts = (object.opts !== undefined && object.opts !== null)
-      ? UserFindFolloweesOpts.fromPartial(object.opts)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseUserFindFolloweesResultMeta(): UserFindFolloweesResultMeta {
-  return { offset: 0 };
-}
-
-export const UserFindFolloweesResultMeta = {
-  encode(message: UserFindFolloweesResultMeta, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.offset !== 0) {
-      writer.uint32(8).uint64(message.offset);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesResultMeta {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFolloweesResultMeta();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.offset = longToNumber(reader.uint64() as Long);
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFolloweesResultMeta {
-    return { offset: isSet(object.offset) ? Number(object.offset) : 0 };
-  },
-
-  toJSON(message: UserFindFolloweesResultMeta): unknown {
-    const obj: any = {};
-    if (message.offset !== 0) {
-      obj.offset = Math.round(message.offset);
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFolloweesResultMeta>): UserFindFolloweesResultMeta {
-    return UserFindFolloweesResultMeta.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFolloweesResultMeta>): UserFindFolloweesResultMeta {
-    const message = createBaseUserFindFolloweesResultMeta();
-    message.offset = object.offset ?? 0;
-    return message;
-  },
-};
-
-function createBaseUserFindFolloweesResult(): UserFindFolloweesResult {
-  return { meta: undefined, followees: [] };
-}
-
-export const UserFindFolloweesResult = {
-  encode(message: UserFindFolloweesResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.meta !== undefined) {
-      UserFindFolloweesResultMeta.encode(message.meta, writer.uint32(10).fork()).ldelim();
-    }
-    for (const v of message.followees) {
-      Followee.encode(v!, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesResult {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserFindFolloweesResult();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.meta = UserFindFolloweesResultMeta.decode(reader, reader.uint32());
-          continue;
-        case 2:
-          if (tag !== 18) {
-            break;
-          }
-
-          message.followees.push(Followee.decode(reader, reader.uint32()));
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserFindFolloweesResult {
-    return {
-      meta: isSet(object.meta) ? UserFindFolloweesResultMeta.fromJSON(object.meta) : undefined,
-      followees: Array.isArray(object?.followees) ? object.followees.map((e: any) => Followee.fromJSON(e)) : [],
-    };
-  },
-
-  toJSON(message: UserFindFolloweesResult): unknown {
-    const obj: any = {};
-    if (message.meta !== undefined) {
-      obj.meta = UserFindFolloweesResultMeta.toJSON(message.meta);
-    }
-    if (message.followees?.length) {
-      obj.followees = message.followees.map((e) => Followee.toJSON(e));
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<UserFindFolloweesResult>): UserFindFolloweesResult {
-    return UserFindFolloweesResult.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<UserFindFolloweesResult>): UserFindFolloweesResult {
-    const message = createBaseUserFindFolloweesResult();
-    message.meta = (object.meta !== undefined && object.meta !== null)
-      ? UserFindFolloweesResultMeta.fromPartial(object.meta)
-      : undefined;
-    message.followees = object.followees?.map((e) => Followee.fromPartial(e)) || [];
-    return message;
-  },
-};
-
-function createBaseFollowee(): Followee {
-  return { id: "", createdAt: 0, updatedAt: 0, followerId: "", followeeId: "" };
-}
-
-export const Followee = {
-  encode(message: Followee, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    if (message.createdAt !== 0) {
-      writer.uint32(16).uint64(message.createdAt);
-    }
-    if (message.updatedAt !== 0) {
-      writer.uint32(24).uint64(message.updatedAt);
-    }
-    if (message.followerId !== "") {
-      writer.uint32(34).string(message.followerId);
-    }
-    if (message.followeeId !== "") {
-      writer.uint32(42).string(message.followeeId);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Followee {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseFollowee();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.createdAt = longToNumber(reader.uint64() as Long);
-          continue;
-        case 3:
-          if (tag !== 24) {
-            break;
-          }
-
-          message.updatedAt = longToNumber(reader.uint64() as Long);
-          continue;
-        case 4:
-          if (tag !== 34) {
-            break;
-          }
-
-          message.followerId = reader.string();
-          continue;
-        case 5:
-          if (tag !== 42) {
-            break;
-          }
-
-          message.followeeId = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Followee {
-    return {
-      id: isSet(object.id) ? String(object.id) : "",
-      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
-      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
-      followerId: isSet(object.followerId) ? String(object.followerId) : "",
-      followeeId: isSet(object.followeeId) ? String(object.followeeId) : "",
-    };
-  },
-
-  toJSON(message: Followee): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    if (message.createdAt !== 0) {
-      obj.createdAt = Math.round(message.createdAt);
-    }
-    if (message.updatedAt !== 0) {
-      obj.updatedAt = Math.round(message.updatedAt);
-    }
-    if (message.followerId !== "") {
-      obj.followerId = message.followerId;
-    }
-    if (message.followeeId !== "") {
-      obj.followeeId = message.followeeId;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<Followee>): Followee {
-    return Followee.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<Followee>): Followee {
-    const message = createBaseFollowee();
-    message.id = object.id ?? "";
-    message.createdAt = object.createdAt ?? 0;
-    message.updatedAt = object.updatedAt ?? 0;
-    message.followerId = object.followerId ?? "";
-    message.followeeId = object.followeeId ?? "";
-    return message;
-  },
-};
-
 function createBaseUser(): User {
   return { id: "", createdAt: 0, updatedAt: 0, name: "", email: "", photo: "" };
 }
@@ -7812,6 +6779,1073 @@ export const IntRange = {
   },
 };
 
+function createBaseUserFollowCreateOneInput(): UserFollowCreateOneInput {
+  return { followerId: "", followeeId: "" };
+}
+
+export const UserFollowCreateOneInput = {
+  encode(message: UserFollowCreateOneInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.followerId !== "") {
+      writer.uint32(10).string(message.followerId);
+    }
+    if (message.followeeId !== "") {
+      writer.uint32(18).string(message.followeeId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFollowCreateOneInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFollowCreateOneInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.followerId = reader.string();
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.followeeId = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFollowCreateOneInput {
+    return {
+      followerId: isSet(object.followerId) ? String(object.followerId) : "",
+      followeeId: isSet(object.followeeId) ? String(object.followeeId) : "",
+    };
+  },
+
+  toJSON(message: UserFollowCreateOneInput): unknown {
+    const obj: any = {};
+    if (message.followerId !== "") {
+      obj.followerId = message.followerId;
+    }
+    if (message.followeeId !== "") {
+      obj.followeeId = message.followeeId;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFollowCreateOneInput>): UserFollowCreateOneInput {
+    return UserFollowCreateOneInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFollowCreateOneInput>): UserFollowCreateOneInput {
+    const message = createBaseUserFollowCreateOneInput();
+    message.followerId = object.followerId ?? "";
+    message.followeeId = object.followeeId ?? "";
+    return message;
+  },
+};
+
+function createBaseUserFollowRemoveOneInput(): UserFollowRemoveOneInput {
+  return { id: "" };
+}
+
+export const UserFollowRemoveOneInput = {
+  encode(message: UserFollowRemoveOneInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFollowRemoveOneInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFollowRemoveOneInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFollowRemoveOneInput {
+    return { id: isSet(object.id) ? String(object.id) : "" };
+  },
+
+  toJSON(message: UserFollowRemoveOneInput): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFollowRemoveOneInput>): UserFollowRemoveOneInput {
+    return UserFollowRemoveOneInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFollowRemoveOneInput>): UserFollowRemoveOneInput {
+    const message = createBaseUserFollowRemoveOneInput();
+    message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBaseUserFindFollowersFilter(): UserFindFollowersFilter {
+  return { followeeId: "" };
+}
+
+export const UserFindFollowersFilter = {
+  encode(message: UserFindFollowersFilter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.followeeId !== "") {
+      writer.uint32(10).string(message.followeeId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersFilter {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFollowersFilter();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.followeeId = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFollowersFilter {
+    return { followeeId: isSet(object.followeeId) ? String(object.followeeId) : "" };
+  },
+
+  toJSON(message: UserFindFollowersFilter): unknown {
+    const obj: any = {};
+    if (message.followeeId !== "") {
+      obj.followeeId = message.followeeId;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFollowersFilter>): UserFindFollowersFilter {
+    return UserFindFollowersFilter.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFollowersFilter>): UserFindFollowersFilter {
+    const message = createBaseUserFindFollowersFilter();
+    message.followeeId = object.followeeId ?? "";
+    return message;
+  },
+};
+
+function createBaseUserFindFollowersOpts(): UserFindFollowersOpts {
+  return { limit: 0, offset: 0 };
+}
+
+export const UserFindFollowersOpts = {
+  encode(message: UserFindFollowersOpts, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.limit !== 0) {
+      writer.uint32(8).uint64(message.limit);
+    }
+    if (message.offset !== 0) {
+      writer.uint32(16).uint64(message.offset);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersOpts {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFollowersOpts();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.limit = longToNumber(reader.uint64() as Long);
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.offset = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFollowersOpts {
+    return {
+      limit: isSet(object.limit) ? Number(object.limit) : 0,
+      offset: isSet(object.offset) ? Number(object.offset) : 0,
+    };
+  },
+
+  toJSON(message: UserFindFollowersOpts): unknown {
+    const obj: any = {};
+    if (message.limit !== 0) {
+      obj.limit = Math.round(message.limit);
+    }
+    if (message.offset !== 0) {
+      obj.offset = Math.round(message.offset);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFollowersOpts>): UserFindFollowersOpts {
+    return UserFindFollowersOpts.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFollowersOpts>): UserFindFollowersOpts {
+    const message = createBaseUserFindFollowersOpts();
+    message.limit = object.limit ?? 0;
+    message.offset = object.offset ?? 0;
+    return message;
+  },
+};
+
+function createBaseUserFindFollowersInput(): UserFindFollowersInput {
+  return { filter: undefined, opts: undefined };
+}
+
+export const UserFindFollowersInput = {
+  encode(message: UserFindFollowersInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.filter !== undefined) {
+      UserFindFollowersFilter.encode(message.filter, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.opts !== undefined) {
+      UserFindFollowersOpts.encode(message.opts, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFollowersInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.filter = UserFindFollowersFilter.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.opts = UserFindFollowersOpts.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFollowersInput {
+    return {
+      filter: isSet(object.filter) ? UserFindFollowersFilter.fromJSON(object.filter) : undefined,
+      opts: isSet(object.opts) ? UserFindFollowersOpts.fromJSON(object.opts) : undefined,
+    };
+  },
+
+  toJSON(message: UserFindFollowersInput): unknown {
+    const obj: any = {};
+    if (message.filter !== undefined) {
+      obj.filter = UserFindFollowersFilter.toJSON(message.filter);
+    }
+    if (message.opts !== undefined) {
+      obj.opts = UserFindFollowersOpts.toJSON(message.opts);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFollowersInput>): UserFindFollowersInput {
+    return UserFindFollowersInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFollowersInput>): UserFindFollowersInput {
+    const message = createBaseUserFindFollowersInput();
+    message.filter = (object.filter !== undefined && object.filter !== null)
+      ? UserFindFollowersFilter.fromPartial(object.filter)
+      : undefined;
+    message.opts = (object.opts !== undefined && object.opts !== null)
+      ? UserFindFollowersOpts.fromPartial(object.opts)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseUserFindFollowersResultMeta(): UserFindFollowersResultMeta {
+  return { offset: 0 };
+}
+
+export const UserFindFollowersResultMeta = {
+  encode(message: UserFindFollowersResultMeta, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.offset !== 0) {
+      writer.uint32(8).uint64(message.offset);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersResultMeta {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFollowersResultMeta();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.offset = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFollowersResultMeta {
+    return { offset: isSet(object.offset) ? Number(object.offset) : 0 };
+  },
+
+  toJSON(message: UserFindFollowersResultMeta): unknown {
+    const obj: any = {};
+    if (message.offset !== 0) {
+      obj.offset = Math.round(message.offset);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFollowersResultMeta>): UserFindFollowersResultMeta {
+    return UserFindFollowersResultMeta.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFollowersResultMeta>): UserFindFollowersResultMeta {
+    const message = createBaseUserFindFollowersResultMeta();
+    message.offset = object.offset ?? 0;
+    return message;
+  },
+};
+
+function createBaseUserFindFollowersResult(): UserFindFollowersResult {
+  return { meta: undefined, followers: [] };
+}
+
+export const UserFindFollowersResult = {
+  encode(message: UserFindFollowersResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.meta !== undefined) {
+      UserFindFollowersResultMeta.encode(message.meta, writer.uint32(10).fork()).ldelim();
+    }
+    for (const v of message.followers) {
+      Follower.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFollowersResult {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFollowersResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.meta = UserFindFollowersResultMeta.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.followers.push(Follower.decode(reader, reader.uint32()));
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFollowersResult {
+    return {
+      meta: isSet(object.meta) ? UserFindFollowersResultMeta.fromJSON(object.meta) : undefined,
+      followers: Array.isArray(object?.followers) ? object.followers.map((e: any) => Follower.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: UserFindFollowersResult): unknown {
+    const obj: any = {};
+    if (message.meta !== undefined) {
+      obj.meta = UserFindFollowersResultMeta.toJSON(message.meta);
+    }
+    if (message.followers?.length) {
+      obj.followers = message.followers.map((e) => Follower.toJSON(e));
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFollowersResult>): UserFindFollowersResult {
+    return UserFindFollowersResult.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFollowersResult>): UserFindFollowersResult {
+    const message = createBaseUserFindFollowersResult();
+    message.meta = (object.meta !== undefined && object.meta !== null)
+      ? UserFindFollowersResultMeta.fromPartial(object.meta)
+      : undefined;
+    message.followers = object.followers?.map((e) => Follower.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseFollower(): Follower {
+  return { id: "", createdAt: 0, updatedAt: 0, followeeId: "", followerId: "" };
+}
+
+export const Follower = {
+  encode(message: Follower, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.createdAt !== 0) {
+      writer.uint32(16).uint64(message.createdAt);
+    }
+    if (message.updatedAt !== 0) {
+      writer.uint32(24).uint64(message.updatedAt);
+    }
+    if (message.followeeId !== "") {
+      writer.uint32(34).string(message.followeeId);
+    }
+    if (message.followerId !== "") {
+      writer.uint32(42).string(message.followerId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Follower {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseFollower();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.createdAt = longToNumber(reader.uint64() as Long);
+          continue;
+        case 3:
+          if (tag !== 24) {
+            break;
+          }
+
+          message.updatedAt = longToNumber(reader.uint64() as Long);
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.followeeId = reader.string();
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.followerId = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Follower {
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
+      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
+      followeeId: isSet(object.followeeId) ? String(object.followeeId) : "",
+      followerId: isSet(object.followerId) ? String(object.followerId) : "",
+    };
+  },
+
+  toJSON(message: Follower): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.createdAt !== 0) {
+      obj.createdAt = Math.round(message.createdAt);
+    }
+    if (message.updatedAt !== 0) {
+      obj.updatedAt = Math.round(message.updatedAt);
+    }
+    if (message.followeeId !== "") {
+      obj.followeeId = message.followeeId;
+    }
+    if (message.followerId !== "") {
+      obj.followerId = message.followerId;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<Follower>): Follower {
+    return Follower.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<Follower>): Follower {
+    const message = createBaseFollower();
+    message.id = object.id ?? "";
+    message.createdAt = object.createdAt ?? 0;
+    message.updatedAt = object.updatedAt ?? 0;
+    message.followeeId = object.followeeId ?? "";
+    message.followerId = object.followerId ?? "";
+    return message;
+  },
+};
+
+function createBaseUserFindFolloweesFilter(): UserFindFolloweesFilter {
+  return { followerId: "" };
+}
+
+export const UserFindFolloweesFilter = {
+  encode(message: UserFindFolloweesFilter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.followerId !== "") {
+      writer.uint32(10).string(message.followerId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesFilter {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFolloweesFilter();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.followerId = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFolloweesFilter {
+    return { followerId: isSet(object.followerId) ? String(object.followerId) : "" };
+  },
+
+  toJSON(message: UserFindFolloweesFilter): unknown {
+    const obj: any = {};
+    if (message.followerId !== "") {
+      obj.followerId = message.followerId;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFolloweesFilter>): UserFindFolloweesFilter {
+    return UserFindFolloweesFilter.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFolloweesFilter>): UserFindFolloweesFilter {
+    const message = createBaseUserFindFolloweesFilter();
+    message.followerId = object.followerId ?? "";
+    return message;
+  },
+};
+
+function createBaseUserFindFolloweesOpts(): UserFindFolloweesOpts {
+  return { limit: 0, offset: 0 };
+}
+
+export const UserFindFolloweesOpts = {
+  encode(message: UserFindFolloweesOpts, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.limit !== 0) {
+      writer.uint32(8).uint64(message.limit);
+    }
+    if (message.offset !== 0) {
+      writer.uint32(16).uint64(message.offset);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesOpts {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFolloweesOpts();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.limit = longToNumber(reader.uint64() as Long);
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.offset = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFolloweesOpts {
+    return {
+      limit: isSet(object.limit) ? Number(object.limit) : 0,
+      offset: isSet(object.offset) ? Number(object.offset) : 0,
+    };
+  },
+
+  toJSON(message: UserFindFolloweesOpts): unknown {
+    const obj: any = {};
+    if (message.limit !== 0) {
+      obj.limit = Math.round(message.limit);
+    }
+    if (message.offset !== 0) {
+      obj.offset = Math.round(message.offset);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFolloweesOpts>): UserFindFolloweesOpts {
+    return UserFindFolloweesOpts.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFolloweesOpts>): UserFindFolloweesOpts {
+    const message = createBaseUserFindFolloweesOpts();
+    message.limit = object.limit ?? 0;
+    message.offset = object.offset ?? 0;
+    return message;
+  },
+};
+
+function createBaseUserFindFolloweesInput(): UserFindFolloweesInput {
+  return { filter: undefined, opts: undefined };
+}
+
+export const UserFindFolloweesInput = {
+  encode(message: UserFindFolloweesInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.filter !== undefined) {
+      UserFindFolloweesFilter.encode(message.filter, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.opts !== undefined) {
+      UserFindFolloweesOpts.encode(message.opts, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFolloweesInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.filter = UserFindFolloweesFilter.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.opts = UserFindFolloweesOpts.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFolloweesInput {
+    return {
+      filter: isSet(object.filter) ? UserFindFolloweesFilter.fromJSON(object.filter) : undefined,
+      opts: isSet(object.opts) ? UserFindFolloweesOpts.fromJSON(object.opts) : undefined,
+    };
+  },
+
+  toJSON(message: UserFindFolloweesInput): unknown {
+    const obj: any = {};
+    if (message.filter !== undefined) {
+      obj.filter = UserFindFolloweesFilter.toJSON(message.filter);
+    }
+    if (message.opts !== undefined) {
+      obj.opts = UserFindFolloweesOpts.toJSON(message.opts);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFolloweesInput>): UserFindFolloweesInput {
+    return UserFindFolloweesInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFolloweesInput>): UserFindFolloweesInput {
+    const message = createBaseUserFindFolloweesInput();
+    message.filter = (object.filter !== undefined && object.filter !== null)
+      ? UserFindFolloweesFilter.fromPartial(object.filter)
+      : undefined;
+    message.opts = (object.opts !== undefined && object.opts !== null)
+      ? UserFindFolloweesOpts.fromPartial(object.opts)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseUserFindFolloweesResultMeta(): UserFindFolloweesResultMeta {
+  return { offset: 0 };
+}
+
+export const UserFindFolloweesResultMeta = {
+  encode(message: UserFindFolloweesResultMeta, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.offset !== 0) {
+      writer.uint32(8).uint64(message.offset);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesResultMeta {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFolloweesResultMeta();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.offset = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFolloweesResultMeta {
+    return { offset: isSet(object.offset) ? Number(object.offset) : 0 };
+  },
+
+  toJSON(message: UserFindFolloweesResultMeta): unknown {
+    const obj: any = {};
+    if (message.offset !== 0) {
+      obj.offset = Math.round(message.offset);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFolloweesResultMeta>): UserFindFolloweesResultMeta {
+    return UserFindFolloweesResultMeta.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFolloweesResultMeta>): UserFindFolloweesResultMeta {
+    const message = createBaseUserFindFolloweesResultMeta();
+    message.offset = object.offset ?? 0;
+    return message;
+  },
+};
+
+function createBaseUserFindFolloweesResult(): UserFindFolloweesResult {
+  return { meta: undefined, followees: [] };
+}
+
+export const UserFindFolloweesResult = {
+  encode(message: UserFindFolloweesResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.meta !== undefined) {
+      UserFindFolloweesResultMeta.encode(message.meta, writer.uint32(10).fork()).ldelim();
+    }
+    for (const v of message.followees) {
+      Followee.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): UserFindFolloweesResult {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUserFindFolloweesResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.meta = UserFindFolloweesResultMeta.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.followees.push(Followee.decode(reader, reader.uint32()));
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UserFindFolloweesResult {
+    return {
+      meta: isSet(object.meta) ? UserFindFolloweesResultMeta.fromJSON(object.meta) : undefined,
+      followees: Array.isArray(object?.followees) ? object.followees.map((e: any) => Followee.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: UserFindFolloweesResult): unknown {
+    const obj: any = {};
+    if (message.meta !== undefined) {
+      obj.meta = UserFindFolloweesResultMeta.toJSON(message.meta);
+    }
+    if (message.followees?.length) {
+      obj.followees = message.followees.map((e) => Followee.toJSON(e));
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<UserFindFolloweesResult>): UserFindFolloweesResult {
+    return UserFindFolloweesResult.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<UserFindFolloweesResult>): UserFindFolloweesResult {
+    const message = createBaseUserFindFolloweesResult();
+    message.meta = (object.meta !== undefined && object.meta !== null)
+      ? UserFindFolloweesResultMeta.fromPartial(object.meta)
+      : undefined;
+    message.followees = object.followees?.map((e) => Followee.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseFollowee(): Followee {
+  return { id: "", createdAt: 0, updatedAt: 0, followerId: "", followeeId: "" };
+}
+
+export const Followee = {
+  encode(message: Followee, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.createdAt !== 0) {
+      writer.uint32(16).uint64(message.createdAt);
+    }
+    if (message.updatedAt !== 0) {
+      writer.uint32(24).uint64(message.updatedAt);
+    }
+    if (message.followerId !== "") {
+      writer.uint32(34).string(message.followerId);
+    }
+    if (message.followeeId !== "") {
+      writer.uint32(42).string(message.followeeId);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): Followee {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseFollowee();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.createdAt = longToNumber(reader.uint64() as Long);
+          continue;
+        case 3:
+          if (tag !== 24) {
+            break;
+          }
+
+          message.updatedAt = longToNumber(reader.uint64() as Long);
+          continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.followerId = reader.string();
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.followeeId = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Followee {
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
+      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
+      followerId: isSet(object.followerId) ? String(object.followerId) : "",
+      followeeId: isSet(object.followeeId) ? String(object.followeeId) : "",
+    };
+  },
+
+  toJSON(message: Followee): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.createdAt !== 0) {
+      obj.createdAt = Math.round(message.createdAt);
+    }
+    if (message.updatedAt !== 0) {
+      obj.updatedAt = Math.round(message.updatedAt);
+    }
+    if (message.followerId !== "") {
+      obj.followerId = message.followerId;
+    }
+    if (message.followeeId !== "") {
+      obj.followeeId = message.followeeId;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<Followee>): Followee {
+    return Followee.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<Followee>): Followee {
+    const message = createBaseFollowee();
+    message.id = object.id ?? "";
+    message.createdAt = object.createdAt ?? 0;
+    message.updatedAt = object.updatedAt ?? 0;
+    message.followerId = object.followerId ?? "";
+    message.followeeId = object.followeeId ?? "";
+    return message;
+  },
+};
+
 function createBaseDummyJobPayload(): DummyJobPayload {
   return { id: "" };
 }
@@ -8284,72 +8318,6 @@ export interface PermissionServiceClient<CallOptionsExt = {}> {
   ): Promise<Empty>;
 }
 
-export type UserFollowServiceDefinition = typeof UserFollowServiceDefinition;
-export const UserFollowServiceDefinition = {
-  name: "UserFollowService",
-  fullName: "main.UserFollowService",
-  methods: {
-    createOne: {
-      name: "CreateOne",
-      requestType: UserFollowCreateOneInput,
-      requestStream: false,
-      responseType: Follower,
-      responseStream: false,
-      options: {},
-    },
-    removeOne: {
-      name: "RemoveOne",
-      requestType: UserFollowRemoveOneInput,
-      requestStream: false,
-      responseType: Follower,
-      responseStream: false,
-      options: {},
-    },
-    findFollowers: {
-      name: "FindFollowers",
-      requestType: UserFindFollowersInput,
-      requestStream: false,
-      responseType: UserFindFollowersResult,
-      responseStream: false,
-      options: {},
-    },
-    findFollowees: {
-      name: "FindFollowees",
-      requestType: UserFindFolloweesInput,
-      requestStream: false,
-      responseType: UserFindFolloweesResult,
-      responseStream: false,
-      options: {},
-    },
-  },
-} as const;
-
-export interface UserFollowServiceImplementation<CallContextExt = {}> {
-  createOne(request: UserFollowCreateOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Follower>>;
-  removeOne(request: UserFollowRemoveOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Follower>>;
-  findFollowers(
-    request: UserFindFollowersInput,
-    context: CallContext & CallContextExt,
-  ): Promise<DeepPartial<UserFindFollowersResult>>;
-  findFollowees(
-    request: UserFindFolloweesInput,
-    context: CallContext & CallContextExt,
-  ): Promise<DeepPartial<UserFindFolloweesResult>>;
-}
-
-export interface UserFollowServiceClient<CallOptionsExt = {}> {
-  createOne(request: DeepPartial<UserFollowCreateOneInput>, options?: CallOptions & CallOptionsExt): Promise<Follower>;
-  removeOne(request: DeepPartial<UserFollowRemoveOneInput>, options?: CallOptions & CallOptionsExt): Promise<Follower>;
-  findFollowers(
-    request: DeepPartial<UserFindFollowersInput>,
-    options?: CallOptions & CallOptionsExt,
-  ): Promise<UserFindFollowersResult>;
-  findFollowees(
-    request: DeepPartial<UserFindFolloweesInput>,
-    options?: CallOptions & CallOptionsExt,
-  ): Promise<UserFindFolloweesResult>;
-}
-
 export type UserServiceDefinition = typeof UserServiceDefinition;
 export const UserServiceDefinition = {
   name: "UserService",
@@ -8583,6 +8551,72 @@ export interface MessageServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<MessageFindByConversationInput>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<MessageFindByConversationResult>;
+}
+
+export type UserFollowServiceDefinition = typeof UserFollowServiceDefinition;
+export const UserFollowServiceDefinition = {
+  name: "UserFollowService",
+  fullName: "main.UserFollowService",
+  methods: {
+    createOne: {
+      name: "CreateOne",
+      requestType: UserFollowCreateOneInput,
+      requestStream: false,
+      responseType: Follower,
+      responseStream: false,
+      options: {},
+    },
+    removeOne: {
+      name: "RemoveOne",
+      requestType: UserFollowRemoveOneInput,
+      requestStream: false,
+      responseType: Follower,
+      responseStream: false,
+      options: {},
+    },
+    findFollowers: {
+      name: "FindFollowers",
+      requestType: UserFindFollowersInput,
+      requestStream: false,
+      responseType: UserFindFollowersResult,
+      responseStream: false,
+      options: {},
+    },
+    findFollowees: {
+      name: "FindFollowees",
+      requestType: UserFindFolloweesInput,
+      requestStream: false,
+      responseType: UserFindFolloweesResult,
+      responseStream: false,
+      options: {},
+    },
+  },
+} as const;
+
+export interface UserFollowServiceImplementation<CallContextExt = {}> {
+  createOne(request: UserFollowCreateOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Follower>>;
+  removeOne(request: UserFollowRemoveOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Follower>>;
+  findFollowers(
+    request: UserFindFollowersInput,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<UserFindFollowersResult>>;
+  findFollowees(
+    request: UserFindFolloweesInput,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<UserFindFolloweesResult>>;
+}
+
+export interface UserFollowServiceClient<CallOptionsExt = {}> {
+  createOne(request: DeepPartial<UserFollowCreateOneInput>, options?: CallOptions & CallOptionsExt): Promise<Follower>;
+  removeOne(request: DeepPartial<UserFollowRemoveOneInput>, options?: CallOptions & CallOptionsExt): Promise<Follower>;
+  findFollowers(
+    request: DeepPartial<UserFindFollowersInput>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<UserFindFollowersResult>;
+  findFollowees(
+    request: DeepPartial<UserFindFolloweesInput>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<UserFindFolloweesResult>;
 }
 
 export type WorkersServiceDefinition = typeof WorkersServiceDefinition;

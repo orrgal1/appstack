@@ -1,6 +1,5 @@
 import { Controller, UseInterceptors } from '@nestjs/common';
-import { GrpcMethod, Payload, RpcException } from '@nestjs/microservices';
-import * as grpc from '@grpc/grpc-js';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { DummyLogic } from './dummy.logic';
 import {
   Dummy,
@@ -21,6 +20,7 @@ import {
   RpcRateLimitReadInterceptor,
   RpcRateLimitWriteInterceptor,
 } from '../../../libs/gateway/rpc/rpcGateway.module';
+import { RpcNotFoundException } from '../../../libs/exceptions/rpcNotFoundException';
 
 @Controller()
 export class DummyController {
@@ -34,10 +34,7 @@ export class DummyController {
   async findOne(@Payload() input: DummyFindOneInput): Promise<Dummy> {
     const found = await this.logic.findOne(input);
     if (!found) {
-      throw new RpcException({
-        message: 'not found',
-        code: grpc.status.NOT_FOUND,
-      });
+      throw new RpcNotFoundException();
     }
     return found;
   }

@@ -11,11 +11,11 @@ import {
 } from '../../../proto/interfaces';
 import { UserFollowLogic } from './userFollow.logic';
 import {
+  RpcAuthenticatedUserId,
   RpcAuthEntityAssertWriteableInterceptor,
   RpcAuthEntityCreateOwnershipInterceptor,
   RpcAuthRequiredInterceptor,
 } from '../../../libs/auth/rpc/rpcAuth.module';
-import { GrpcAuthenticatedUserId } from '../../../libs/auth/rpc/rpcAuthenticatedUserId.decorator';
 import { RpcPermissionDeniedException } from '../../../libs/auth/rpc/rpcPermissionDeniedException';
 import {
   RpcRateLimitReadInterceptor,
@@ -51,7 +51,7 @@ export class UserFollowController {
   @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('UserFollowService', 'FindFollowers')
   async findFollowers(
-    @GrpcAuthenticatedUserId() userId: string,
+    @RpcAuthenticatedUserId() userId: string,
     @Payload() input: UserFindFollowersInput,
   ): Promise<UserFindFollowersResult> {
     if (userId === input.filter.followeeId) {
@@ -63,7 +63,7 @@ export class UserFollowController {
   @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('UserFollowService', 'FindFollowees')
   async findFollowees(
-    @GrpcAuthenticatedUserId() userId: string,
+    @RpcAuthenticatedUserId() userId: string,
     @Payload() input: UserFindFolloweesInput,
   ): Promise<UserFindFolloweesResult> {
     if (userId === input.filter.followerId) {

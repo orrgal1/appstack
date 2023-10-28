@@ -35,7 +35,7 @@ export class RpcGatewayUtils {
           reservoirIncreaseMaximum: limit,
           minTime: 1,
           maxConcurrent: limit,
-          highWater: limit,
+          highWater: 0,
           strategy: BottleNeck.strategy.BLOCK,
         },
       );
@@ -44,7 +44,7 @@ export class RpcGatewayUtils {
           limiter.schedule(async () => {
             return 1;
           }),
-          new Promise((r) => setTimeout(() => r(0), 60000 / limit)),
+          new Promise((r) => setTimeout(() => r(0), 100)),
         ]);
         return result;
       };

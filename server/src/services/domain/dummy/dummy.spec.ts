@@ -2,6 +2,7 @@ import { createChannel, createClient, Metadata } from 'nice-grpc';
 import { main, shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
 import {
+  getMetadata,
   isE2E,
   login,
   sleep,
@@ -155,19 +156,66 @@ describe('Dummy', () => {
       process.env.WRITE_RPM_LIMIT = rpmLimit;
     });
 
-    test('Exceed write rate limit', async () => {
+    test('CreateOne: Exceed rate limit', async () => {
       const input = {
         text: uuid(),
       };
+      const metadata1 = await getMetadata(ports);
       const bombard = async () => {
         const requests = [];
         for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
-          requests.push(client.createOne(input, { metadata }));
+          requests.push(client.createOne(input, { metadata: metadata1 }));
         }
         return await Promise.all(requests);
       };
       await expect(bombard()).rejects.toThrow(
         '/main.DummyService/CreateOne UNKNOWN: rate limit exceeded',
+      );
+    });
+
+    test('UpdateOne: Exceed rate limit', async () => {
+      const input = {
+        text: uuid(),
+      };
+      const metadata1 = await getMetadata(ports);
+      const created = await client.createOne(input, { metadata: metadata1 });
+      const bombard = async () => {
+        const requests = [];
+        for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
+          requests.push(
+            client.updateOne(
+              { id: created.id, ...input },
+              { metadata: metadata1 },
+            ),
+          );
+        }
+        return await Promise.all(requests);
+      };
+      await expect(bombard()).rejects.toThrow(
+        '/main.DummyService/UpdateOne UNKNOWN: rate limit exceeded',
+      );
+    });
+
+    test('RemoveOne: Exceed rate limit', async () => {
+      const input = {
+        text: uuid(),
+      };
+      const metadata1 = await getMetadata(ports);
+      const created = await client.createOne(input, { metadata: metadata1 });
+      const bombard = async () => {
+        const requests = [];
+        for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
+          requests.push(
+            client.removeOne(
+              { id: created.id, ...input },
+              { metadata: metadata1 },
+            ),
+          );
+        }
+        return await Promise.all(requests);
+      };
+      await expect(bombard()).rejects.toThrow(
+        '/main.DummyService/RemoveOne UNKNOWN: rate limit exceeded',
       );
     });
   });

@@ -1,6 +1,7 @@
 import * as detect from 'detect-port';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
+import { Metadata } from 'nice-grpc';
 
 export function isE2E() {
   return process.env.E2E;
@@ -18,6 +19,15 @@ export async function login(ports: {
     input,
   );
   return response.data;
+}
+
+export async function getMetadata(ports: {
+  httpInternal: number;
+}): Promise<Metadata> {
+  const { accessToken } = await login(ports);
+  const metadata = new Metadata();
+  metadata.set('jwt', accessToken);
+  return metadata;
 }
 
 const getPorts = async (): Promise<string[]> => {

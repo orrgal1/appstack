@@ -1,7 +1,13 @@
 import { createChannel, createClient, Metadata } from 'nice-grpc';
 import { main, shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, login, useHost, usePorts } from '../../../../tests/utils';
+import {
+  isE2E,
+  login,
+  sleep,
+  useHost,
+  usePorts,
+} from '../../../../tests/utils';
 import {
   DummyServiceClient,
   DummyServiceDefinition,
@@ -28,6 +34,7 @@ describe('Dummy', () => {
     const channel = createChannel(`${host}:${ports.proto}`);
     client = createClient(DummyServiceDefinition, channel);
     if (!isE2E()) await main({ ports });
+    await sleep(1000);
     const { accessToken } = await login(ports);
     metadata.set('jwt', accessToken);
   });

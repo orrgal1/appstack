@@ -28,7 +28,7 @@ export class RpcGatewayUtils {
       const limiter = this.redis.getGroupLimiter(
         `${key.toLowerCase()}/${userId}`,
         {
-          id: key.toLowerCase(),
+          id: `${key.toLowerCase()}:${limit}`,
           reservoir: limit,
           reservoirRefreshAmount: limit,
           reservoirRefreshInterval: 60000,

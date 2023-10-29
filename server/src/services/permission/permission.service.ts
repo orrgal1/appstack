@@ -1,8 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ArangodbService } from '../../../libs/arangodb/arangodb.service';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ArangodbService } from '../../libs/arangodb/arangodb.service';
 import { DocumentCollection } from 'arangojs/collection';
 import {
   Permission,
+  PermissionCreateManyInput,
   PermissionCreateOneInput,
   PermissionFindAllActionsInput,
   PermissionFindByPermittedInput,
@@ -12,12 +13,16 @@ import {
   PermissionRemoveAllActionsInput,
   PermissionRemoveOneInput,
   PermissionRemoveWhereInput,
+  PermissionRemoveWhereManyInput,
+  Permissions,
   PermissionValidateOneInput,
   PermissionValidateOneResult,
-} from '../../../proto/interfaces';
+} from '../../proto/interfaces';
+import { PermissionFindWhereManyInput } from 'proto/interfaces';
 
 @Injectable()
 export class PermissionService implements OnModuleInit {
+  private logger: Logger = new Logger(PermissionService.name);
   collection: DocumentCollection;
 
   constructor(private arangodb: ArangodbService) {
@@ -32,6 +37,15 @@ export class PermissionService implements OnModuleInit {
         })
       ).new,
     );
+  }
+
+  async createMany(input: PermissionCreateManyInput): Promise<Permissions> {
+    const permissions = await Promise.all(
+      input.permittedEntityIds.map((permittedEntityId) => {
+        return this.createOne({ ...input, permittedEntityId });
+      }),
+    );
+    return { permissions };
   }
 
   async findOne(input: PermissionFindOneInput): Promise<Permission | void> {
@@ -66,6 +80,33 @@ export class PermissionService implements OnModuleInit {
     if (result?.length > 0) {
       return this.arangodb.utils.format(result[0]);
     }
+  }
+
+  async findWhereMany(
+    input: PermissionFindWhereManyInput,
+  ): Promise<Permissions> {
+    const query = `
+      FOR doc IN permission
+      FILTER doc.entity == @entity 
+      AND doc.entityId == @entityId
+      AND doc.permittedEntity == @permittedEntity
+      AND doc.permittedEntityId IN @permittedEntityIds
+      AND doc.action == @action
+      LIMIT 1
+      RETURN doc
+    `;
+    const vars = {
+      ...input,
+    };
+    const cursor = await this.arangodb.db.query(query, vars);
+    const results = await cursor.all();
+    if (results?.length > 0) {
+      const permissions = results.map((result) =>
+        this.arangodb.utils.format(result),
+      );
+      return { permissions };
+    }
+    return { permissions: [] };
   }
 
   async findWhereOrStar(
@@ -124,6 +165,26 @@ export class PermissionService implements OnModuleInit {
     if (found) {
       await this.collection.remove(found.id);
     }
+  }
+
+  async removeWhereMany(input: PermissionRemoveWhereManyInput): Promise<void> {
+    const { permissions } = await this.findWhereMany(input);
+    await Promise.all(
+      permissions.map(async (permission) => {
+        try {
+          await this.removeOne({ id: permission.id });
+        } catch (e) {
+          this.logger.error(
+            {
+              place: 'removeWhereMany',
+              error: e.message,
+            },
+            e.stack,
+            PermissionService.name,
+          );
+        }
+      }),
+    );
   }
 
   async findByPermitted(

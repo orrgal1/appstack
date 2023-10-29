@@ -22,6 +22,7 @@ import {
   RpcRateLimitWriteInterceptor,
 } from '../../../libs/gateway/rpc/rpcGateway.module';
 
+// TODO: conversations should be readable by all participants
 @Controller()
 export class ConversationController {
   constructor(private logic: ConversationLogic) {}

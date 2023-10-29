@@ -8,7 +8,7 @@ import {
   UserUpdateOneInput,
 } from '../../../proto/interfaces';
 import { UserService } from './user.service';
-import { PermissionService } from '../permission/permission.service';
+import { PermissionService } from '../../permission/permission.service';
 
 @Injectable()
 export class UserLogic {

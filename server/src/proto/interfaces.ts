@@ -119,134 +119,6 @@ export interface LoginRemoveOneInput {
   id: string;
 }
 
-export interface Permission {
-  id: string;
-  createdAt: number;
-  updatedAt: number;
-  entity: string;
-  entityId: string;
-  permittedEntity: string;
-  permittedEntityId: string;
-  action: string;
-}
-
-export interface PermissionCreateOneInput {
-  entity: string;
-  entityId: string;
-  permittedEntity: string;
-  permittedEntityId: string;
-  action: string;
-}
-
-export interface PermissionFindOneInput {
-  id: string;
-}
-
-export interface PermissionFindWhereInput {
-  entity: string;
-  entityId: string;
-  permittedEntity: string;
-  permittedEntityId: string;
-  action: string;
-}
-
-export interface PermissionFindWhereOrStarInput {
-  entity: string;
-  entityId: string;
-  permittedEntity: string;
-  permittedEntityId: string;
-  action: string;
-}
-
-export interface Permitted {
-  permittedEntity: string;
-  permittedEntityId: string;
-}
-
-export interface PermissionValidateOneInput {
-  entity: string;
-  entityId: string;
-  action: string;
-  permitted: Permitted[];
-}
-
-export interface PermissionValidateOneResult {
-  validated: boolean;
-}
-
-export interface PermissionRemoveOneInput {
-  id: string;
-}
-
-export interface PermissionRemoveWhereInput {
-  entity: string;
-  entityId: string;
-  permittedEntity: string;
-  permittedEntityId: string;
-  action: string;
-}
-
-export interface PermissionFindByPermittedFilter {
-  permittedEntity: string;
-  permittedEntityId: string;
-}
-
-export interface PermissionFindByPermittedOpts {
-  limit: number;
-  offset: number;
-}
-
-export interface PermissionFindByPermittedInput {
-  filter: PermissionFindByPermittedFilter | undefined;
-  opts: PermissionFindByPermittedOpts | undefined;
-}
-
-export interface PermissionFindByPermittedResultMeta {
-  offset: number;
-}
-
-export interface PermissionFindByPermittedResult {
-  meta: PermissionFindByPermittedResultMeta | undefined;
-  results: Permission[];
-}
-
-export interface PermissionFindAllActionsFilter {
-  entity: string;
-  entityId: string;
-  permittedEntity: string;
-  permittedEntityId: string;
-}
-
-export interface PermissionFindAllActionsOpts {
-  limit: number;
-  offset: number;
-}
-
-export interface PermissionFindAllActionsInput {
-  filter: PermissionFindAllActionsFilter | undefined;
-  opts: PermissionFindAllActionsOpts | undefined;
-}
-
-export interface PermissionFindAllActionsResultMeta {
-  offset: number;
-}
-
-export interface PermissionFindAllActionsResult {
-  meta: PermissionFindAllActionsResultMeta | undefined;
-  results: Permission[];
-}
-
-export interface PermissionRemoveAllActionsFilter {
-  entity: string;
-  entityId: string;
-  permittedEntity: string;
-  permittedEntityId: string;
-}
-
-export interface PermissionRemoveAllActionsInput {
-  filter: PermissionRemoveAllActionsFilter | undefined;
-}
-
 export interface User {
   id: string;
   createdAt: number;
@@ -425,6 +297,162 @@ export interface MessageFindByConversationResult {
   results: Message[];
 }
 
+export interface Permission {
+  id: string;
+  createdAt: number;
+  updatedAt: number;
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityId: string;
+  action: string;
+}
+
+export interface Permissions {
+  permissions: Permission[];
+}
+
+export interface PermissionCreateOneInput {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityId: string;
+  action: string;
+}
+
+export interface PermissionCreateManyInput {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityIds: string[];
+  action: string;
+}
+
+export interface PermissionFindOneInput {
+  id: string;
+}
+
+export interface PermissionFindWhereInput {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityId: string;
+  action: string;
+}
+
+export interface PermissionFindWhereManyInput {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityIds: string[];
+  action: string;
+}
+
+export interface PermissionFindWhereOrStarInput {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityId: string;
+  action: string;
+}
+
+export interface Permitted {
+  permittedEntity: string;
+  permittedEntityId: string;
+}
+
+export interface PermissionValidateOneInput {
+  entity: string;
+  entityId: string;
+  action: string;
+  permitted: Permitted[];
+}
+
+export interface PermissionValidateOneResult {
+  validated: boolean;
+}
+
+export interface PermissionRemoveOneInput {
+  id: string;
+}
+
+export interface PermissionRemoveWhereInput {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityId: string;
+  action: string;
+}
+
+export interface PermissionRemoveWhereManyInput {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityIds: string[];
+  action: string;
+}
+
+export interface PermissionFindByPermittedFilter {
+  permittedEntity: string;
+  permittedEntityId: string;
+}
+
+export interface PermissionFindByPermittedOpts {
+  limit: number;
+  offset: number;
+}
+
+export interface PermissionFindByPermittedInput {
+  filter: PermissionFindByPermittedFilter | undefined;
+  opts: PermissionFindByPermittedOpts | undefined;
+}
+
+export interface PermissionFindByPermittedResultMeta {
+  offset: number;
+}
+
+export interface PermissionFindByPermittedResult {
+  meta: PermissionFindByPermittedResultMeta | undefined;
+  results: Permission[];
+}
+
+export interface PermissionFindAllActionsFilter {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityId: string;
+}
+
+export interface PermissionFindAllActionsOpts {
+  limit: number;
+  offset: number;
+}
+
+export interface PermissionFindAllActionsInput {
+  filter: PermissionFindAllActionsFilter | undefined;
+  opts: PermissionFindAllActionsOpts | undefined;
+}
+
+export interface PermissionFindAllActionsResultMeta {
+  offset: number;
+}
+
+export interface PermissionFindAllActionsResult {
+  meta: PermissionFindAllActionsResultMeta | undefined;
+  results: Permission[];
+}
+
+export interface PermissionRemoveAllActionsFilter {
+  entity: string;
+  entityId: string;
+  permittedEntity: string;
+  permittedEntityId: string;
+}
+
+export interface PermissionRemoveAllActionsInput {
+  filter: PermissionRemoveAllActionsFilter | undefined;
+}
+
 export interface UserFollowCreateOneInput {
   followerId: string;
   followeeId: string;
@@ -529,25 +557,6 @@ export interface LoginService {
   RemoveOne(request: LoginRemoveOneInput): Promise<Empty>;
 }
 
-export interface PermissionService {
-  CreateOne(request: PermissionCreateOneInput): Promise<Permission>;
-  FindOne(request: PermissionFindOneInput): Promise<Permission>;
-  FindWhere(request: PermissionFindWhereInput): Promise<Permission>;
-  FindWhereOrStar(request: PermissionFindWhereOrStarInput): Promise<Permission>;
-  FindByPermitted(
-    request: PermissionFindByPermittedInput,
-  ): Promise<PermissionFindByPermittedResult>;
-  FindAllActions(
-    request: PermissionFindAllActionsInput,
-  ): Promise<PermissionFindAllActionsResult>;
-  ValidateOne(
-    request: PermissionValidateOneInput,
-  ): Promise<PermissionValidateOneResult>;
-  RemoveOne(request: PermissionRemoveOneInput): Promise<Empty>;
-  RemoveWhere(request: PermissionRemoveWhereInput): Promise<Empty>;
-  RemoveAllActions(request: PermissionRemoveAllActionsInput): Promise<Empty>;
-}
-
 export interface UserService {
   CreateOne(request: UserCreateOneInput): Promise<User>;
   UpdateOne(request: UserUpdateOneInput): Promise<User>;
@@ -579,6 +588,28 @@ export interface MessageService {
   FindByConversation(
     request: MessageFindByConversationInput,
   ): Promise<MessageFindByConversationResult>;
+}
+
+export interface PermissionService {
+  CreateOne(request: PermissionCreateOneInput): Promise<Permission>;
+  CreateMany(request: PermissionCreateManyInput): Promise<Permissions>;
+  FindOne(request: PermissionFindOneInput): Promise<Permission>;
+  FindWhere(request: PermissionFindWhereInput): Promise<Permission>;
+  FindWhereMany(request: PermissionFindWhereInput): Promise<Permissions>;
+  FindWhereOrStar(request: PermissionFindWhereOrStarInput): Promise<Permission>;
+  FindByPermitted(
+    request: PermissionFindByPermittedInput,
+  ): Promise<PermissionFindByPermittedResult>;
+  FindAllActions(
+    request: PermissionFindAllActionsInput,
+  ): Promise<PermissionFindAllActionsResult>;
+  ValidateOne(
+    request: PermissionValidateOneInput,
+  ): Promise<PermissionValidateOneResult>;
+  RemoveOne(request: PermissionRemoveOneInput): Promise<Empty>;
+  RemoveWhere(request: PermissionRemoveWhereInput): Promise<Empty>;
+  RemoveWhereMany(request: PermissionRemoveWhereManyInput): Promise<Empty>;
+  RemoveAllActions(request: PermissionRemoveAllActionsInput): Promise<Empty>;
 }
 
 export interface UserFollowService {

@@ -1,18 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import {
   Permission,
+  PermissionCreateManyInput,
   PermissionCreateOneInput,
   PermissionFindAllActionsInput,
   PermissionFindByPermittedInput,
   PermissionFindOneInput,
   PermissionFindWhereInput,
+  PermissionFindWhereManyInput,
   PermissionFindWhereOrStarInput,
   PermissionRemoveAllActionsInput,
   PermissionRemoveOneInput,
   PermissionRemoveWhereInput,
+  PermissionRemoveWhereManyInput,
+  Permissions,
   PermissionValidateOneInput,
   PermissionValidateOneResult,
-} from '../../../proto/interfaces';
+} from '../../proto/interfaces';
 import { PermissionService } from './permission.service';
 
 @Injectable()
@@ -23,12 +27,22 @@ export class PermissionLogic {
     return await this.service.createOne(input);
   }
 
+  async createMany(input: PermissionCreateManyInput): Promise<Permissions> {
+    return await this.service.createMany(input);
+  }
+
   async findOne(input: PermissionFindOneInput): Promise<Permission | void> {
     return await this.service.findOne(input);
   }
 
   async findWhere(input: PermissionFindWhereInput): Promise<Permission | void> {
     return await this.service.findWhere(input);
+  }
+
+  async findWhereMany(
+    input: PermissionFindWhereManyInput,
+  ): Promise<Permissions> {
+    return await this.service.findWhereMany(input);
   }
 
   async findWhereOrStar(
@@ -51,6 +65,10 @@ export class PermissionLogic {
     input: PermissionRemoveWhereInput,
   ): Promise<Permission | void> {
     return await this.service.removeWhere(input);
+  }
+
+  async removeWhereMany(input: PermissionRemoveWhereManyInput): Promise<void> {
+    return await this.service.removeWhereMany(input);
   }
 
   async findByPermitted(

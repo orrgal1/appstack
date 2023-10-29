@@ -2,10 +2,10 @@ import { createChannel, createClient } from 'nice-grpc';
 import {
   PermissionServiceClient,
   PermissionServiceDefinition,
-} from '../../../libs/client';
-import { shutdownComponents } from '../../../main/main';
+} from '../../libs/client';
+import { shutdownComponents } from '../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, runMain, useHost, usePorts } from '../../../../tests/utils';
+import { isE2E, runMain, useHost, usePorts } from '../../../tests/utils';
 
 describe('Permission', () => {
   let client: PermissionServiceClient;

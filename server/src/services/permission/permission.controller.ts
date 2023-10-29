@@ -2,25 +2,29 @@ import { Controller, UseInterceptors } from '@nestjs/common';
 import { GrpcMethod, Payload } from '@nestjs/microservices';
 import {
   Permission,
+  PermissionCreateManyInput,
   PermissionCreateOneInput,
   PermissionFindAllActionsInput,
   PermissionFindByPermittedInput,
   PermissionFindByPermittedResult,
   PermissionFindOneInput,
   PermissionFindWhereInput,
+  PermissionFindWhereManyInput,
   PermissionFindWhereOrStarInput,
   PermissionRemoveAllActionsInput,
   PermissionRemoveOneInput,
   PermissionRemoveWhereInput,
+  PermissionRemoveWhereManyInput,
+  Permissions,
   PermissionValidateOneInput,
   PermissionValidateOneResult,
-} from '../../../proto/interfaces';
+} from '../../proto/interfaces';
 import { PermissionLogic } from './permission.logic';
 import {
   RpcAuthAssertInternalInterceptor,
   RpcPermissionDeniedException,
-} from '../../../libs/auth/rpc/rpcAuth.module';
-import { RpcNotFoundException } from '../../../libs/exceptions/rpcNotFoundException';
+} from '../../libs/auth/rpc/rpcAuth.module';
+import { RpcNotFoundException } from '../../libs/exceptions/rpcNotFoundException';
 
 @Controller()
 export class PermissionController {
@@ -42,6 +46,18 @@ export class PermissionController {
     @Payload() input: PermissionFindWhereInput,
   ): Promise<Permission> {
     const found = await this.logic.findWhere(input);
+    if (!found) {
+      throw new RpcNotFoundException();
+    }
+    return found;
+  }
+
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('PermissionService', 'FindWhereMany')
+  async findWhereMany(
+    @Payload() input: PermissionFindWhereManyInput,
+  ): Promise<Permissions> {
+    const found = await this.logic.findWhereMany(input);
     if (!found) {
       throw new RpcNotFoundException();
     }
@@ -79,6 +95,14 @@ export class PermissionController {
   }
 
   @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('PermissionService', 'CreateMany')
+  async createMany(
+    @Payload() input: PermissionCreateManyInput,
+  ): Promise<Permissions> {
+    return await this.logic.createMany(input);
+  }
+
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
   @GrpcMethod('PermissionService', 'RemoveOne')
   async removeOne(@Payload() input: PermissionRemoveOneInput): Promise<void> {
     await this.logic.removeOne(input);
@@ -90,6 +114,14 @@ export class PermissionController {
     @Payload() input: PermissionRemoveWhereInput,
   ): Promise<void> {
     await this.logic.removeWhere(input);
+  }
+
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('PermissionService', 'RemoveWhereMany')
+  async removeWhereMany(
+    @Payload() input: PermissionRemoveWhereManyInput,
+  ): Promise<void> {
+    await this.logic.removeWhereMany(input);
   }
 
   @UseInterceptors(RpcAuthAssertInternalInterceptor)

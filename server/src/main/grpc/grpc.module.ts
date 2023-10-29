@@ -4,6 +4,7 @@ import { IdentityServicesModule } from '../../services/identity/identity.service
 import { InfraServicesModule } from '../../services/infra/infra.services.module';
 import { SocialServicesModule } from '../../services/social/social.services.module';
 import { MessagingServicesModule } from '../../services/messaging/messaging.services.module';
+import { PermissionModule } from '../../services/permission/permission.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MessagingServicesModule } from '../../services/messaging/messaging.serv
     InfraServicesModule,
     SocialServicesModule,
     MessagingServicesModule,
+    PermissionModule,
   ],
 })
 export class GrpcModule {}

@@ -19,7 +19,7 @@ export async function runMain(opts: {
   };
 }) {
   await main({ ports: opts.ports });
-  await sleep(1000);
+  await sleep(500);
 }
 
 export async function login(ports: {

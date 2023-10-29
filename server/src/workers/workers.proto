@@ -7,6 +7,11 @@ message PublishJobResult {
   string jobId = 1;
 }
 
+message WorkersHealthCheckResult {
+  bool ok = 1;
+}
+
 service WorkersService {
   rpc PublishJob (PublishJobInput) returns (PublishJobResult) {}
+  rpc HealthCheck (google.protobuf.Empty) returns (WorkersHealthCheckResult) {}
 }

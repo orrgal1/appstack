@@ -1,11 +1,11 @@
 import { createChannel, createClient, Metadata } from 'nice-grpc';
-import { shutdownComponents } from '../../../main/main';
+import { shutdownComponents } from '../../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, runMain, useHost, usePorts } from '../../../../tests/utils';
+import { isE2E, runMain, useHost, usePorts } from '../../../../../tests/utils';
 import {
   DummyServiceClient,
   DummyServiceDefinition,
-} from '../../../libs/client';
+} from '../../../../libs/client';
 
 describe('Dummy: Hack Attempts', () => {
   let client: DummyServiceClient;

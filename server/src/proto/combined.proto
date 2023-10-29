@@ -302,6 +302,11 @@ message HealthChekcResult {
     bool ok = 1;
 }
 
+message IntRange {
+  uint32 min = 1;
+  uint32 max = 2;
+}
+
 message Conversation {
     string id = 1;
     uint64 createdAt = 2;
@@ -417,11 +422,6 @@ message MessageFindByConversationResult {
     repeated Message results = 2;
 }
 
-message IntRange {
-  uint32 min = 1;
-  uint32 max = 2;
-}
-
 message UserFollowCreateOneInput {
     string followerId = 1;
     string followeeId = 2;
@@ -505,6 +505,10 @@ message PublishJobResult {
   string jobId = 1;
 }
 
+message WorkersHealthCheckResult {
+  bool ok = 1;
+}
+
 service DummyService {
   rpc CreateOne (DummyCreateOneInput) returns (Dummy) {}
   rpc UpdateOne (DummyUpdateOneInput) returns (Dummy) {}
@@ -573,6 +577,7 @@ service UserFollowService {
 
 service WorkersService {
   rpc PublishJob (PublishJobInput) returns (PublishJobResult) {}
+  rpc HealthCheck (google.protobuf.Empty) returns (WorkersHealthCheckResult) {}
 }
 
 enum Maturity {

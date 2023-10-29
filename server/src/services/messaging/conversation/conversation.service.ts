@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ArangodbService } from '../../../../libs/arangodb/arangodb.service';
+import { ArangodbService } from '../../../libs/arangodb/arangodb.service';
 import { DocumentCollection } from 'arangojs/collection';
 import {
   Conversation,
@@ -8,7 +8,7 @@ import {
   ConversationFindOneInput,
   ConversationRemoveOneInput,
   ConversationUpdateOneInput,
-} from '../../../../proto/interfaces';
+} from '../../../proto/interfaces';
 
 @Injectable()
 export class ConversationService implements OnModuleInit {

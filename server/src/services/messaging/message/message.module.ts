@@ -2,8 +2,8 @@ import { Global, Module } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { MessageController } from './message.controller';
 import { MessageLogic } from './message.logic';
-import { PubsubModule } from '../../../../libs/pubsub/pubsub.module';
-import { RpcGatewayModule } from '../../../../libs/gateway/rpc/rpcGateway.module';
+import { PubsubModule } from '../../../libs/pubsub/pubsub.module';
+import { RpcGatewayModule } from '../../../libs/gateway/rpc/rpcGateway.module';
 
 @Global()
 @Module({

@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ArangodbService } from '../../../../libs/arangodb/arangodb.service';
+import { ArangodbService } from '../../../libs/arangodb/arangodb.service';
 import { DocumentCollection } from 'arangojs/collection';
 import {
   Message,
@@ -9,7 +9,7 @@ import {
   MessageFindUniqueInput,
   MessageRemoveOneInput,
   MessageUpdateOneInput,
-} from '../../../../proto/interfaces';
+} from '../../../proto/interfaces';
 
 // TODO: implement seenBy etc.
 

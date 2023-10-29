@@ -37,11 +37,11 @@ export class GrpcLocalHealthIndicator extends HealthIndicator {
     return this.getStatus(key, true, { skipped: true });
   }
 
-  async isHealthyExternal(key: string): Promise<HealthIndicatorResult> {
-    return await this.isHealthy(key, this.client);
+  async isHealthyExternal(): Promise<HealthIndicatorResult> {
+    return await this.isHealthy('PROTO', this.client);
   }
 
-  async isHealthyInternal(key: string): Promise<HealthIndicatorResult> {
-    return await this.isHealthy(key, this.clientInternal);
+  async isHealthyInternal(): Promise<HealthIndicatorResult> {
+    return await this.isHealthy('PROTO_INTERNAL', this.clientInternal);
   }
 }

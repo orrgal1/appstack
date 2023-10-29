@@ -4,8 +4,8 @@ import {
   ConversationServiceDefinition,
   MessageServiceClient,
   MessageServiceDefinition,
-} from '../../../../libs/client';
-import { shutdownComponents } from '../../../../main/main';
+} from '../../../libs/client';
+import { shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
 import {
   isE2E,
@@ -14,8 +14,8 @@ import {
   sleep,
   useHost,
   usePorts,
-} from '../../../../../tests/utils';
-import { MessageCreateOneInput } from '../../../../proto/interfaces';
+} from '../../../../tests/utils';
+import { MessageCreateOneInput } from '../../../proto/interfaces';
 import { io } from 'socket.io-client';
 import * as process from 'process';
 

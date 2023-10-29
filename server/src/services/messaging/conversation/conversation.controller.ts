@@ -10,17 +10,17 @@ import {
   ConversationFindOneInput,
   ConversationRemoveOneInput,
   ConversationUpdateOneInput,
-} from '../../../../proto/interfaces';
+} from '../../../proto/interfaces';
 import {
   RpcAuthEntityAssertReadableInterceptor,
   RpcAuthEntityAssertWriteableInterceptor,
   RpcAuthEntityCreateOwnershipInterceptor,
   RpcAuthRequiredInterceptor,
-} from '../../../../libs/auth/rpc/rpcAuth.module';
+} from '../../../libs/auth/rpc/rpcAuth.module';
 import {
   RpcRateLimitReadInterceptor,
   RpcRateLimitWriteInterceptor,
-} from '../../../../libs/gateway/rpc/rpcGateway.module';
+} from '../../../libs/gateway/rpc/rpcGateway.module';
 
 @Controller()
 export class ConversationController {

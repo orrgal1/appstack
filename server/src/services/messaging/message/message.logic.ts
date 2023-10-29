@@ -7,14 +7,14 @@ import {
   MessageFindUniqueInput,
   MessageRemoveOneInput,
   MessageUpdateOneInput,
-} from '../../../../proto/interfaces';
+} from '../../../proto/interfaces';
 import { MessageService } from './message.service';
-import { ClientService } from '../../../../libs/client/client.service';
+import { ClientService } from '../../../libs/client/client.service';
 import {
   ConversationServiceClient,
   ConversationServiceDefinition,
-} from '../../../../libs/client';
-import { PubsubService } from '../../../../libs/pubsub/pubsub.service';
+} from '../../../libs/client';
+import { PubsubService } from '../../../libs/pubsub/pubsub.service';
 
 @Injectable()
 export class MessageLogic {

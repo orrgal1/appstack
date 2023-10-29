@@ -1,5 +1,5 @@
 import { createChannel, createClient, Metadata } from 'nice-grpc';
-import { shutdownComponents } from '../../../main/main';
+import { shutdownComponents } from '../../../../main/main';
 import { v4 as uuid } from 'uuid';
 import {
   isE2E,
@@ -7,11 +7,11 @@ import {
   runMain,
   useHost,
   usePorts,
-} from '../../../../tests/utils';
+} from '../../../../../tests/utils';
 import {
   DummyServiceClient,
   DummyServiceDefinition,
-} from '../../../libs/client';
+} from '../../../../libs/client';
 
 jest.setTimeout(10000);
 

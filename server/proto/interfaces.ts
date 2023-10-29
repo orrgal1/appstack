@@ -305,6 +305,11 @@ export interface HealthChekcResult {
   ok: boolean;
 }
 
+export interface IntRange {
+  min: number;
+  max: number;
+}
+
 export interface Conversation {
   id: string;
   createdAt: number;
@@ -420,11 +425,6 @@ export interface MessageFindByConversationResult {
   results: Message[];
 }
 
-export interface IntRange {
-  min: number;
-  max: number;
-}
-
 export interface UserFollowCreateOneInput {
   followerId: string;
   followeeId: string;
@@ -506,6 +506,10 @@ export interface PublishJobInput {
 
 export interface PublishJobResult {
   jobId: string;
+}
+
+export interface WorkersHealthCheckResult {
+  ok: boolean;
 }
 
 export interface DummyService {
@@ -590,4 +594,5 @@ export interface UserFollowService {
 
 export interface WorkersService {
   PublishJob(request: PublishJobInput): Promise<PublishJobResult>;
+  HealthCheck(request: Empty): Promise<WorkersHealthCheckResult>;
 }

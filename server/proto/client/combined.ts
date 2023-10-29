@@ -343,6 +343,11 @@ export interface HealthChekcResult {
   ok: boolean;
 }
 
+export interface IntRange {
+  min: number;
+  max: number;
+}
+
 export interface Conversation {
   id: string;
   createdAt: number;
@@ -458,11 +463,6 @@ export interface MessageFindByConversationResult {
   results: Message[];
 }
 
-export interface IntRange {
-  min: number;
-  max: number;
-}
-
 export interface UserFollowCreateOneInput {
   followerId: string;
   followeeId: string;
@@ -544,6 +544,10 @@ export interface PublishJobInput {
 
 export interface PublishJobResult {
   jobId: string;
+}
+
+export interface WorkersHealthCheckResult {
+  ok: boolean;
 }
 
 function createBaseDummy(): Dummy {
@@ -5032,6 +5036,78 @@ export const HealthChekcResult = {
   },
 };
 
+function createBaseIntRange(): IntRange {
+  return { min: 0, max: 0 };
+}
+
+export const IntRange = {
+  encode(message: IntRange, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.min !== 0) {
+      writer.uint32(8).uint32(message.min);
+    }
+    if (message.max !== 0) {
+      writer.uint32(16).uint32(message.max);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): IntRange {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseIntRange();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.min = reader.uint32();
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.max = reader.uint32();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): IntRange {
+    return { min: isSet(object.min) ? Number(object.min) : 0, max: isSet(object.max) ? Number(object.max) : 0 };
+  },
+
+  toJSON(message: IntRange): unknown {
+    const obj: any = {};
+    if (message.min !== 0) {
+      obj.min = Math.round(message.min);
+    }
+    if (message.max !== 0) {
+      obj.max = Math.round(message.max);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<IntRange>): IntRange {
+    return IntRange.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<IntRange>): IntRange {
+    const message = createBaseIntRange();
+    message.min = object.min ?? 0;
+    message.max = object.max ?? 0;
+    return message;
+  },
+};
+
 function createBaseConversation(): Conversation {
   return { id: "", createdAt: 0, updatedAt: 0, participantIds: [], lastMessageAt: 0 };
 }
@@ -6769,78 +6845,6 @@ export const MessageFindByConversationResult = {
   },
 };
 
-function createBaseIntRange(): IntRange {
-  return { min: 0, max: 0 };
-}
-
-export const IntRange = {
-  encode(message: IntRange, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.min !== 0) {
-      writer.uint32(8).uint32(message.min);
-    }
-    if (message.max !== 0) {
-      writer.uint32(16).uint32(message.max);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): IntRange {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseIntRange();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 8) {
-            break;
-          }
-
-          message.min = reader.uint32();
-          continue;
-        case 2:
-          if (tag !== 16) {
-            break;
-          }
-
-          message.max = reader.uint32();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): IntRange {
-    return { min: isSet(object.min) ? Number(object.min) : 0, max: isSet(object.max) ? Number(object.max) : 0 };
-  },
-
-  toJSON(message: IntRange): unknown {
-    const obj: any = {};
-    if (message.min !== 0) {
-      obj.min = Math.round(message.min);
-    }
-    if (message.max !== 0) {
-      obj.max = Math.round(message.max);
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<IntRange>): IntRange {
-    return IntRange.fromPartial(base ?? {});
-  },
-
-  fromPartial(object: DeepPartial<IntRange>): IntRange {
-    const message = createBaseIntRange();
-    message.min = object.min ?? 0;
-    message.max = object.max ?? 0;
-    return message;
-  },
-};
-
 function createBaseUserFollowCreateOneInput(): UserFollowCreateOneInput {
   return { followerId: "", followeeId: "" };
 }
@@ -8086,6 +8090,64 @@ export const PublishJobResult = {
   },
 };
 
+function createBaseWorkersHealthCheckResult(): WorkersHealthCheckResult {
+  return { ok: false };
+}
+
+export const WorkersHealthCheckResult = {
+  encode(message: WorkersHealthCheckResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.ok === true) {
+      writer.uint32(8).bool(message.ok);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): WorkersHealthCheckResult {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWorkersHealthCheckResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.ok = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): WorkersHealthCheckResult {
+    return { ok: isSet(object.ok) ? Boolean(object.ok) : false };
+  },
+
+  toJSON(message: WorkersHealthCheckResult): unknown {
+    const obj: any = {};
+    if (message.ok === true) {
+      obj.ok = message.ok;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<WorkersHealthCheckResult>): WorkersHealthCheckResult {
+    return WorkersHealthCheckResult.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<WorkersHealthCheckResult>): WorkersHealthCheckResult {
+    const message = createBaseWorkersHealthCheckResult();
+    message.ok = object.ok ?? false;
+    return message;
+  },
+};
+
 export type DummyServiceDefinition = typeof DummyServiceDefinition;
 export const DummyServiceDefinition = {
   name: "DummyService",
@@ -8718,15 +8780,25 @@ export const WorkersServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    healthCheck: {
+      name: "HealthCheck",
+      requestType: Empty,
+      requestStream: false,
+      responseType: WorkersHealthCheckResult,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
 export interface WorkersServiceImplementation<CallContextExt = {}> {
   publishJob(request: PublishJobInput, context: CallContext & CallContextExt): Promise<DeepPartial<PublishJobResult>>;
+  healthCheck(request: Empty, context: CallContext & CallContextExt): Promise<DeepPartial<WorkersHealthCheckResult>>;
 }
 
 export interface WorkersServiceClient<CallOptionsExt = {}> {
   publishJob(request: DeepPartial<PublishJobInput>, options?: CallOptions & CallOptionsExt): Promise<PublishJobResult>;
+  healthCheck(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): Promise<WorkersHealthCheckResult>;
 }
 
 declare const self: any | undefined;

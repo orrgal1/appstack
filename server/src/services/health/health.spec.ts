@@ -36,6 +36,10 @@ describe('Health', () => {
           ok: true,
           status: 'up',
         },
+        WORKERS: {
+          ok: true,
+          status: 'up',
+        },
       },
       error: {},
       info: {
@@ -44,6 +48,10 @@ describe('Health', () => {
           status: 'up',
         },
         PROTO_INTERNAL: {
+          ok: true,
+          status: 'up',
+        },
+        WORKERS: {
           ok: true,
           status: 'up',
         },

@@ -9,19 +9,19 @@ import {
   MessageFindUniqueInput,
   MessageRemoveOneInput,
   MessageUpdateOneInput,
-} from '../../../../proto/interfaces';
+} from '../../../proto/interfaces';
 import { MessageLogic } from './message.logic';
 import {
   RpcAuthEntityAssertReadableInterceptor,
   RpcAuthEntityAssertWriteableInterceptor,
   RpcAuthEntityCreateOwnershipInterceptor,
   RpcAuthRequiredInterceptor,
-} from '../../../../libs/auth/rpc/rpcAuth.module';
+} from '../../../libs/auth/rpc/rpcAuth.module';
 import {
   RpcRateLimitReadInterceptor,
   RpcRateLimitWriteInterceptor,
-} from '../../../../libs/gateway/rpc/rpcGateway.module';
-import { RpcNotFoundException } from '../../../../libs/exceptions/rpcNotFoundException';
+} from '../../../libs/gateway/rpc/rpcGateway.module';
+import { RpcNotFoundException } from '../../../libs/exceptions/rpcNotFoundException';
 
 @Controller()
 export class MessageController {

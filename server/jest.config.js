@@ -24,6 +24,6 @@ module.exports = {
     '!src/proto/**/*.*',
   ],
   forceExit: true,
-  maxWorkers: 1,
+  maxWorkers: 3,
   setupFiles: ['./jest.setup.js'],
 };

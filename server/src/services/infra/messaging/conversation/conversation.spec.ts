@@ -3,9 +3,15 @@ import {
   ConversationServiceClient,
   ConversationServiceDefinition,
 } from '../../../../libs/client';
-import { main, shutdownComponents } from '../../../../main/main';
+import { shutdownComponents } from '../../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, login, useHost, usePorts } from '../../../../../tests/utils';
+import {
+  isE2E,
+  login,
+  runMain,
+  useHost,
+  usePorts,
+} from '../../../../../tests/utils';
 import { ConversationCreateOneInput } from '../../../../proto/interfaces';
 
 describe('Conversation', () => {
@@ -17,7 +23,7 @@ describe('Conversation', () => {
     const host = useHost();
     const channel = createChannel(`${host}:${ports.proto}`);
     client = createClient(ConversationServiceDefinition, channel);
-    if (!isE2E()) await main({ ports });
+    if (!isE2E()) await runMain({ ports });
     const { accessToken } = await login(ports);
     metadata.set('jwt', accessToken);
   });

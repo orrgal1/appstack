@@ -338,6 +338,10 @@ export interface UserSearchResult {
   users: User[];
 }
 
+export interface HealthChekcResult {
+  ok: boolean;
+}
+
 export interface Conversation {
   id: string;
   createdAt: number;
@@ -4999,6 +5003,64 @@ export const UserSearchResult = {
   },
 };
 
+function createBaseHealthChekcResult(): HealthChekcResult {
+  return { ok: false };
+}
+
+export const HealthChekcResult = {
+  encode(message: HealthChekcResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.ok === true) {
+      writer.uint32(8).bool(message.ok);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): HealthChekcResult {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseHealthChekcResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.ok = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): HealthChekcResult {
+    return { ok: isSet(object.ok) ? Boolean(object.ok) : false };
+  },
+
+  toJSON(message: HealthChekcResult): unknown {
+    const obj: any = {};
+    if (message.ok === true) {
+      obj.ok = message.ok;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<HealthChekcResult>, I>>(base?: I): HealthChekcResult {
+    return HealthChekcResult.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<HealthChekcResult>, I>>(object: I): HealthChekcResult {
+    const message = createBaseHealthChekcResult();
+    message.ok = object.ok ?? false;
+    return message;
+  },
+};
+
 function createBaseConversation(): Conversation {
   return { id: "", createdAt: 0, updatedAt: 0, participantIds: [], lastMessageAt: 0 };
 }
@@ -8121,6 +8183,10 @@ export interface UserService {
   FindOne(request: UserFindOneInput): Promise<User>;
   RemoveOne(request: UserRemoveOneInput): Promise<Empty>;
   Search(request: UserSearchInput): Promise<UserSearchResult>;
+}
+
+export interface HealthService {
+  HealthCheck(request: Empty): Promise<HealthChekcResult>;
 }
 
 export interface ConversationService {

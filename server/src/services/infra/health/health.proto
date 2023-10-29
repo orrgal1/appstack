@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message HealthChekcResult {
+    bool ok = 1;
+}
+
+service HealthService {
+    rpc HealthCheck (google.protobuf.Empty) returns (HealthChekcResult) {}
+}

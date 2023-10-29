@@ -5,11 +5,12 @@ import {
   MessageServiceClient,
   MessageServiceDefinition,
 } from '../../../../libs/client';
-import { main, shutdownComponents } from '../../../../main/main';
+import { shutdownComponents } from '../../../../main/main';
 import { v4 as uuid } from 'uuid';
 import {
   isE2E,
   login,
+  runMain,
   sleep,
   useHost,
   usePorts,
@@ -28,6 +29,7 @@ describe('Message', () => {
     http: number;
     httpInternal: number;
     workers: number;
+    ws: number;
   };
   let host: any;
   let loggedInUserId;
@@ -38,7 +40,7 @@ describe('Message', () => {
     const channel = createChannel(`${host}:${ports.proto}`);
     client = createClient(MessageServiceDefinition, channel);
     conversationClient = createClient(ConversationServiceDefinition, channel);
-    if (!isE2E()) await main({ ports });
+    if (!isE2E()) await runMain({ ports });
     const { accessToken, userId } = await login(ports);
     metadata.set('jwt', accessToken);
     loggedInUserId = userId;

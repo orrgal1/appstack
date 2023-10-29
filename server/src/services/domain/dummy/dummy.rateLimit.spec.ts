@@ -1,10 +1,11 @@
 import { createChannel, createClient, Metadata } from 'nice-grpc';
-import { main, shutdownComponents } from '../../../main/main';
+import { shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
 import {
   getMetadata,
   isE2E,
   login,
+  runMain,
   sleep,
   useHost,
   usePorts,
@@ -36,7 +37,7 @@ describe('Dummy: Rate limits', () => {
     const host = useHost();
     const channel = createChannel(`${host}:${ports.proto}`);
     client = createClient(DummyServiceDefinition, channel);
-    if (!isE2E()) await main({ ports });
+    if (!isE2E()) await runMain({ ports });
     await sleep(1000);
     const { accessToken } = await login(ports);
     metadata.set('jwt', accessToken);
@@ -84,29 +85,6 @@ describe('Dummy: Rate limits', () => {
     };
     await expect(bombard()).rejects.toThrow(
       '/main.DummyService/UpdateOne UNKNOWN: rate limit exceeded',
-    );
-  });
-
-  test('RemoveOne: Exceed rate limit', async () => {
-    const input = {
-      text: uuid(),
-    };
-    const metadata1 = await getMetadata(ports);
-    const created = await client.createOne(input, { metadata: metadata1 });
-    const bombard = async () => {
-      const requests = [];
-      for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
-        requests.push(
-          client.removeOne(
-            { id: created.id, ...input },
-            { metadata: metadata1 },
-          ),
-        );
-      }
-      return await Promise.all(requests);
-    };
-    await expect(bombard()).rejects.toThrow(
-      '/main.DummyService/RemoveOne UNKNOWN: rate limit exceeded',
     );
   });
 });

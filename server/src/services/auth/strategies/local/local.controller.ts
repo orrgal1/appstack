@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../../auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { HttpAuthAssertInternalInterceptor } from '../../../../../libs/auth/http/httpAuthAssertInternal.interceptor';
+import { HttpAuthAssertInternalInterceptor } from '../../../../libs/auth/http/httpAuthAssertInternal.interceptor';
 
 @Controller('auth')
 export class LocalController {

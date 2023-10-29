@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginLogic } from '../../login/login.logic';
-import { UserLogic } from '../../user/user.logic';
-import { Credentials, Login, User } from '../../../../proto/interfaces';
+import { LoginLogic } from '../../identity/login/login.logic';
+import { UserLogic } from '../../identity/user/user.logic';
+import { Credentials, Login, User } from '../../../proto/interfaces';
 
 @Injectable()
 export class StrategyService {

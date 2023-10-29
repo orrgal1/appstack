@@ -301,6 +301,10 @@ export interface UserSearchResult {
   users: User[];
 }
 
+export interface HealthChekcResult {
+  ok: boolean;
+}
+
 export interface Conversation {
   id: string;
   createdAt: number;
@@ -546,6 +550,10 @@ export interface UserService {
   FindOne(request: UserFindOneInput): Promise<User>;
   RemoveOne(request: UserRemoveOneInput): Promise<Empty>;
   Search(request: UserSearchInput): Promise<UserSearchResult>;
+}
+
+export interface HealthService {
+  HealthCheck(request: Empty): Promise<HealthChekcResult>;
 }
 
 export interface ConversationService {

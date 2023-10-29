@@ -3,10 +3,16 @@ import {
   LoginServiceClient,
   LoginServiceDefinition,
 } from '../../../libs/client';
-import { main, shutdownComponents } from '../../../main/main';
+import { shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
 import { LoginCreateOneInput } from '../../../proto/interfaces';
-import { isE2E, login, useHost, usePorts } from '../../../../tests/utils';
+import {
+  isE2E,
+  login,
+  runMain,
+  useHost,
+  usePorts,
+} from '../../../../tests/utils';
 
 describe('Login', () => {
   let client: LoginServiceClient;
@@ -17,7 +23,7 @@ describe('Login', () => {
     const host = useHost();
     const channel = createChannel(`${host}:${ports.proto}`);
     client = createClient(LoginServiceDefinition, channel);
-    if (!isE2E()) await main({ ports });
+    if (!isE2E()) await runMain({ ports });
     const { accessToken } = await login(ports);
     metadata.set('jwt', accessToken);
   });

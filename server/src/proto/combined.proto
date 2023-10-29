@@ -298,6 +298,10 @@ message UserSearchResult {
     repeated User users = 2;
 }
 
+message HealthChekcResult {
+    bool ok = 1;
+}
+
 message Conversation {
     string id = 1;
     uint64 createdAt = 2;
@@ -537,6 +541,10 @@ service UserService {
     rpc FindOne (UserFindOneInput) returns (User) {}
     rpc RemoveOne (UserRemoveOneInput) returns (google.protobuf.Empty) {}
     rpc Search (UserSearchInput) returns (UserSearchResult) {}
+}
+
+service HealthService {
+    rpc HealthCheck (google.protobuf.Empty) returns (HealthChekcResult) {}
 }
 
 service ConversationService {

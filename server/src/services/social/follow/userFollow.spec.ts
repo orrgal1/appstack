@@ -5,8 +5,13 @@ import {
   UserServiceClient,
   UserServiceDefinition,
 } from '../../../libs/client';
-import { main } from '../../../main/main';
-import { isE2E, login, useHost, usePorts } from '../../../../tests/utils';
+import {
+  isE2E,
+  login,
+  runMain,
+  useHost,
+  usePorts,
+} from '../../../../tests/utils';
 
 describe('UserFollow', () => {
   let ports: {
@@ -15,6 +20,7 @@ describe('UserFollow', () => {
     http: number;
     httpInternal: number;
     workers: number;
+    ws: number;
   };
   let client: UserFollowServiceClient;
   let userClient: UserServiceClient;
@@ -27,7 +33,7 @@ describe('UserFollow', () => {
     const channelInternal = createChannel(`${host}:${ports.protoInternal}`);
     client = createClient(UserFollowServiceDefinition, channel);
     userClient = createClient(UserServiceDefinition, channelInternal);
-    if (!isE2E()) await main({ ports });
+    if (!isE2E()) await runMain({ ports });
     const { accessToken } = await login(ports);
     metadata.set('jwt', accessToken);
   });

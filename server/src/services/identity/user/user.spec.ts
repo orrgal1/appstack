@@ -1,8 +1,14 @@
 import { createChannel, createClient, Metadata } from 'nice-grpc';
 import { UserServiceClient, UserServiceDefinition } from '../../../libs/client';
-import { main, shutdownComponents } from '../../../main/main';
+import { shutdownComponents } from '../../../main/main';
 import { v4 as uuid } from 'uuid';
-import { isE2E, login, useHost, usePorts } from '../../../../tests/utils';
+import {
+  isE2E,
+  login,
+  runMain,
+  useHost,
+  usePorts,
+} from '../../../../tests/utils';
 
 describe('User', () => {
   let client: UserServiceClient;
@@ -23,7 +29,7 @@ describe('User', () => {
     const channelInternal = createChannel(`${host}:${ports.protoInternal}`);
     client = createClient(UserServiceDefinition, channel);
     clientInternal = createClient(UserServiceDefinition, channelInternal);
-    if (!isE2E()) await main({ ports });
+    if (!isE2E()) await runMain({ ports });
   });
 
   afterAll(async () => {

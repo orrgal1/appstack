@@ -1,4 +1,3 @@
-import { main } from '../../../../../main/main';
 import { v4 as uuid } from 'uuid';
 import axios from 'axios';
 import { createChannel, createClient, Metadata } from 'nice-grpc';
@@ -7,8 +6,8 @@ import {
   LoginServiceDefinition,
   UserServiceClient,
   UserServiceDefinition,
-} from '../../../../../libs/client';
-import { isE2E, useHost, usePorts } from '../../../../../../tests/utils';
+} from '../../../../libs/client';
+import { isE2E, runMain, useHost, usePorts } from '../../../../../tests/utils';
 
 describe('Auth: Local', () => {
   let ports: {
@@ -17,6 +16,7 @@ describe('Auth: Local', () => {
     http: number;
     httpInternal: number;
     workers: number;
+    ws: number;
   };
   let userClient: UserServiceClient;
   let loginClient: LoginServiceClient;
@@ -33,7 +33,7 @@ describe('Auth: Local', () => {
     const channelInternal = createChannel(`${host}:${ports.protoInternal}`);
     userClient = createClient(UserServiceDefinition, channelInternal);
     loginClient = createClient(LoginServiceDefinition, channel);
-    if (!isE2E()) await main({ ports });
+    if (!isE2E()) await runMain({ ports });
   });
 
   test('Login: Fail external', async () => {

@@ -339,6 +339,10 @@ export interface UserSearchResult {
   users: User[];
 }
 
+export interface HealthChekcResult {
+  ok: boolean;
+}
+
 export interface Conversation {
   id: string;
   createdAt: number;
@@ -4970,6 +4974,64 @@ export const UserSearchResult = {
   },
 };
 
+function createBaseHealthChekcResult(): HealthChekcResult {
+  return { ok: false };
+}
+
+export const HealthChekcResult = {
+  encode(message: HealthChekcResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.ok === true) {
+      writer.uint32(8).bool(message.ok);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): HealthChekcResult {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseHealthChekcResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.ok = reader.bool();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): HealthChekcResult {
+    return { ok: isSet(object.ok) ? Boolean(object.ok) : false };
+  },
+
+  toJSON(message: HealthChekcResult): unknown {
+    const obj: any = {};
+    if (message.ok === true) {
+      obj.ok = message.ok;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<HealthChekcResult>): HealthChekcResult {
+    return HealthChekcResult.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<HealthChekcResult>): HealthChekcResult {
+    const message = createBaseHealthChekcResult();
+    message.ok = object.ok ?? false;
+    return message;
+  },
+};
+
 function createBaseConversation(): Conversation {
   return { id: "", createdAt: 0, updatedAt: 0, participantIds: [], lastMessageAt: 0 };
 }
@@ -8380,6 +8442,30 @@ export interface UserServiceClient<CallOptionsExt = {}> {
   findOne(request: DeepPartial<UserFindOneInput>, options?: CallOptions & CallOptionsExt): Promise<User>;
   removeOne(request: DeepPartial<UserRemoveOneInput>, options?: CallOptions & CallOptionsExt): Promise<Empty>;
   search(request: DeepPartial<UserSearchInput>, options?: CallOptions & CallOptionsExt): Promise<UserSearchResult>;
+}
+
+export type HealthServiceDefinition = typeof HealthServiceDefinition;
+export const HealthServiceDefinition = {
+  name: "HealthService",
+  fullName: "main.HealthService",
+  methods: {
+    healthCheck: {
+      name: "HealthCheck",
+      requestType: Empty,
+      requestStream: false,
+      responseType: HealthChekcResult,
+      responseStream: false,
+      options: {},
+    },
+  },
+} as const;
+
+export interface HealthServiceImplementation<CallContextExt = {}> {
+  healthCheck(request: Empty, context: CallContext & CallContextExt): Promise<DeepPartial<HealthChekcResult>>;
+}
+
+export interface HealthServiceClient<CallOptionsExt = {}> {
+  healthCheck(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): Promise<HealthChekcResult>;
 }
 
 export type ConversationServiceDefinition = typeof ConversationServiceDefinition;

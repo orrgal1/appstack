@@ -2,9 +2,24 @@ import * as detect from 'detect-port';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import { Metadata } from 'nice-grpc';
+import { main } from '../src/main/main';
 
 export function isE2E() {
   return process.env.E2E;
+}
+
+export async function runMain(opts: {
+  ports: {
+    protoInternal: number;
+    proto: number;
+    http: number;
+    httpInternal: number;
+    ws: number;
+    workers: number;
+  };
+}) {
+  await main({ ports: opts.ports });
+  await sleep(1000);
 }
 
 export async function login(ports: {

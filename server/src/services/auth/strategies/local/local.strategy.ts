@@ -1,7 +1,7 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { Login } from '../../../../../proto/interfaces';
+import { Login } from '../../../../proto/interfaces';
 import { StrategyService } from '../strategy.service';
 
 @Injectable()

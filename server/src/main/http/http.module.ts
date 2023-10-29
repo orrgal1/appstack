@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common';
-import { HttpController } from './http.controller';
-import { HttpService } from './http.service';
-import { AuthModule } from '../../services/identity/auth/auth.module';
+import { AuthModule } from '../../services/auth/auth.module';
 import { ArangodbModule } from '../../libs/arangodb/arangodb.module';
 import { ClientModule } from '../../libs/client/client.module';
+import { HealthModule } from '../../services/health/health.module';
 
 @Module({
-  imports: [AuthModule, ArangodbModule, ClientModule],
-  controllers: [HttpController],
-  providers: [HttpService],
+  imports: [AuthModule, ArangodbModule, ClientModule, HealthModule],
 })
 export class HttpModule {}

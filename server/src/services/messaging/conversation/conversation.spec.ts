@@ -12,6 +12,7 @@ import {
   isE2E,
   login,
   runMain,
+  sleep,
   useHost,
   usePorts,
 } from '../../../../tests/utils';
@@ -148,7 +149,7 @@ describe('Conversation', () => {
     }
 
     await clientInternal.updateOne({ id: created.id, ...input });
-
+    await sleep(100);
     const findPermissions = await permissionclientInternal.findByEntity({
       filter: {
         entity: 'conversation',

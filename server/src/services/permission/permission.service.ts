@@ -154,37 +154,40 @@ export class PermissionService implements OnModuleInit {
   }
 
   async removeOne(input: PermissionRemoveOneInput): Promise<void> {
-    const found = await this.findOne(input);
-    if (found) {
-      await this.collection.remove(found.id);
-    }
+    await this.collection.remove(input.id);
   }
 
   async removeWhere(input: PermissionRemoveWhereInput): Promise<void> {
-    const found = await this.findWhere(input);
-    if (found) {
-      await this.collection.remove(found.id);
-    }
+    const query = `
+      FOR doc IN permission
+      FILTER doc.entity == @entity 
+      AND doc.entityId == @entityId
+      AND doc.permittedEntity == @permittedEntity
+      AND doc.permittedEntityId == @permittedEntityId
+      AND doc.action == @action
+      LIMIT 1
+      REMOVE doc IN permission
+    `;
+    const vars = {
+      ...input,
+    };
+    await this.arangodb.db.query(query, vars);
   }
 
   async removeWhereMany(input: PermissionRemoveWhereManyInput): Promise<void> {
-    const { permissions } = await this.findWhereMany(input);
-    await Promise.all(
-      permissions.map(async (permission) => {
-        try {
-          await this.removeOne({ id: permission.id });
-        } catch (e) {
-          this.logger.error(
-            {
-              place: 'removeWhereMany',
-              error: e.message,
-            },
-            e.stack,
-            PermissionService.name,
-          );
-        }
-      }),
-    );
+    const query = `
+      FOR doc IN permission
+      FILTER doc.entity == @entity 
+      AND doc.entityId == @entityId
+      AND doc.permittedEntity == @permittedEntity
+      AND doc.permittedEntityId IN @permittedEntityIds
+      AND doc.action == @action
+      REMOVE doc IN permission
+    `;
+    const vars = {
+      ...input,
+    };
+    await this.arangodb.db.query(query, vars);
   }
 
   async findByPermitted(

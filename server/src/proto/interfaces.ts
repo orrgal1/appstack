@@ -188,6 +188,8 @@ export interface Conversation {
   updatedAt: number;
   participantIds: string[];
   lastMessageAt: number;
+  isTemp: boolean;
+  permissionIntegrityWarning: boolean;
 }
 
 export interface ConversationCreateOneInput {
@@ -595,7 +597,7 @@ export interface PermissionService {
   CreateMany(request: PermissionCreateManyInput): Promise<Permissions>;
   FindOne(request: PermissionFindOneInput): Promise<Permission>;
   FindWhere(request: PermissionFindWhereInput): Promise<Permission>;
-  FindWhereMany(request: PermissionFindWhereInput): Promise<Permissions>;
+  FindWhereMany(request: PermissionFindWhereManyInput): Promise<Permissions>;
   FindWhereOrStar(request: PermissionFindWhereOrStarInput): Promise<Permission>;
   FindByPermitted(
     request: PermissionFindByPermittedInput,

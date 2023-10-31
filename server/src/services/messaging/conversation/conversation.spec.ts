@@ -34,16 +34,20 @@ describe('Conversation', () => {
 
   test('CreateOne + FindOne', async () => {
     const input: ConversationCreateOneInput = {
-      participantIds: [],
+      participantIds: [uuid()],
     };
     const created = await client.createOne(input, { metadata });
     const found = await client.findOne({ id: created.id }, { metadata });
-    expect(found).toEqual(created);
+    expect(found).toEqual({
+      ...created,
+      isTemp: false,
+      updatedAt: expect.any(Number),
+    });
   });
 
   test('UpdateOne', async () => {
-    const input = { participantIds: [] };
-    const update = { participantIds: [] };
+    const input = { participantIds: [uuid()] };
+    const update = { participantIds: [uuid()] };
     const created = await client.createOne(input, { metadata });
     const updated = await client.updateOne(
       { id: created.id, ...update },
@@ -54,7 +58,7 @@ describe('Conversation', () => {
 
   test('RemoveOne', async () => {
     const input: ConversationCreateOneInput = {
-      participantIds: [],
+      participantIds: [uuid()],
     };
     const created = await client.createOne(input, { metadata });
     await client.removeOne({ id: created.id }, { metadata });

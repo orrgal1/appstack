@@ -38,7 +38,7 @@ export class ConversationController {
     const found = await this.logic.findOne(input);
     if (!found) {
       throw new RpcException({
-        conversation: 'not found',
+        message: 'not found',
         code: grpc.status.NOT_FOUND,
       });
     }
@@ -78,7 +78,7 @@ export class ConversationController {
     const removed = await this.logic.removeOne(input);
     if (!removed) {
       throw new RpcException({
-        conversation: 'not found',
+        message: 'not found',
         code: grpc.status.NOT_FOUND,
       });
     }

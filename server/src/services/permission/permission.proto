@@ -161,7 +161,7 @@ service PermissionService {
   rpc CreateMany (PermissionCreateManyInput) returns (Permissions) {}
   rpc FindOne (PermissionFindOneInput) returns (Permission) {}
   rpc FindWhere (PermissionFindWhereInput) returns (Permission) {}
-  rpc FindWhereMany (PermissionFindWhereInput) returns (Permissions) {}
+  rpc FindWhereMany (PermissionFindWhereManyInput) returns (Permissions) {}
   rpc FindWhereOrStar (PermissionFindWhereOrStarInput) returns (Permission) {}
   rpc FindByPermitted (PermissionFindByPermittedInput) returns (PermissionFindByPermittedResult) {}
   rpc FindAllActions (PermissionFindAllActionsInput) returns (PermissionFindAllActionsResult) {}

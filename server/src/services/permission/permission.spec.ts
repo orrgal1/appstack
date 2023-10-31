@@ -48,6 +48,22 @@ describe('Permission', () => {
     expect(found).toEqual(created);
   });
 
+  test('FindWhereMany', async () => {
+    const input = {
+      entity: uuid(),
+      entityId: uuid(),
+      permittedEntity: uuid(),
+      permittedEntityId: uuid(),
+      action: '*',
+    };
+    const created = await client.createOne(input);
+    const found = await client.findWhereMany({
+      ...input,
+      permittedEntityIds: [input.permittedEntityId],
+    });
+    expect(found).toEqual({ permissions: [created] });
+  });
+
   test('RemoveOne', async () => {
     const input = {
       entity: uuid(),
@@ -73,6 +89,22 @@ describe('Permission', () => {
     };
     await client.createOne(input);
     await client.removeWhere(input);
+    await expect(client.findWhere(input)).rejects.toThrow('not found');
+  });
+
+  test('RemoveWhereMany', async () => {
+    const input = {
+      entity: uuid(),
+      entityId: uuid(),
+      permittedEntity: uuid(),
+      permittedEntityId: uuid(),
+      action: '*',
+    };
+    await client.createOne(input);
+    await client.removeWhereMany({
+      ...input,
+      permittedEntityIds: [input.permittedEntityId],
+    });
     await expect(client.findWhere(input)).rejects.toThrow('not found');
   });
 

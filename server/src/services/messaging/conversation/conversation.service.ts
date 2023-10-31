@@ -18,7 +18,9 @@ export class ConversationService implements OnModuleInit {
     this.collection = this.arangodb.db.collection('conversation');
   }
 
-  async createOne(input: ConversationCreateOneInput): Promise<Conversation> {
+  async createOne(
+    input: ConversationCreateOneInput & { isTemp: boolean },
+  ): Promise<Conversation> {
     return this.arangodb.utils.format(
       (
         await this.collection.save(this.arangodb.utils.addTs(input), {
@@ -34,7 +36,7 @@ export class ConversationService implements OnModuleInit {
         await this.collection.document(input.id),
       );
     } catch (e) {
-      if (e.conversation === 'document not found') {
+      if (e.message === 'document not found') {
         return;
       }
       throw e;
@@ -42,7 +44,12 @@ export class ConversationService implements OnModuleInit {
   }
 
   async updateOne(
-    input: Partial<ConversationUpdateOneInput>,
+    input: Partial<
+      ConversationUpdateOneInput & {
+        isTemp: boolean;
+        permissionIntegrityWarning: boolean;
+      }
+    >,
   ): Promise<Conversation> {
     return this.arangodb.utils.format(
       (
@@ -73,6 +80,7 @@ export class ConversationService implements OnModuleInit {
       FOR doc IN conversation
       FILTER @participantId IN doc.participantIds
       AND doc.lastMessageAt >= @fromLastMessageAt
+      AND doc.isTemp == false 
       LIMIT @offset, @limit
       RETURN doc
     `;
@@ -90,9 +98,9 @@ export class ConversationService implements OnModuleInit {
       () => this.arangodb.db.createCollection('conversation', {}),
       () =>
         this.arangodb.db.collection('conversation').ensureIndex({
-          name: 'idx-conversation-v3',
+          name: 'idx-conversation-v5',
           type: 'persistent',
-          fields: ['participantIds[*]', 'lastMessageAt'],
+          fields: ['participantIds[*]', 'lastMessageAt', 'isTemp'],
         }),
     );
   }

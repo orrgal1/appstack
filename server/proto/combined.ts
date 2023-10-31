@@ -225,6 +225,8 @@ export interface Conversation {
   updatedAt: number;
   participantIds: string[];
   lastMessageAt: number;
+  isTemp: boolean;
+  permissionIntegrityWarning: boolean;
 }
 
 export interface ConversationCreateOneInput {
@@ -3205,7 +3207,15 @@ export const IntRange = {
 };
 
 function createBaseConversation(): Conversation {
-  return { id: "", createdAt: 0, updatedAt: 0, participantIds: [], lastMessageAt: 0 };
+  return {
+    id: "",
+    createdAt: 0,
+    updatedAt: 0,
+    participantIds: [],
+    lastMessageAt: 0,
+    isTemp: false,
+    permissionIntegrityWarning: false,
+  };
 }
 
 export const Conversation = {
@@ -3224,6 +3234,12 @@ export const Conversation = {
     }
     if (message.lastMessageAt !== 0) {
       writer.uint32(40).uint64(message.lastMessageAt);
+    }
+    if (message.isTemp === true) {
+      writer.uint32(48).bool(message.isTemp);
+    }
+    if (message.permissionIntegrityWarning === true) {
+      writer.uint32(56).bool(message.permissionIntegrityWarning);
     }
     return writer;
   },
@@ -3270,6 +3286,20 @@ export const Conversation = {
 
           message.lastMessageAt = longToNumber(reader.uint64() as Long);
           continue;
+        case 6:
+          if (tag !== 48) {
+            break;
+          }
+
+          message.isTemp = reader.bool();
+          continue;
+        case 7:
+          if (tag !== 56) {
+            break;
+          }
+
+          message.permissionIntegrityWarning = reader.bool();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -3286,6 +3316,10 @@ export const Conversation = {
       updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
       participantIds: Array.isArray(object?.participantIds) ? object.participantIds.map((e: any) => String(e)) : [],
       lastMessageAt: isSet(object.lastMessageAt) ? Number(object.lastMessageAt) : 0,
+      isTemp: isSet(object.isTemp) ? Boolean(object.isTemp) : false,
+      permissionIntegrityWarning: isSet(object.permissionIntegrityWarning)
+        ? Boolean(object.permissionIntegrityWarning)
+        : false,
     };
   },
 
@@ -3306,6 +3340,12 @@ export const Conversation = {
     if (message.lastMessageAt !== 0) {
       obj.lastMessageAt = Math.round(message.lastMessageAt);
     }
+    if (message.isTemp === true) {
+      obj.isTemp = message.isTemp;
+    }
+    if (message.permissionIntegrityWarning === true) {
+      obj.permissionIntegrityWarning = message.permissionIntegrityWarning;
+    }
     return obj;
   },
 
@@ -3320,6 +3360,8 @@ export const Conversation = {
     message.updatedAt = object.updatedAt ?? 0;
     message.participantIds = object.participantIds?.map((e) => e) || [];
     message.lastMessageAt = object.lastMessageAt ?? 0;
+    message.isTemp = object.isTemp ?? false;
+    message.permissionIntegrityWarning = object.permissionIntegrityWarning ?? false;
     return message;
   },
 };
@@ -8716,7 +8758,7 @@ export interface PermissionService {
   CreateMany(request: PermissionCreateManyInput): Promise<Permissions>;
   FindOne(request: PermissionFindOneInput): Promise<Permission>;
   FindWhere(request: PermissionFindWhereInput): Promise<Permission>;
-  FindWhereMany(request: PermissionFindWhereInput): Promise<Permissions>;
+  FindWhereMany(request: PermissionFindWhereManyInput): Promise<Permissions>;
   FindWhereOrStar(request: PermissionFindWhereOrStarInput): Promise<Permission>;
   FindByPermitted(request: PermissionFindByPermittedInput): Promise<PermissionFindByPermittedResult>;
   FindAllActions(request: PermissionFindAllActionsInput): Promise<PermissionFindAllActionsResult>;

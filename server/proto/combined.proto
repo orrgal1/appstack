@@ -180,53 +180,55 @@ message IntRange {
 }
 
 message Conversation {
-    string id = 1;
-    uint64 createdAt = 2;
-    uint64 updatedAt = 3;
-    repeated string participantIds = 4;
-    uint64 lastMessageAt = 5;
+  string id = 1;
+  uint64 createdAt = 2;
+  uint64 updatedAt = 3;
+  repeated string participantIds = 4;
+  uint64 lastMessageAt = 5;
+  bool isTemp = 6;
+  bool permissionIntegrityWarning = 7;
 }
 
 message ConversationCreateOneInput {
-    repeated string participantIds = 4;
+  repeated string participantIds = 4;
 }
 
 message ConversationUpdateOneInput {
-    string id = 1;
-    repeated string participantIds = 4;
-    uint64 lastMessageAt = 5;
+  string id = 1;
+  repeated string participantIds = 4;
+  uint64 lastMessageAt = 5;
 }
 
 message ConversationFindOneInput {
-    string id = 1;
+  string id = 1;
 }
 
 message ConversationRemoveOneInput {
-    string id = 1;
+  string id = 1;
 }
 
 message ConversationFindByParticipantFilter {
-    string participantId = 1;
-    uint64 fromLastMessageAt = 2;
+  string participantId = 1;
+  uint64 fromLastMessageAt = 2;
 }
 
 message ConversationFindByParticipantOpts {
-    uint64 limit = 1;
-    uint64 offset = 2;
+  uint64 limit = 1;
+  uint64 offset = 2;
 }
 
 message ConversationFindByParticipantInput {
-    ConversationFindByParticipantFilter filter = 1;
-    ConversationFindByParticipantOpts opts = 2;
+  ConversationFindByParticipantFilter filter = 1;
+  ConversationFindByParticipantOpts opts = 2;
 }
 
 message ConversationFindByParticipantResultMeta {
-    uint64 offset = 1;
+  uint64 offset = 1;
 }
 
 message ConversationFindByParticipantResult {
-    ConversationFindByParticipantResultMeta meta = 1;
-    repeated Conversation results = 2;
+  ConversationFindByParticipantResultMeta meta = 1;
+  repeated Conversation results = 2;
 }
 
 message Message {
@@ -567,11 +569,11 @@ service HealthService {
 }
 
 service ConversationService {
-    rpc CreateOne (ConversationCreateOneInput) returns (Conversation) {}
-    rpc UpdateOne (ConversationUpdateOneInput) returns (Conversation) {}
-    rpc FindOne (ConversationFindOneInput) returns (Conversation) {}
-    rpc RemoveOne (ConversationRemoveOneInput) returns (Conversation) {}
-    rpc FindByParticipant (ConversationFindByParticipantInput) returns (ConversationFindByParticipantResult) {}
+  rpc CreateOne (ConversationCreateOneInput) returns (Conversation) {}
+  rpc UpdateOne (ConversationUpdateOneInput) returns (Conversation) {}
+  rpc FindOne (ConversationFindOneInput) returns (Conversation) {}
+  rpc RemoveOne (ConversationRemoveOneInput) returns (Conversation) {}
+  rpc FindByParticipant (ConversationFindByParticipantInput) returns (ConversationFindByParticipantResult) {}
 }
 
 service MessageService {
@@ -588,7 +590,7 @@ service PermissionService {
   rpc CreateMany (PermissionCreateManyInput) returns (Permissions) {}
   rpc FindOne (PermissionFindOneInput) returns (Permission) {}
   rpc FindWhere (PermissionFindWhereInput) returns (Permission) {}
-  rpc FindWhereMany (PermissionFindWhereInput) returns (Permissions) {}
+  rpc FindWhereMany (PermissionFindWhereManyInput) returns (Permissions) {}
   rpc FindWhereOrStar (PermissionFindWhereOrStarInput) returns (Permission) {}
   rpc FindByPermitted (PermissionFindByPermittedInput) returns (PermissionFindByPermittedResult) {}
   rpc FindAllActions (PermissionFindAllActionsInput) returns (PermissionFindAllActionsResult) {}

@@ -9,7 +9,6 @@ import { LoggingInterceptorGrpc } from '../libs/logging/logging.interceptor.grpc
 import * as passport from 'passport';
 import * as session from 'express-session';
 import { LoggingInterceptorHttp } from '../libs/logging/logging.interceptor.http';
-import { WorkersModule } from '../workers/workers.module';
 import {
   RpcAuthExternalInterceptor,
   RpcAuthInternalInterceptor,
@@ -19,8 +18,9 @@ import { PubsubServerModule } from '../libs/pubsub/pubsub.server.module';
 import { HttpAuthExternalInterceptor } from '../libs/auth/http/httpAuthExternal.interceptor';
 import { HttpAuthInternalInterceptor } from '../libs/auth/http/httpAuthInternal.interceptor';
 import { AllExceptionsFilter } from '../libs/exceptions/global.exception.filter';
-import { HttpModule } from './http/http.module';
-import { GrpcModule } from './grpc/grpc.module';
+import { MainHttpModule } from './http/main.http.module';
+import { MainGrpcModule } from './grpc/main.grpc.module';
+import { MainWorkersModule } from './workers/main.workers.module';
 
 type Component = {
   key: string;
@@ -79,7 +79,7 @@ const main = async (opts: {
     key: 'PROTO',
     init: async () => {
       const proto = await NestFactory.createMicroservice<MicroserviceOptions>(
-        GrpcModule,
+        MainGrpcModule,
         {
           transport: Transport.GRPC,
           options: {
@@ -104,15 +104,18 @@ const main = async (opts: {
     key: 'PROTOINTERNAL',
     init: async () => {
       const protoInternal =
-        await NestFactory.createMicroservice<MicroserviceOptions>(GrpcModule, {
-          transport: Transport.GRPC,
-          options: {
-            package: ['main'],
-            protoPath: join(__dirname, '..', 'proto', `combined.proto`),
-            url: `localhost:${opts.ports.protoInternal}`,
+        await NestFactory.createMicroservice<MicroserviceOptions>(
+          MainGrpcModule,
+          {
+            transport: Transport.GRPC,
+            options: {
+              package: ['main'],
+              protoPath: join(__dirname, '..', 'proto', `combined.proto`),
+              url: `localhost:${opts.ports.protoInternal}`,
+            },
+            logger: new JsonLoggerService(),
           },
-          logger: new JsonLoggerService(),
-        });
+        );
       protoInternal.useGlobalFilters(new RpcExceptionsFilter());
       protoInternal.useGlobalInterceptors(
         new LoggingInterceptorGrpc(),
@@ -126,7 +129,7 @@ const main = async (opts: {
   addComponent({
     key: 'HTTP',
     init: async () => {
-      const http = await NestFactory.create(HttpModule, {
+      const http = await NestFactory.create(MainHttpModule, {
         logger: new JsonLoggerService(),
       });
       http.use(
@@ -150,7 +153,7 @@ const main = async (opts: {
   addComponent({
     key: 'HTTP_INTERNAL',
     init: async () => {
-      const http = await NestFactory.create(HttpModule, {
+      const http = await NestFactory.create(MainHttpModule, {
         logger: new JsonLoggerService(),
       });
       http.use(
@@ -175,7 +178,7 @@ const main = async (opts: {
     key: 'WORKERS',
     init: async () => {
       const workers = await NestFactory.createMicroservice<MicroserviceOptions>(
-        WorkersModule,
+        MainWorkersModule,
         {
           transport: Transport.GRPC,
           options: {

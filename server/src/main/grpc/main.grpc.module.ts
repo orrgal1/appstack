@@ -16,4 +16,4 @@ import { PermissionModule } from '../../services/permission/permission.module';
     PermissionModule,
   ],
 })
-export class GrpcModule {}
+export class MainGrpcModule {}

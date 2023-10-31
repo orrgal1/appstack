@@ -12,6 +12,7 @@ import {
   ConversationUpdateOneInput,
 } from '../../../proto/interfaces';
 import {
+  RpcAuthAssertInternalInterceptor,
   RpcAuthEntityAssertReadableInterceptor,
   RpcAuthEntityAssertWriteableInterceptor,
   RpcAuthEntityCreateOwnershipInterceptor,
@@ -87,13 +88,24 @@ export class ConversationController {
 
   @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('ConversationService', 'FindByParticipant')
-  async search(
+  async findByParticipant(
     @Payload() input: ConversationFindByParticipantInput,
   ): Promise<ConversationFindByParticipantResult> {
-    const results = await this.logic.findByParticipant(input);
-    return {
-      meta: { offset: (input.opts.offset || 0) + results.length },
-      results,
-    };
+    const result = await this.logic.findByParticipant(input);
+    return result;
+  }
+
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('ConversationService', 'FindByPermissionIntegrityWarning')
+  async findByPermissionIntegrityWarning(
+    data: any,
+    metadata: any,
+    call: any,
+  ): Promise<void> {
+    const cursor = this.logic.findByPermissionIntegrityWarning();
+    for await (const next of cursor) {
+      call.write(next);
+    }
+    call.end();
   }
 }

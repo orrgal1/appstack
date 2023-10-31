@@ -1,5 +1,6 @@
 /* eslint-disable */
 import * as _m0 from "protobufjs/minimal";
+import { Observable } from "rxjs";
 import { Empty } from "./google/protobuf/empty";
 import Long = require("long");
 
@@ -92,6 +93,14 @@ export interface DummySearchResultMeta {
 export interface DummySearchResult {
   meta: DummySearchResultMeta | undefined;
   results: Dummy[];
+}
+
+export interface DummyJobPayload {
+  id: string;
+}
+
+export interface PublishJobInput {
+  dummyJobPayload: DummyJobPayload | undefined;
 }
 
 export interface Login {
@@ -237,6 +246,7 @@ export interface ConversationUpdateOneInput {
   id: string;
   participantIds: string[];
   lastMessageAt: number;
+  permissionIntegrityWarning: boolean;
 }
 
 export interface ConversationFindOneInput {
@@ -455,6 +465,31 @@ export interface PermissionFindByPermittedResult {
   results: Permission[];
 }
 
+export interface PermissionFindByEntityFilter {
+  entity: string;
+  entityId: string;
+  action: string;
+}
+
+export interface PermissionFindByEntityOpts {
+  limit: number;
+  offset: number;
+}
+
+export interface PermissionFindByEntityInput {
+  filter: PermissionFindByEntityFilter | undefined;
+  opts: PermissionFindByEntityOpts | undefined;
+}
+
+export interface PermissionFindByEntityResultMeta {
+  offset: number;
+}
+
+export interface PermissionFindByEntityResult {
+  meta: PermissionFindByEntityResultMeta | undefined;
+  results: Permission[];
+}
+
 export interface PermissionFindAllActionsFilter {
   entity: string;
   entityId: string;
@@ -561,14 +596,6 @@ export interface Followee {
   updatedAt: number;
   followerId: string;
   followeeId: string;
-}
-
-export interface DummyJobPayload {
-  id: string;
-}
-
-export interface PublishJobInput {
-  dummyJobPayload: DummyJobPayload | undefined;
 }
 
 export interface PublishJobResult {
@@ -1320,6 +1347,126 @@ export const DummySearchResult = {
       ? DummySearchResultMeta.fromPartial(object.meta)
       : undefined;
     message.results = object.results?.map((e) => Dummy.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseDummyJobPayload(): DummyJobPayload {
+  return { id: "" };
+}
+
+export const DummyJobPayload = {
+  encode(message: DummyJobPayload, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): DummyJobPayload {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDummyJobPayload();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): DummyJobPayload {
+    return { id: isSet(object.id) ? String(object.id) : "" };
+  },
+
+  toJSON(message: DummyJobPayload): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<DummyJobPayload>, I>>(base?: I): DummyJobPayload {
+    return DummyJobPayload.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<DummyJobPayload>, I>>(object: I): DummyJobPayload {
+    const message = createBaseDummyJobPayload();
+    message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBasePublishJobInput(): PublishJobInput {
+  return { dummyJobPayload: undefined };
+}
+
+export const PublishJobInput = {
+  encode(message: PublishJobInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.dummyJobPayload !== undefined) {
+      DummyJobPayload.encode(message.dummyJobPayload, writer.uint32(82).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PublishJobInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePublishJobInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 10:
+          if (tag !== 82) {
+            break;
+          }
+
+          message.dummyJobPayload = DummyJobPayload.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PublishJobInput {
+    return {
+      dummyJobPayload: isSet(object.dummyJobPayload) ? DummyJobPayload.fromJSON(object.dummyJobPayload) : undefined,
+    };
+  },
+
+  toJSON(message: PublishJobInput): unknown {
+    const obj: any = {};
+    if (message.dummyJobPayload !== undefined) {
+      obj.dummyJobPayload = DummyJobPayload.toJSON(message.dummyJobPayload);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PublishJobInput>, I>>(base?: I): PublishJobInput {
+    return PublishJobInput.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PublishJobInput>, I>>(object: I): PublishJobInput {
+    const message = createBasePublishJobInput();
+    message.dummyJobPayload = (object.dummyJobPayload !== undefined && object.dummyJobPayload !== null)
+      ? DummyJobPayload.fromPartial(object.dummyJobPayload)
+      : undefined;
     return message;
   },
 };
@@ -3427,7 +3574,7 @@ export const ConversationCreateOneInput = {
 };
 
 function createBaseConversationUpdateOneInput(): ConversationUpdateOneInput {
-  return { id: "", participantIds: [], lastMessageAt: 0 };
+  return { id: "", participantIds: [], lastMessageAt: 0, permissionIntegrityWarning: false };
 }
 
 export const ConversationUpdateOneInput = {
@@ -3440,6 +3587,9 @@ export const ConversationUpdateOneInput = {
     }
     if (message.lastMessageAt !== 0) {
       writer.uint32(40).uint64(message.lastMessageAt);
+    }
+    if (message.permissionIntegrityWarning === true) {
+      writer.uint32(56).bool(message.permissionIntegrityWarning);
     }
     return writer;
   },
@@ -3472,6 +3622,13 @@ export const ConversationUpdateOneInput = {
 
           message.lastMessageAt = longToNumber(reader.uint64() as Long);
           continue;
+        case 7:
+          if (tag !== 56) {
+            break;
+          }
+
+          message.permissionIntegrityWarning = reader.bool();
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -3486,6 +3643,9 @@ export const ConversationUpdateOneInput = {
       id: isSet(object.id) ? String(object.id) : "",
       participantIds: Array.isArray(object?.participantIds) ? object.participantIds.map((e: any) => String(e)) : [],
       lastMessageAt: isSet(object.lastMessageAt) ? Number(object.lastMessageAt) : 0,
+      permissionIntegrityWarning: isSet(object.permissionIntegrityWarning)
+        ? Boolean(object.permissionIntegrityWarning)
+        : false,
     };
   },
 
@@ -3500,6 +3660,9 @@ export const ConversationUpdateOneInput = {
     if (message.lastMessageAt !== 0) {
       obj.lastMessageAt = Math.round(message.lastMessageAt);
     }
+    if (message.permissionIntegrityWarning === true) {
+      obj.permissionIntegrityWarning = message.permissionIntegrityWarning;
+    }
     return obj;
   },
 
@@ -3512,6 +3675,7 @@ export const ConversationUpdateOneInput = {
     message.id = object.id ?? "";
     message.participantIds = object.participantIds?.map((e) => e) || [];
     message.lastMessageAt = object.lastMessageAt ?? 0;
+    message.permissionIntegrityWarning = object.permissionIntegrityWarning ?? false;
     return message;
   },
 };
@@ -6829,6 +6993,389 @@ export const PermissionFindByPermittedResult = {
   },
 };
 
+function createBasePermissionFindByEntityFilter(): PermissionFindByEntityFilter {
+  return { entity: "", entityId: "", action: "" };
+}
+
+export const PermissionFindByEntityFilter = {
+  encode(message: PermissionFindByEntityFilter, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.entity !== "") {
+      writer.uint32(50).string(message.entity);
+    }
+    if (message.entityId !== "") {
+      writer.uint32(58).string(message.entityId);
+    }
+    if (message.action !== "") {
+      writer.uint32(66).string(message.action);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionFindByEntityFilter {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePermissionFindByEntityFilter();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 6:
+          if (tag !== 50) {
+            break;
+          }
+
+          message.entity = reader.string();
+          continue;
+        case 7:
+          if (tag !== 58) {
+            break;
+          }
+
+          message.entityId = reader.string();
+          continue;
+        case 8:
+          if (tag !== 66) {
+            break;
+          }
+
+          message.action = reader.string();
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PermissionFindByEntityFilter {
+    return {
+      entity: isSet(object.entity) ? String(object.entity) : "",
+      entityId: isSet(object.entityId) ? String(object.entityId) : "",
+      action: isSet(object.action) ? String(object.action) : "",
+    };
+  },
+
+  toJSON(message: PermissionFindByEntityFilter): unknown {
+    const obj: any = {};
+    if (message.entity !== "") {
+      obj.entity = message.entity;
+    }
+    if (message.entityId !== "") {
+      obj.entityId = message.entityId;
+    }
+    if (message.action !== "") {
+      obj.action = message.action;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PermissionFindByEntityFilter>, I>>(base?: I): PermissionFindByEntityFilter {
+    return PermissionFindByEntityFilter.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PermissionFindByEntityFilter>, I>>(object: I): PermissionFindByEntityFilter {
+    const message = createBasePermissionFindByEntityFilter();
+    message.entity = object.entity ?? "";
+    message.entityId = object.entityId ?? "";
+    message.action = object.action ?? "";
+    return message;
+  },
+};
+
+function createBasePermissionFindByEntityOpts(): PermissionFindByEntityOpts {
+  return { limit: 0, offset: 0 };
+}
+
+export const PermissionFindByEntityOpts = {
+  encode(message: PermissionFindByEntityOpts, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.limit !== 0) {
+      writer.uint32(8).uint64(message.limit);
+    }
+    if (message.offset !== 0) {
+      writer.uint32(16).uint64(message.offset);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionFindByEntityOpts {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePermissionFindByEntityOpts();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.limit = longToNumber(reader.uint64() as Long);
+          continue;
+        case 2:
+          if (tag !== 16) {
+            break;
+          }
+
+          message.offset = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PermissionFindByEntityOpts {
+    return {
+      limit: isSet(object.limit) ? Number(object.limit) : 0,
+      offset: isSet(object.offset) ? Number(object.offset) : 0,
+    };
+  },
+
+  toJSON(message: PermissionFindByEntityOpts): unknown {
+    const obj: any = {};
+    if (message.limit !== 0) {
+      obj.limit = Math.round(message.limit);
+    }
+    if (message.offset !== 0) {
+      obj.offset = Math.round(message.offset);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PermissionFindByEntityOpts>, I>>(base?: I): PermissionFindByEntityOpts {
+    return PermissionFindByEntityOpts.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PermissionFindByEntityOpts>, I>>(object: I): PermissionFindByEntityOpts {
+    const message = createBasePermissionFindByEntityOpts();
+    message.limit = object.limit ?? 0;
+    message.offset = object.offset ?? 0;
+    return message;
+  },
+};
+
+function createBasePermissionFindByEntityInput(): PermissionFindByEntityInput {
+  return { filter: undefined, opts: undefined };
+}
+
+export const PermissionFindByEntityInput = {
+  encode(message: PermissionFindByEntityInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.filter !== undefined) {
+      PermissionFindByEntityFilter.encode(message.filter, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.opts !== undefined) {
+      PermissionFindByEntityOpts.encode(message.opts, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionFindByEntityInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePermissionFindByEntityInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.filter = PermissionFindByEntityFilter.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.opts = PermissionFindByEntityOpts.decode(reader, reader.uint32());
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PermissionFindByEntityInput {
+    return {
+      filter: isSet(object.filter) ? PermissionFindByEntityFilter.fromJSON(object.filter) : undefined,
+      opts: isSet(object.opts) ? PermissionFindByEntityOpts.fromJSON(object.opts) : undefined,
+    };
+  },
+
+  toJSON(message: PermissionFindByEntityInput): unknown {
+    const obj: any = {};
+    if (message.filter !== undefined) {
+      obj.filter = PermissionFindByEntityFilter.toJSON(message.filter);
+    }
+    if (message.opts !== undefined) {
+      obj.opts = PermissionFindByEntityOpts.toJSON(message.opts);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PermissionFindByEntityInput>, I>>(base?: I): PermissionFindByEntityInput {
+    return PermissionFindByEntityInput.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PermissionFindByEntityInput>, I>>(object: I): PermissionFindByEntityInput {
+    const message = createBasePermissionFindByEntityInput();
+    message.filter = (object.filter !== undefined && object.filter !== null)
+      ? PermissionFindByEntityFilter.fromPartial(object.filter)
+      : undefined;
+    message.opts = (object.opts !== undefined && object.opts !== null)
+      ? PermissionFindByEntityOpts.fromPartial(object.opts)
+      : undefined;
+    return message;
+  },
+};
+
+function createBasePermissionFindByEntityResultMeta(): PermissionFindByEntityResultMeta {
+  return { offset: 0 };
+}
+
+export const PermissionFindByEntityResultMeta = {
+  encode(message: PermissionFindByEntityResultMeta, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.offset !== 0) {
+      writer.uint32(8).uint64(message.offset);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionFindByEntityResultMeta {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePermissionFindByEntityResultMeta();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.offset = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PermissionFindByEntityResultMeta {
+    return { offset: isSet(object.offset) ? Number(object.offset) : 0 };
+  },
+
+  toJSON(message: PermissionFindByEntityResultMeta): unknown {
+    const obj: any = {};
+    if (message.offset !== 0) {
+      obj.offset = Math.round(message.offset);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PermissionFindByEntityResultMeta>, I>>(
+    base?: I,
+  ): PermissionFindByEntityResultMeta {
+    return PermissionFindByEntityResultMeta.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PermissionFindByEntityResultMeta>, I>>(
+    object: I,
+  ): PermissionFindByEntityResultMeta {
+    const message = createBasePermissionFindByEntityResultMeta();
+    message.offset = object.offset ?? 0;
+    return message;
+  },
+};
+
+function createBasePermissionFindByEntityResult(): PermissionFindByEntityResult {
+  return { meta: undefined, results: [] };
+}
+
+export const PermissionFindByEntityResult = {
+  encode(message: PermissionFindByEntityResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.meta !== undefined) {
+      PermissionFindByEntityResultMeta.encode(message.meta, writer.uint32(10).fork()).ldelim();
+    }
+    for (const v of message.results) {
+      Permission.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PermissionFindByEntityResult {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePermissionFindByEntityResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break;
+          }
+
+          message.meta = PermissionFindByEntityResultMeta.decode(reader, reader.uint32());
+          continue;
+        case 2:
+          if (tag !== 18) {
+            break;
+          }
+
+          message.results.push(Permission.decode(reader, reader.uint32()));
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PermissionFindByEntityResult {
+    return {
+      meta: isSet(object.meta) ? PermissionFindByEntityResultMeta.fromJSON(object.meta) : undefined,
+      results: Array.isArray(object?.results) ? object.results.map((e: any) => Permission.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: PermissionFindByEntityResult): unknown {
+    const obj: any = {};
+    if (message.meta !== undefined) {
+      obj.meta = PermissionFindByEntityResultMeta.toJSON(message.meta);
+    }
+    if (message.results?.length) {
+      obj.results = message.results.map((e) => Permission.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<PermissionFindByEntityResult>, I>>(base?: I): PermissionFindByEntityResult {
+    return PermissionFindByEntityResult.fromPartial(base ?? {});
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PermissionFindByEntityResult>, I>>(object: I): PermissionFindByEntityResult {
+    const message = createBasePermissionFindByEntityResult();
+    message.meta = (object.meta !== undefined && object.meta !== null)
+      ? PermissionFindByEntityResultMeta.fromPartial(object.meta)
+      : undefined;
+    message.results = object.results?.map((e) => Permission.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBasePermissionFindAllActionsFilter(): PermissionFindAllActionsFilter {
   return { entity: "", entityId: "", permittedEntity: "", permittedEntityId: "" };
 }
@@ -8471,126 +9018,6 @@ export const Followee = {
   },
 };
 
-function createBaseDummyJobPayload(): DummyJobPayload {
-  return { id: "" };
-}
-
-export const DummyJobPayload = {
-  encode(message: DummyJobPayload, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): DummyJobPayload {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDummyJobPayload();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.string();
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DummyJobPayload {
-    return { id: isSet(object.id) ? String(object.id) : "" };
-  },
-
-  toJSON(message: DummyJobPayload): unknown {
-    const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DummyJobPayload>, I>>(base?: I): DummyJobPayload {
-    return DummyJobPayload.fromPartial(base ?? {});
-  },
-
-  fromPartial<I extends Exact<DeepPartial<DummyJobPayload>, I>>(object: I): DummyJobPayload {
-    const message = createBaseDummyJobPayload();
-    message.id = object.id ?? "";
-    return message;
-  },
-};
-
-function createBasePublishJobInput(): PublishJobInput {
-  return { dummyJobPayload: undefined };
-}
-
-export const PublishJobInput = {
-  encode(message: PublishJobInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.dummyJobPayload !== undefined) {
-      DummyJobPayload.encode(message.dummyJobPayload, writer.uint32(82).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): PublishJobInput {
-    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePublishJobInput();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 10:
-          if (tag !== 82) {
-            break;
-          }
-
-          message.dummyJobPayload = DummyJobPayload.decode(reader, reader.uint32());
-          continue;
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skipType(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): PublishJobInput {
-    return {
-      dummyJobPayload: isSet(object.dummyJobPayload) ? DummyJobPayload.fromJSON(object.dummyJobPayload) : undefined,
-    };
-  },
-
-  toJSON(message: PublishJobInput): unknown {
-    const obj: any = {};
-    if (message.dummyJobPayload !== undefined) {
-      obj.dummyJobPayload = DummyJobPayload.toJSON(message.dummyJobPayload);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<PublishJobInput>, I>>(base?: I): PublishJobInput {
-    return PublishJobInput.fromPartial(base ?? {});
-  },
-
-  fromPartial<I extends Exact<DeepPartial<PublishJobInput>, I>>(object: I): PublishJobInput {
-    const message = createBasePublishJobInput();
-    message.dummyJobPayload = (object.dummyJobPayload !== undefined && object.dummyJobPayload !== null)
-      ? DummyJobPayload.fromPartial(object.dummyJobPayload)
-      : undefined;
-    return message;
-  },
-};
-
 function createBasePublishJobResult(): PublishJobResult {
   return { jobId: "" };
 }
@@ -8742,6 +9169,7 @@ export interface ConversationService {
   FindOne(request: ConversationFindOneInput): Promise<Conversation>;
   RemoveOne(request: ConversationRemoveOneInput): Promise<Conversation>;
   FindByParticipant(request: ConversationFindByParticipantInput): Promise<ConversationFindByParticipantResult>;
+  FindByPermissionIntegrityWarning(request: Empty): Observable<Conversation>;
 }
 
 export interface MessageService {
@@ -8761,6 +9189,7 @@ export interface PermissionService {
   FindWhereMany(request: PermissionFindWhereManyInput): Promise<Permissions>;
   FindWhereOrStar(request: PermissionFindWhereOrStarInput): Promise<Permission>;
   FindByPermitted(request: PermissionFindByPermittedInput): Promise<PermissionFindByPermittedResult>;
+  FindByEntity(request: PermissionFindByEntityInput): Promise<PermissionFindByEntityResult>;
   FindAllActions(request: PermissionFindAllActionsInput): Promise<PermissionFindAllActionsResult>;
   ValidateOne(request: PermissionValidateOneInput): Promise<PermissionValidateOneResult>;
   RemoveOne(request: PermissionRemoveOneInput): Promise<Empty>;

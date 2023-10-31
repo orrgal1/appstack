@@ -6,6 +6,7 @@ import {
   PermissionCreateManyInput,
   PermissionCreateOneInput,
   PermissionFindAllActionsInput,
+  PermissionFindByEntityInput,
   PermissionFindByPermittedInput,
   PermissionFindOneInput,
   PermissionFindWhereInput,
@@ -92,7 +93,6 @@ export class PermissionService implements OnModuleInit {
       AND doc.permittedEntity == @permittedEntity
       AND doc.permittedEntityId IN @permittedEntityIds
       AND doc.action == @action
-      LIMIT 1
       RETURN doc
     `;
     const vars = {
@@ -195,6 +195,27 @@ export class PermissionService implements OnModuleInit {
       FOR doc IN permission
       FILTER doc.permittedEntity == @permittedEntity
       AND doc.permittedEntityId == @permittedEntityId
+      LIMIT @offset, @limit
+      RETURN doc
+    `;
+    const vars = {
+      ...filter,
+      offset: Number(opts.offset) || 0,
+      limit: Number(opts.limit) || 0,
+    };
+    const cursor = await this.arangodb.db.query(query, vars);
+    return (await cursor.all()).map(this.arangodb.utils.format);
+  }
+
+  async findByEntity(
+    input: PermissionFindByEntityInput,
+  ): Promise<Permission[]> {
+    const { filter, opts } = input;
+    const query = `
+      FOR doc IN permission
+      FILTER doc.entity == @entity
+      AND doc.entityId == @entityId
+      AND doc.action == @action
       LIMIT @offset, @limit
       RETURN doc
     `;

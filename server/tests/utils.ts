@@ -3,6 +3,8 @@ import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import { Metadata } from 'nice-grpc';
 import { main } from '../src/main/main';
+import { ArangodbService } from '../src/libs/arangodb/arangodb.service';
+import { ArangodbUtils } from '../src/libs/arangodb/arangodbUtils';
 
 export function isE2E() {
   return process.env.E2E;
@@ -110,4 +112,9 @@ export function retry(
     }
     throw error;
   };
+}
+
+export function getArangoDb() {
+  const arangodb: ArangodbService = new ArangodbService(new ArangodbUtils());
+  return arangodb.db;
 }

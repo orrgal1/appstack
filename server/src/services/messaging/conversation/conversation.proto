@@ -18,6 +18,7 @@ message ConversationUpdateOneInput {
   string id = 1;
   repeated string participantIds = 4;
   uint64 lastMessageAt = 5;
+  bool permissionIntegrityWarning = 7;
 }
 
 message ConversationFindOneInput {
@@ -58,4 +59,5 @@ service ConversationService {
   rpc FindOne (ConversationFindOneInput) returns (Conversation) {}
   rpc RemoveOne (ConversationRemoveOneInput) returns (Conversation) {}
   rpc FindByParticipant (ConversationFindByParticipantInput) returns (ConversationFindByParticipantResult) {}
+  rpc FindByPermissionIntegrityWarning (google.protobuf.Empty) returns (stream Conversation) {}
 }

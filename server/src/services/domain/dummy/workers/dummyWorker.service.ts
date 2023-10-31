@@ -1,17 +1,20 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { MqService } from '../../libs/mq/mq.service';
+import { MqService } from '../../../../libs/mq/mq.service';
 import { Job } from 'bullmq';
-import { WorkerJobData } from '../types';
-import { ClientService } from '../../libs/client/client.service';
-import { DummyServiceClient, DummyServiceDefinition } from '../../libs/client';
-import { DummyJobPayload } from '../../proto/interfaces';
-import { enableWorker } from '../enableWorker';
+import { WorkerJobData } from '../../../../libs/workers/types';
+import { ClientService } from '../../../../libs/client/client.service';
+import {
+  DummyServiceClient,
+  DummyServiceDefinition,
+} from '../../../../libs/client';
+import { DummyJobPayload } from '../../../../proto/interfaces';
+import { enableWorker } from '../../../../libs/workers/enableWorker';
 
 export type DummyJobData = WorkerJobData<DummyJobPayload>;
 
 @Injectable()
-export class DummyWorker implements OnModuleInit {
-  private logger: Logger = new Logger(DummyWorker.name);
+export class DummyWorkerService implements OnModuleInit {
+  private logger: Logger = new Logger(DummyWorkerService.name);
   private dummyServiceClient: DummyServiceClient;
 
   constructor(private mq: MqService, private clientService: ClientService) {

@@ -5,6 +5,7 @@ import {
   Conversation,
   ConversationCreateOneInput,
   ConversationFindByParticipantInput,
+  ConversationFindByParticipantResult,
   ConversationFindOneInput,
   ConversationRemoveOneInput,
   ConversationUpdateOneInput,
@@ -74,7 +75,7 @@ export class ConversationService implements OnModuleInit {
 
   async findByParticipant(
     input: ConversationFindByParticipantInput,
-  ): Promise<Conversation[]> {
+  ): Promise<ConversationFindByParticipantResult> {
     const { filter, opts } = input;
     const query = `
       FOR doc IN conversation
@@ -90,7 +91,24 @@ export class ConversationService implements OnModuleInit {
       limit: Number(opts.limit) || 0,
     };
     const cursor = await this.arangodb.db.query(query, vars);
-    return (await cursor.all()).map(this.arangodb.utils.format);
+    const results = (await cursor.all()).map(this.arangodb.utils.format);
+    return {
+      meta: { offset: results.length },
+      results,
+    };
+  }
+
+  async *findByPermissionIntegrityWarning(): AsyncGenerator<Conversation> {
+    const query = `
+      FOR doc IN conversation
+      FILTER doc.permissionIntegrityWarning == true 
+      RETURN doc
+    `;
+    const cursor = await this.arangodb.db.query(query);
+    while (cursor.hasNext) {
+      const next = await cursor.next();
+      yield this.arangodb.utils.format(next);
+    }
   }
 
   async onModuleInit(): Promise<void> {
@@ -101,6 +119,12 @@ export class ConversationService implements OnModuleInit {
           name: 'idx-conversation-v5',
           type: 'persistent',
           fields: ['participantIds[*]', 'lastMessageAt', 'isTemp'],
+        }),
+      () =>
+        this.arangodb.db.collection('conversation').ensureIndex({
+          name: 'idx-conversation-permission-integrity-warning-v1',
+          type: 'persistent',
+          fields: ['permissionIntegrityWarning'],
         }),
     );
   }

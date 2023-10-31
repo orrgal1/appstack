@@ -5,6 +5,8 @@ import {
   PermissionCreateManyInput,
   PermissionCreateOneInput,
   PermissionFindAllActionsInput,
+  PermissionFindByEntityInput,
+  PermissionFindByEntityResult,
   PermissionFindByPermittedInput,
   PermissionFindByPermittedResult,
   PermissionFindOneInput,
@@ -126,10 +128,22 @@ export class PermissionController {
 
   @UseInterceptors(RpcAuthAssertInternalInterceptor)
   @GrpcMethod('PermissionService', 'FindByPermitted')
-  async search(
+  async findByPermitted(
     @Payload() input: PermissionFindByPermittedInput,
   ): Promise<PermissionFindByPermittedResult> {
     const results = await this.logic.findByPermitted(input);
+    return {
+      meta: { offset: (input.opts.offset || 0) + results.length },
+      results,
+    };
+  }
+
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('PermissionService', 'FindByEntity')
+  async findByEntity(
+    @Payload() input: PermissionFindByEntityInput,
+  ): Promise<PermissionFindByEntityResult> {
+    const results = await this.logic.findByEntity(input);
     return {
       meta: { offset: (input.opts.offset || 0) + results.length },
       results,

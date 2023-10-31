@@ -4,6 +4,7 @@ import {
   Conversation,
   ConversationCreateOneInput,
   ConversationFindByParticipantInput,
+  ConversationFindByParticipantResult,
   ConversationFindOneInput,
   ConversationRemoveOneInput,
   ConversationUpdateOneInput,
@@ -66,28 +67,40 @@ export class ConversationLogic {
   }
 
   private async syncPermissions(input: ConversationUpdateOneInput) {
-    const current = await this.findOne({ id: input.id });
-    if (current) {
-      const added = difference(input.participantIds, current.participantIds);
-      const removed = difference(current.participantIds, input);
-      if (added?.length > 0) {
-        await this.permissionClient.createMany({
-          entity: 'conversation',
-          entityId: current.id,
-          permittedEntity: 'user',
-          permittedEntityIds: added,
-          action: 'read',
-        });
-      }
-      if (removed?.length > 0) {
-        await this.permissionClient.removeWhereMany({
-          entity: 'conversation',
-          entityId: current.id,
-          permittedEntity: 'user',
-          permittedEntityIds: removed,
-          action: 'read',
-        });
-      }
+    const permissions = await this.permissionClient.findByEntity({
+      filter: {
+        entity: 'conversation',
+        entityId: input.id,
+        action: 'read',
+      },
+      opts: {
+        limit: 99999,
+        offset: 0,
+      },
+    });
+    const current = permissions.results.map(
+      (permission) => permission.permittedEntityId,
+    );
+    const desired = input.participantIds;
+    const add = difference(desired, current);
+    const remove = difference(current, desired);
+    if (add?.length > 0) {
+      await this.permissionClient.createMany({
+        entity: 'conversation',
+        entityId: input.id,
+        permittedEntity: 'user',
+        permittedEntityIds: add,
+        action: 'read',
+      });
+    }
+    if (remove?.length > 0) {
+      await this.permissionClient.removeWhereMany({
+        entity: 'conversation',
+        entityId: input.id,
+        permittedEntity: 'user',
+        permittedEntityIds: remove,
+        action: 'read',
+      });
     }
   }
 
@@ -99,7 +112,14 @@ export class ConversationLogic {
 
   async findByParticipant(
     input: ConversationFindByParticipantInput,
-  ): Promise<Conversation[]> {
+  ): Promise<ConversationFindByParticipantResult> {
     return await this.service.findByParticipant(input);
+  }
+
+  async *findByPermissionIntegrityWarning(): AsyncGenerator<Conversation> {
+    const cursor = this.service.findByPermissionIntegrityWarning();
+    for await (const next of cursor) {
+      yield next;
+    }
   }
 }

@@ -4,6 +4,7 @@ import {
   PermissionCreateManyInput,
   PermissionCreateOneInput,
   PermissionFindAllActionsInput,
+  PermissionFindByEntityInput,
   PermissionFindByPermittedInput,
   PermissionFindOneInput,
   PermissionFindWhereInput,
@@ -75,6 +76,12 @@ export class PermissionLogic {
     input: PermissionFindByPermittedInput,
   ): Promise<Permission[]> {
     return await this.service.findByPermitted(input);
+  }
+
+  async findByEntity(
+    input: PermissionFindByEntityInput,
+  ): Promise<Permission[]> {
+    return await this.service.findByEntity(input);
   }
 
   async findAllActions(

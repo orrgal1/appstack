@@ -7,4 +7,4 @@ import { HealthModule } from '../../services/health/health.module';
 @Module({
   imports: [AuthModule, ArangodbModule, ClientModule, HealthModule],
 })
-export class HttpModule {}
+export class MainHttpModule {}

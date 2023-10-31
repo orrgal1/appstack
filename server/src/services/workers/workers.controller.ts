@@ -4,9 +4,9 @@ import {
   PublishJobInput,
   PublishJobResult,
   WorkersHealthCheckResult,
-} from '../proto/interfaces';
-import { MqService } from '../libs/mq/mq.service';
-import { RpcAuthAssertInternalInterceptor } from '../libs/auth/rpc/rpcAuth.module';
+} from '../../proto/interfaces';
+import { MqService } from '../../libs/mq/mq.service';
+import { RpcAuthAssertInternalInterceptor } from '../../libs/auth/rpc/rpcAuth.module';
 
 @Controller()
 export class WorkersController {

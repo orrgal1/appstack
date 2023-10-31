@@ -57,6 +57,14 @@ export interface DummySearchResult {
   results: Dummy[];
 }
 
+export interface DummyJobPayload {
+  id: string;
+}
+
+export interface PublishJobInput {
+  dummyJobPayload: DummyJobPayload | undefined;
+}
+
 export interface Login {
   id: string;
   createdAt: number;
@@ -200,6 +208,7 @@ export interface ConversationUpdateOneInput {
   id: string;
   participantIds: string[];
   lastMessageAt: number;
+  permissionIntegrityWarning: boolean;
 }
 
 export interface ConversationFindOneInput {
@@ -418,6 +427,31 @@ export interface PermissionFindByPermittedResult {
   results: Permission[];
 }
 
+export interface PermissionFindByEntityFilter {
+  entity: string;
+  entityId: string;
+  action: string;
+}
+
+export interface PermissionFindByEntityOpts {
+  limit: number;
+  offset: number;
+}
+
+export interface PermissionFindByEntityInput {
+  filter: PermissionFindByEntityFilter | undefined;
+  opts: PermissionFindByEntityOpts | undefined;
+}
+
+export interface PermissionFindByEntityResultMeta {
+  offset: number;
+}
+
+export interface PermissionFindByEntityResult {
+  meta: PermissionFindByEntityResultMeta | undefined;
+  results: Permission[];
+}
+
 export interface PermissionFindAllActionsFilter {
   entity: string;
   entityId: string;
@@ -526,14 +560,6 @@ export interface Followee {
   followeeId: string;
 }
 
-export interface DummyJobPayload {
-  id: string;
-}
-
-export interface PublishJobInput {
-  dummyJobPayload: DummyJobPayload | undefined;
-}
-
 export interface PublishJobResult {
   jobId: string;
 }
@@ -579,6 +605,7 @@ export interface ConversationService {
   FindByParticipant(
     request: ConversationFindByParticipantInput,
   ): Promise<ConversationFindByParticipantResult>;
+  FindByPermissionIntegrityWarning(request: Empty): Observable<Conversation>;
 }
 
 export interface MessageService {
@@ -602,6 +629,9 @@ export interface PermissionService {
   FindByPermitted(
     request: PermissionFindByPermittedInput,
   ): Promise<PermissionFindByPermittedResult>;
+  FindByEntity(
+    request: PermissionFindByEntityInput,
+  ): Promise<PermissionFindByEntityResult>;
   FindAllActions(
     request: PermissionFindAllActionsInput,
   ): Promise<PermissionFindAllActionsResult>;

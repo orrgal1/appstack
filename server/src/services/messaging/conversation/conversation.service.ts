@@ -7,7 +7,9 @@ import {
   ConversationFindByParticipantInput,
   ConversationFindByParticipantResult,
   ConversationFindOneInput,
+  ConversationFindTempsInput,
   ConversationRemoveOneInput,
+  ConversationRemoveTempsInput,
   ConversationUpdateOneInput,
 } from '../../../proto/interfaces';
 
@@ -109,6 +111,40 @@ export class ConversationService implements OnModuleInit {
       const next = await cursor.next();
       yield this.arangodb.utils.format(next);
     }
+  }
+
+  // TODO: test
+  async *findTemps(
+    input: ConversationFindTempsInput,
+  ): AsyncGenerator<Conversation> {
+    const query = `
+      FOR doc IN conversation
+      FILTER doc.isTemp == true
+      AND doc.createdAt < (DATE_NOW() - @millisAgo)
+      RETURN doc
+    `;
+    const vars = {
+      ...input,
+    };
+    const cursor = await this.arangodb.db.query(query, vars);
+    while (cursor.hasNext) {
+      const next = await cursor.next();
+      yield this.arangodb.utils.format(next);
+    }
+  }
+
+  // TODO: test
+  async removeTemps(input: ConversationRemoveTempsInput): Promise<void> {
+    const query = `
+      FOR doc IN conversation
+      FILTER doc.isTemp == true
+      AND doc.createdAt < (DATE_NOW() - @millisAgo)
+      REMOVE doc in conversation
+    `;
+    const vars = {
+      ...input,
+    };
+    await this.arangodb.db.query(query, vars);
   }
 
   async onModuleInit(): Promise<void> {

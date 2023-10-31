@@ -240,6 +240,14 @@ message ConversationFindByParticipantResult {
   repeated Conversation results = 2;
 }
 
+message ConversationFindTempsInput {
+  uint64 millisAgo = 1;
+}
+
+message ConversationRemoveTempsInput {
+  uint64 millisAgo = 1;
+}
+
 message Message {
     string id = 1;
     uint64 createdAt = 2;
@@ -601,6 +609,8 @@ service ConversationService {
   rpc RemoveOne (ConversationRemoveOneInput) returns (Conversation) {}
   rpc FindByParticipant (ConversationFindByParticipantInput) returns (ConversationFindByParticipantResult) {}
   rpc FindByPermissionIntegrityWarning (google.protobuf.Empty) returns (stream Conversation) {}
+  rpc FindTemps (ConversationFindTempsInput) returns (stream Conversation) {}
+  rpc RemoveTemps (ConversationRemoveTempsInput) returns (google.protobuf.Empty) {}
 }
 
 service MessageService {

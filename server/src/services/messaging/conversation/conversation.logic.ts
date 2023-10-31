@@ -6,7 +6,9 @@ import {
   ConversationFindByParticipantInput,
   ConversationFindByParticipantResult,
   ConversationFindOneInput,
+  ConversationFindTempsInput,
   ConversationRemoveOneInput,
+  ConversationRemoveTempsInput,
   ConversationUpdateOneInput,
 } from '../../../proto/interfaces';
 import { ConversationService } from './conversation.service';
@@ -110,6 +112,10 @@ export class ConversationLogic {
     return await this.service.removeOne(input);
   }
 
+  async removeTemps(input: ConversationRemoveTempsInput): Promise<void> {
+    return await this.service.removeTemps(input);
+  }
+
   async findByParticipant(
     input: ConversationFindByParticipantInput,
   ): Promise<ConversationFindByParticipantResult> {
@@ -118,6 +124,15 @@ export class ConversationLogic {
 
   async *findByPermissionIntegrityWarning(): AsyncGenerator<Conversation> {
     const cursor = this.service.findByPermissionIntegrityWarning();
+    for await (const next of cursor) {
+      yield next;
+    }
+  }
+
+  async *findTemps(
+    input: ConversationFindTempsInput,
+  ): AsyncGenerator<Conversation> {
+    const cursor = this.service.findTemps(input);
     for await (const next of cursor) {
       yield next;
     }

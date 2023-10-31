@@ -243,6 +243,14 @@ export interface ConversationFindByParticipantResult {
   results: Conversation[];
 }
 
+export interface ConversationFindTempsInput {
+  millisAgo: number;
+}
+
+export interface ConversationRemoveTempsInput {
+  millisAgo: number;
+}
+
 export interface Message {
   id: string;
   createdAt: number;
@@ -606,6 +614,8 @@ export interface ConversationService {
     request: ConversationFindByParticipantInput,
   ): Promise<ConversationFindByParticipantResult>;
   FindByPermissionIntegrityWarning(request: Empty): Observable<Conversation>;
+  FindTemps(request: ConversationFindTempsInput): Observable<Conversation>;
+  RemoveTemps(request: ConversationRemoveTempsInput): Promise<Empty>;
 }
 
 export interface MessageService {

@@ -8,7 +8,9 @@ import {
   ConversationFindByParticipantInput,
   ConversationFindByParticipantResult,
   ConversationFindOneInput,
+  ConversationFindTempsInput,
   ConversationRemoveOneInput,
+  ConversationRemoveTempsInput,
   ConversationUpdateOneInput,
 } from '../../../proto/interfaces';
 import {
@@ -86,6 +88,14 @@ export class ConversationController {
     return removed;
   }
 
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('ConversationService', 'RemoveTemps')
+  async removeTemps(
+    @Payload() input: ConversationRemoveTempsInput,
+  ): Promise<void> {
+    await this.logic.removeTemps(input);
+  }
+
   @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
   @GrpcMethod('ConversationService', 'FindByParticipant')
   async findByParticipant(
@@ -98,11 +108,25 @@ export class ConversationController {
   @UseInterceptors(RpcAuthAssertInternalInterceptor)
   @GrpcMethod('ConversationService', 'FindByPermissionIntegrityWarning')
   async findByPermissionIntegrityWarning(
-    data: any,
+    input: any,
     metadata: any,
     call: any,
   ): Promise<void> {
     const cursor = this.logic.findByPermissionIntegrityWarning();
+    for await (const next of cursor) {
+      call.write(next);
+    }
+    call.end();
+  }
+
+  @UseInterceptors(RpcAuthAssertInternalInterceptor)
+  @GrpcMethod('ConversationService', 'FindTemps')
+  async findTemps(
+    @Payload() input: ConversationFindTempsInput,
+    metadata: any,
+    call: any,
+  ): Promise<void> {
+    const cursor = this.logic.findTemps(input);
     for await (const next of cursor) {
       call.write(next);
     }

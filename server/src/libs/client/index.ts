@@ -281,6 +281,14 @@ export interface ConversationFindByParticipantResult {
   results: Conversation[];
 }
 
+export interface ConversationFindTempsInput {
+  millisAgo: number;
+}
+
+export interface ConversationRemoveTempsInput {
+  millisAgo: number;
+}
+
 export interface Message {
   id: string;
   createdAt: number;
@@ -4156,6 +4164,122 @@ export const ConversationFindByParticipantResult = {
       ? ConversationFindByParticipantResultMeta.fromPartial(object.meta)
       : undefined;
     message.results = object.results?.map((e) => Conversation.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseConversationFindTempsInput(): ConversationFindTempsInput {
+  return { millisAgo: 0 };
+}
+
+export const ConversationFindTempsInput = {
+  encode(message: ConversationFindTempsInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.millisAgo !== 0) {
+      writer.uint32(8).uint64(message.millisAgo);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ConversationFindTempsInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseConversationFindTempsInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.millisAgo = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ConversationFindTempsInput {
+    return { millisAgo: isSet(object.millisAgo) ? Number(object.millisAgo) : 0 };
+  },
+
+  toJSON(message: ConversationFindTempsInput): unknown {
+    const obj: any = {};
+    if (message.millisAgo !== 0) {
+      obj.millisAgo = Math.round(message.millisAgo);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<ConversationFindTempsInput>): ConversationFindTempsInput {
+    return ConversationFindTempsInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<ConversationFindTempsInput>): ConversationFindTempsInput {
+    const message = createBaseConversationFindTempsInput();
+    message.millisAgo = object.millisAgo ?? 0;
+    return message;
+  },
+};
+
+function createBaseConversationRemoveTempsInput(): ConversationRemoveTempsInput {
+  return { millisAgo: 0 };
+}
+
+export const ConversationRemoveTempsInput = {
+  encode(message: ConversationRemoveTempsInput, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.millisAgo !== 0) {
+      writer.uint32(8).uint64(message.millisAgo);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ConversationRemoveTempsInput {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseConversationRemoveTempsInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.millisAgo = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ConversationRemoveTempsInput {
+    return { millisAgo: isSet(object.millisAgo) ? Number(object.millisAgo) : 0 };
+  },
+
+  toJSON(message: ConversationRemoveTempsInput): unknown {
+    const obj: any = {};
+    if (message.millisAgo !== 0) {
+      obj.millisAgo = Math.round(message.millisAgo);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<ConversationRemoveTempsInput>): ConversationRemoveTempsInput {
+    return ConversationRemoveTempsInput.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<ConversationRemoveTempsInput>): ConversationRemoveTempsInput {
+    const message = createBaseConversationRemoveTempsInput();
+    message.millisAgo = object.millisAgo ?? 0;
     return message;
   },
 };
@@ -9351,6 +9475,22 @@ export const ConversationServiceDefinition = {
       responseStream: true,
       options: {},
     },
+    findTemps: {
+      name: "FindTemps",
+      requestType: ConversationFindTempsInput,
+      requestStream: false,
+      responseType: Conversation,
+      responseStream: true,
+      options: {},
+    },
+    removeTemps: {
+      name: "RemoveTemps",
+      requestType: ConversationRemoveTempsInput,
+      requestStream: false,
+      responseType: Empty,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -9376,6 +9516,14 @@ export interface ConversationServiceImplementation<CallContextExt = {}> {
     request: Empty,
     context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<Conversation>>;
+  findTemps(
+    request: ConversationFindTempsInput,
+    context: CallContext & CallContextExt,
+  ): ServerStreamingMethodResult<DeepPartial<Conversation>>;
+  removeTemps(
+    request: ConversationRemoveTempsInput,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<Empty>>;
 }
 
 export interface ConversationServiceClient<CallOptionsExt = {}> {
@@ -9403,6 +9551,14 @@ export interface ConversationServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<Empty>,
     options?: CallOptions & CallOptionsExt,
   ): AsyncIterable<Conversation>;
+  findTemps(
+    request: DeepPartial<ConversationFindTempsInput>,
+    options?: CallOptions & CallOptionsExt,
+  ): AsyncIterable<Conversation>;
+  removeTemps(
+    request: DeepPartial<ConversationRemoveTempsInput>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<Empty>;
 }
 
 export type MessageServiceDefinition = typeof MessageServiceDefinition;

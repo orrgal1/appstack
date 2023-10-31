@@ -6,7 +6,10 @@ const fileContents = fs.readFileSync(protoFilePath, 'utf-8');
 
 const interfaceRegex = /export (interface|enum) [\s\S]*?\}(?=\n|$)/gm;
 
-const imports = ["import { Empty } from './google/protobuf/empty';"];
+const imports = [
+  "import { Empty } from './google/protobuf/empty';",
+  "import { Observable } from 'rxjs';",
+];
 const interfaces = fileContents.match(interfaceRegex);
 
 fs.writeFileSync(

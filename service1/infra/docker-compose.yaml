@@ -1,5 +1,13 @@
 version: '3.7'
 services:
+  envoy:
+    image: envoyproxy/envoy:v1.21-latest
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    ports:
+      - "8080:8080" # The HTTP port that Envoy listens on
+      - "9901:9901" # The admin interface of Envoy
+
   arangodb:
     image: arangodb:latest
     environment:

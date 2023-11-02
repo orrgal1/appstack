@@ -44,15 +44,16 @@ describe('User', () => {
 
     const update = { name: uuid() };
 
-    // Act
-    const updateP = client.updateOne({ id: userId, ...update }, { metadata });
-    const findP = client.findOne({ id: userId }, { metadata });
-    const removeP = client.removeOne({ id: userId }, { metadata });
-
-    // Assert
-    await expect(updateP).resolves.toReturn();
-    await expect(removeP).resolves.toReturn();
-    await expect(removeP).rejects.toThrow('permission denied');
+    // Act + Assert
+    await expect(
+      client.updateOne({ id: userId, ...update }, { metadata }),
+    ).resolves.toBeDefined();
+    await expect(
+      client.findOne({ id: userId }, { metadata }),
+    ).resolves.toBeDefined();
+    await expect(
+      client.removeOne({ id: userId }, { metadata }),
+    ).rejects.toThrow('permission denied');
   });
 
   test('CreateOne + FindOne', async () => {

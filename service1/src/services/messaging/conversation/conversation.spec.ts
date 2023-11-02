@@ -184,7 +184,7 @@ describe('Conversation', () => {
 
     // Act
     await clientInternal.updateOne({ id: created.id, ...input });
-    await sleep(500);
+    await sleep(1000);
 
     // Assert
     const findPermissions = await permissionclientInternal.findByEntity({

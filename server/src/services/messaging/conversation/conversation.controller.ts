@@ -122,7 +122,7 @@ export class ConversationController {
   @UseInterceptors(RpcAuthAssertInternalInterceptor)
   @GrpcMethod('ConversationService', 'FindTemps')
   async findTemps(
-    @Payload() input: ConversationFindTempsInput,
+    input: ConversationFindTempsInput,
     metadata: any,
     call: any,
   ): Promise<void> {

@@ -37,6 +37,7 @@ describe('Auth: Local', () => {
   });
 
   test('Login: Fail external', async () => {
+    // Arrange
     const user = await userClient.createOne({ name: uuid() });
     const loginInput = {
       platform: 'local',
@@ -50,12 +51,19 @@ describe('Auth: Local', () => {
       username: loginInput.platformLoginId,
       password: loginInput.platformLoginSecret,
     };
-    await expect(
-      axios.post(`http://localhost:${ports.http}/auth/local/login`, input),
-    ).rejects.toThrow('Request failed with status code 403');
+
+    // Act
+    const p = axios.post(
+      `http://localhost:${ports.http}/auth/local/login`,
+      input,
+    );
+
+    // Assert
+    await expect(p).rejects.toThrow('Request failed with status code 403');
   });
 
   test('Login: exists', async () => {
+    // Arrange
     const user = await userClient.createOne({ name: uuid() });
     const loginInput = {
       platform: 'local',
@@ -69,10 +77,14 @@ describe('Auth: Local', () => {
       username: loginInput.platformLoginId,
       password: loginInput.platformLoginSecret,
     };
+
+    // Act
     const response = await axios.post(
       `http://localhost:${ports.httpInternal}/auth/local/login`,
       input,
     );
+
+    // Assert
     expect(response.data).toEqual({
       userId: loginInput.userId,
       accessToken: expect.any(String),
@@ -80,14 +92,19 @@ describe('Auth: Local', () => {
   });
 
   test('Login: new', async () => {
+    // Arrange
     const input = {
       username: uuid(),
       password: uuid(),
     };
+
+    // Act
     const response = await axios.post(
       `http://localhost:${ports.httpInternal}/auth/local/login`,
       input,
     );
+
+    // Assert
     expect(response.data).toEqual({
       userId: expect.any(String),
       isNew: true,
@@ -96,6 +113,7 @@ describe('Auth: Local', () => {
   });
 
   test('Login: 401', async () => {
+    // Arrange
     const loginInput = {
       platform: 'local',
       platformLoginId: uuid(),
@@ -108,8 +126,14 @@ describe('Auth: Local', () => {
       username: loginInput.platformLoginId,
       password: uuid(),
     };
-    await expect(
-      axios.post(`http://localhost:${ports.http}/auth/local/login`, input),
-    ).rejects.toThrow('Request failed with status code 401');
+
+    // Act
+    const p = axios.post(
+      `http://localhost:${ports.http}/auth/local/login`,
+      input,
+    );
+
+    // Assert
+    await expect(p).rejects.toThrow('Request failed with status code 401');
   });
 });

@@ -42,70 +42,91 @@ describe('Dummy', () => {
   });
 
   test('CreateOne + FindOne', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
+
+    // Act
     const created = await client.createOne(input, { metadata });
     const found = await client.findOne({ id: created.id }, { metadata });
+
+    // Assert
     expect(found).toEqual(created);
   });
 
   test('CreateOne + FindOne: Non Public', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
-    const created = await client.createOne(input, { metadata });
-
     const { accessToken } = await login(ports);
     const otherMetadata = new Metadata();
     otherMetadata.set('jwt', accessToken);
 
-    await expect(
-      client.findOne({ id: created.id }, { metadata: otherMetadata }),
-    ).rejects.toThrow('permission denied');
+    // Act
+    const created = await client.createOne(input, { metadata });
+    const p = client.findOne({ id: created.id }, { metadata: otherMetadata });
+
+    // Assert
+    await expect(p).rejects.toThrow('permission denied');
   });
 
   test('CreateOne + FindOne: Public', async () => {
+    // Arrange
     const input = {
       text: uuid(),
       isPublic: true,
     };
-    const created = await client.createOne(input, { metadata });
-
     const { accessToken } = await login(ports);
     const otherMetadata = new Metadata();
     otherMetadata.set('jwt', accessToken);
 
+    // Act
+    const created = await client.createOne(input, { metadata });
     const found = await client.findOne(
       { id: created.id },
       { metadata: otherMetadata },
     );
+
+    // Assert
     expect(found).toEqual(created);
   });
 
   test('UpdateOne', async () => {
+    // Arrange
     const input = { text: uuid() };
     const update = { text: uuid() };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     const updated = await client.updateOne(
       { id: created.id, ...update },
       { metadata },
     );
+
+    // Assert
     expect(updated).toEqual({ ...created, ...updated });
   });
 
   test('RemoveOne', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     await client.removeOne({ id: created.id }, { metadata });
+
+    // Assert
     await expect(
       client.findOne({ id: created.id }, { metadata }),
     ).rejects.toThrow('not found');
   });
 
   test('Search', async () => {
+    // Arrange
     const input = { text: uuid().replace(/-/g, ' ') };
     const token = input.text.split(' ')[0];
     for (let i = 0; i < 4; i++) {
@@ -114,6 +135,8 @@ describe('Dummy', () => {
         { metadata },
       );
     }
+
+    // Act
     const all = await client.search(
       {
         filter: { text: token },
@@ -121,8 +144,6 @@ describe('Dummy', () => {
       },
       { metadata },
     );
-    expect(all.results.length).toEqual(4);
-
     const page1 = await client.search(
       {
         filter: { text: token },
@@ -130,9 +151,7 @@ describe('Dummy', () => {
       },
       { metadata },
     );
-    expect(page1.results).toEqual(all.results.slice(0, 3));
     const lastOffset = page1.meta.offset;
-
     const page2 = await client.search(
       {
         filter: { text: token },
@@ -140,6 +159,10 @@ describe('Dummy', () => {
       },
       { metadata },
     );
+
+    // Assert
+    expect(all.results.length).toEqual(4);
+    expect(page1.results).toEqual(all.results.slice(0, 3));
     expect(page2.results).toEqual(all.results.slice(3, 6));
   });
 });

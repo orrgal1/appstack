@@ -23,6 +23,7 @@ describe('Permission', () => {
   });
 
   test('CreateOne + FindOne', async () => {
+    // Arrange
     const input = {
       entity: uuid(),
       entityId: uuid(),
@@ -30,12 +31,17 @@ describe('Permission', () => {
       permittedEntityId: uuid(),
       action: '*',
     };
+
+    // Act
     const created = await client.createOne(input);
     const found = await client.findOne({ id: created.id });
+
+    // Assert
     expect(found).toEqual(created);
   });
 
   test('FindWhere', async () => {
+    // Arrange
     const input = {
       entity: uuid(),
       entityId: uuid(),
@@ -43,12 +49,17 @@ describe('Permission', () => {
       permittedEntityId: uuid(),
       action: '*',
     };
+
+    // Act
     const created = await client.createOne(input);
     const found = await client.findWhere(input);
+
+    // Assert
     expect(found).toEqual(created);
   });
 
   test('FindWhereMany', async () => {
+    // Arrange
     const input = {
       entity: uuid(),
       entityId: uuid(),
@@ -57,14 +68,19 @@ describe('Permission', () => {
       action: '*',
     };
     const created = await client.createOne(input);
+
+    // Act
     const found = await client.findWhereMany({
       ...input,
       permittedEntityIds: [input.permittedEntityId],
     });
+
+    // Assert
     expect(found).toEqual({ permissions: [created] });
   });
 
   test('RemoveOne', async () => {
+    // Arrange
     const input = {
       entity: uuid(),
       entityId: uuid(),
@@ -73,13 +89,18 @@ describe('Permission', () => {
       action: '*',
     };
     const created = await client.createOne(input);
+
+    // Act
     await client.removeOne({ id: created.id });
+
+    // Assert
     await expect(client.findOne({ id: created.id })).rejects.toThrow(
       'not found',
     );
   });
 
   test('RemoveWhere', async () => {
+    // Arrange
     const input = {
       entity: uuid(),
       entityId: uuid(),
@@ -88,11 +109,16 @@ describe('Permission', () => {
       action: '*',
     };
     await client.createOne(input);
+
+    // Act
     await client.removeWhere(input);
+
+    // Assert
     await expect(client.findWhere(input)).rejects.toThrow('not found');
   });
 
   test('RemoveWhereMany', async () => {
+    // Arrange
     const input = {
       entity: uuid(),
       entityId: uuid(),
@@ -101,14 +127,19 @@ describe('Permission', () => {
       action: '*',
     };
     await client.createOne(input);
+
+    // Act
     await client.removeWhereMany({
       ...input,
       permittedEntityIds: [input.permittedEntityId],
     });
+
+    // Assert
     await expect(client.findWhere(input)).rejects.toThrow('not found');
   });
 
   test('FindByPermitted', async () => {
+    // Arrange
     const input = {
       entity: uuid(),
       entityId: uuid(),
@@ -123,6 +154,8 @@ describe('Permission', () => {
         entityId: uuid(),
       });
     }
+
+    // Act
     const all = await client.findByPermitted({
       filter: {
         permittedEntity: input.permittedEntity,
@@ -130,6 +163,8 @@ describe('Permission', () => {
       },
       opts: { limit: 10 },
     });
+
+    // Assert
     expect(all.results.length).toEqual(7);
   });
 });

@@ -24,8 +24,13 @@ describe('Health', () => {
   });
 
   test('Health Check', async () => {
+    // Arrange
     await sleep(1000);
+
+    // Act
     const response = await axios.get(`http://${host}:${ports.http}/health`);
+
+    // Assert
     expect(response.data).toEqual({
       details: {
         PROTO: {

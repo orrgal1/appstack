@@ -1,3 +1,4 @@
+import * as uniq from 'lodash.uniq';
 import { createChannel, createClient, Metadata } from 'nice-grpc';
 import {
   ConversationServiceClient,
@@ -51,9 +52,10 @@ describe('Message', () => {
   });
 
   test('CreateOne + FindOne', async () => {
+    // Arrange
     const conversation = await conversationClient.createOne(
       {
-        participantIds: [],
+        participantIds: [uuid()],
       },
       { metadata },
     );
@@ -63,32 +65,42 @@ describe('Message', () => {
       senderId: '',
       media: { text: uuid() },
     };
+
+    // Act
     const created = await client.createOne(input, { metadata });
     const found = await client.findOne({ id: created.id }, { metadata });
+
+    // Assert
     expect(found).toEqual(created);
   });
 
   test('UpdateOne', async () => {
+    // Arrange
     const conversation = await conversationClient.createOne(
       {
-        participantIds: [],
+        participantIds: [uuid()],
       },
       { metadata },
     );
     const input = { conversationId: conversation.id, uniqueness: uuid() };
     const update = { media: { text: uuid() } };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     const updated = await client.updateOne(
       { id: created.id, ...update },
       { metadata },
     );
+
+    // Assert
     expect(updated).toEqual({ ...created, ...updated });
   });
 
   test('RemoveOne', async () => {
+    // Arrange
     const conversation = await conversationClient.createOne(
       {
-        participantIds: [],
+        participantIds: [uuid()],
       },
       { metadata },
     );
@@ -99,16 +111,21 @@ describe('Message', () => {
       media: { text: uuid() },
     };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     await client.removeOne({ id: created.id }, { metadata });
+
+    // Assert
     await expect(
       client.findOne({ id: created.id }, { metadata }),
     ).rejects.toThrow('not found');
   });
 
   test('FindByConversation', async () => {
+    // Arrange
     const conversation = await conversationClient.createOne(
       {
-        participantIds: [],
+        participantIds: [uuid()],
       },
       { metadata },
     );
@@ -122,6 +139,8 @@ describe('Message', () => {
     for (let i = 0; i < 3; i++) {
       await client.createOne({ ...input, uniqueness: uuid() }, { metadata });
     }
+
+    // Act
     const all = await client.findByConversation(
       {
         filter: {
@@ -131,8 +150,9 @@ describe('Message', () => {
       },
       { metadata },
     );
-    expect(all.results.length).toEqual(3);
 
+    // Assert
+    expect(all.results.length).toEqual(3);
     function assertSortedDesc() {
       expect(
         all.results.map((r) => r).sort((a, b) => b.createdAt - a.createdAt),
@@ -143,9 +163,10 @@ describe('Message', () => {
   });
 
   test('Uniqueness', async () => {
+    // Arrange
     const conversation = await conversationClient.createOne(
       {
-        participantIds: [],
+        participantIds: [uuid()],
       },
       { metadata },
     );
@@ -156,11 +177,16 @@ describe('Message', () => {
       senderId: '',
       media: { text: uuid() },
     };
+
+    // Act
     const created = await client.createOne(input, { metadata });
+    const dups = [];
     for (let i = 0; i < 3; i++) {
-      const dup = await client.createOne(input, { metadata });
-      expect(dup.id).toEqual(created.id);
+      dups.push(await client.createOne(input, { metadata }));
     }
+
+    // Assert
+    expect(uniq(dups.map((dup) => dup.id))).toEqual([created.id]);
     const found = await client.findUnique(
       { uniqueness: input.uniqueness },
       { metadata },
@@ -169,6 +195,7 @@ describe('Message', () => {
   });
 
   test('Create: Side-effects: Publish + Update conversation', async () => {
+    // Arrange
     let published;
     const socket = io(`http://${host}:${process.env.WS_PORT}`, {
       query: {
@@ -191,8 +218,12 @@ describe('Message', () => {
       senderId: '',
       media: { text: uuid() },
     };
+
+    // Act
     const created = await client.createOne(input, { metadata });
     await sleep(10);
+
+    // Assert
     expect(published.id).toEqual(created.id);
     expect(published.media.text).toEqual(created.media.text);
 
@@ -204,6 +235,7 @@ describe('Message', () => {
   });
 
   test('Update: Side-effects: Publish + Update conversation', async () => {
+    // Arrange
     let published;
     const socket = io(`http://${host}:${process.env.WS_PORT}`, {
       query: {
@@ -213,6 +245,7 @@ describe('Message', () => {
     socket.on('message.updated', (data) => {
       published = data;
     });
+
     await sleep(10);
     const conversation = await conversationClient.createOne(
       {
@@ -226,13 +259,16 @@ describe('Message', () => {
       senderId: '',
       media: { text: uuid() },
     };
+
     const created = await client.createOne(input, { metadata });
 
+    // Act
     const updated = await client.updateOne(
       { id: created.id, media: { text: uuid() } },
       { metadata },
     );
 
+    // Assert
     const updatedConversation = await conversationClient.findOne(
       { id: conversation.id },
       { metadata },

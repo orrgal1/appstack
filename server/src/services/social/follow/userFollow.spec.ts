@@ -39,6 +39,9 @@ describe('UserFollow', () => {
   });
 
   test('Follow + Unfollow', async () => {
+    // Arrange
+    // Act
+    // Assert
     const { accessToken: followerAccessToken, userId: followerUserId } =
       await login(ports);
     const followerMetadata = new Metadata({ jwt: followerAccessToken });
@@ -112,6 +115,9 @@ describe('UserFollow', () => {
   });
 
   test('FindFollowees: Paging', async () => {
+    // Arrange
+    // Act
+    // Assert
     const { accessToken: followerAccessToken, userId: followerUserId } =
       await login(ports);
     const followerMetadata = new Metadata({ jwt: followerAccessToken });
@@ -145,6 +151,9 @@ describe('UserFollow', () => {
   });
 
   test('FindFollowers: Paging', async () => {
+    // Arrange
+    // Act
+    // Assert
     const { accessToken: followeeAccessToken, userId: followeeUserId } =
       await login(ports);
     const followeeMetadata = new Metadata({ jwt: followeeAccessToken });

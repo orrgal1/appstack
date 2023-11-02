@@ -50,11 +50,14 @@ describe('Dummy: Rate limits', () => {
   });
 
   test('FindOne: Exceed rate limit', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
     const metadata1 = await getMetadata(ports);
     const created = await client.createOne(input, { metadata: metadata1 });
+
+    // Act
     const bombard = async () => {
       const requests = [];
       for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
@@ -64,16 +67,22 @@ describe('Dummy: Rate limits', () => {
       }
       return await Promise.all(requests);
     };
-    await expect(bombard()).rejects.toThrow(
+    const p = bombard();
+
+    // Assert
+    await expect(p).rejects.toThrow(
       '/main.DummyService/FindOne UNKNOWN: rate limit exceeded',
     );
   });
 
   test('Search: Exceed rate limit', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
     const metadata1 = await getMetadata(ports);
+
+    // Act
     const bombard = async () => {
       const requests = [];
       for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
@@ -83,16 +92,22 @@ describe('Dummy: Rate limits', () => {
       }
       return await Promise.all(requests);
     };
-    await expect(bombard()).rejects.toThrow(
+    const p = bombard();
+
+    // Assert
+    await expect(p).rejects.toThrow(
       '/main.DummyService/Search UNKNOWN: rate limit exceeded',
     );
   });
 
   test('CreateOne: Exceed rate limit', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
     const metadata1 = await getMetadata(ports);
+
+    // Act
     const bombard = async () => {
       const requests = [];
       for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
@@ -100,17 +115,23 @@ describe('Dummy: Rate limits', () => {
       }
       return await Promise.all(requests);
     };
-    await expect(bombard()).rejects.toThrow(
+    const p = bombard();
+
+    // Assert
+    await expect(p).rejects.toThrow(
       '/main.DummyService/CreateOne UNKNOWN: rate limit exceeded',
     );
   });
 
   test('UpdateOne: Exceed rate limit', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
     const metadata1 = await getMetadata(ports);
     const created = await client.createOne(input, { metadata: metadata1 });
+
+    // Act
     const bombard = async () => {
       const requests = [];
       for (let i = 0; i < Number(process.env.WRITE_RPM_LIMIT) * 5; i++) {
@@ -123,12 +144,16 @@ describe('Dummy: Rate limits', () => {
       }
       return await Promise.all(requests);
     };
-    await expect(bombard()).rejects.toThrow(
+    const p = bombard();
+
+    // Assert
+    await expect(p).rejects.toThrow(
       '/main.DummyService/UpdateOne UNKNOWN: rate limit exceeded',
     );
   });
 
   test('RemoveOne: Exceed rate limit', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
@@ -161,8 +186,12 @@ describe('Dummy: Rate limits', () => {
       return await Promise.all(requests);
     };
 
+    // Act
     const many = await createMany();
-    await expect(bombard(many)).rejects.toThrow(
+    const p = bombard(many);
+
+    // Assert
+    await expect(p).rejects.toThrow(
       '/main.DummyService/RemoveOne UNKNOWN: rate limit exceeded',
     );
   });

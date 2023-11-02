@@ -21,7 +21,7 @@ export async function runMain(opts: {
   };
 }) {
   await main({ ports: opts.ports });
-  await sleep(500);
+  await sleep(1000);
 }
 
 export async function login(ports: {
@@ -114,7 +114,8 @@ export function retry(
   };
 }
 
-export function getArangoDb() {
+export async function getArangoDb() {
   const arangodb: ArangodbService = new ArangodbService(new ArangodbUtils());
+  await arangodb.initDb();
   return arangodb.db;
 }

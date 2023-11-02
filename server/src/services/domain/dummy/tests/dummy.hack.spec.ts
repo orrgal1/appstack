@@ -39,43 +39,59 @@ describe('Dummy: Hack Attempts', () => {
   });
 
   test('CreateOne', async () => {
+    // Arrange
     const input = {
       text: uuid(),
     };
-    await expect(client.createOne(input, { metadata })).rejects.toThrow(
-      'permission denied',
-    );
+
+    // Act
+    const p = client.createOne(input, { metadata });
+
+    // Assert
+    await expect(p).rejects.toThrow('permission denied');
   });
 
   test('FindOne', async () => {
+    // Arrange
     const input = {
       id: uuid(),
     };
-    await expect(client.findOne(input, { metadata })).rejects.toThrow(
-      'permission denied',
-    );
+
+    // Act
+    const p = client.findOne(input, { metadata });
+
+    // Assert
+    await expect(p).rejects.toThrow('permission denied');
   });
 
   test('RemoveOne', async () => {
+    // Arrange
     const input = {
       id: uuid(),
     };
-    await expect(client.removeOne(input, { metadata })).rejects.toThrow(
-      'permission denied',
-    );
+
+    // Act
+    const p = client.removeOne(input, { metadata });
+
+    // Assert
+    await expect(p).rejects.toThrow('permission denied');
   });
 
   test('Search', async () => {
+    // Arrange
     const input = { text: uuid().replace(/-/g, ' ') };
     const token = input.text.split(' ')[0];
-    await expect(
-      client.search(
-        {
-          filter: { text: token },
-          opts: { limit: 10, waitForSync: true },
-        },
-        { metadata },
-      ),
-    ).rejects.toThrow('permission denied');
+
+    // Act
+    const p = client.search(
+      {
+        filter: { text: token },
+        opts: { limit: 10, waitForSync: true },
+      },
+      { metadata },
+    );
+
+    // Assert
+    await expect(p).rejects.toThrow('permission denied');
   });
 });

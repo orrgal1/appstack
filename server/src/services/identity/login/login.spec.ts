@@ -33,18 +33,24 @@ describe('Login', () => {
   });
 
   test('CreateOne + FindWhere', async () => {
+    // Arrange
     const input: Partial<LoginCreateOneInput> = {
       platform: uuid(),
       platformLoginId: uuid(),
       platformLoginSecret: uuid(),
       credentials: { local: { username: uuid(), password: uuid() } },
     };
+
+    // Act
     const created = await client.createOne(input, { metadata });
     const found = await client.findWhere(input, { metadata });
+
+    // Assert
     expect(found).toEqual(created);
   });
 
   test('FindWhere: ByPlatformId', async () => {
+    // Arrange
     const input = {
       platform: uuid(),
       platformLoginId: uuid(),
@@ -52,11 +58,16 @@ describe('Login', () => {
       credentials: { local: { username: uuid(), password: uuid() } },
     };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     const found = await client.findByPlatformId(input, { metadata });
+
+    // Assert
     expect(found).toEqual(created);
   });
 
   test('UpdateOne', async () => {
+    // Arrange
     const input = {
       platform: uuid(),
       platformLoginId: uuid(),
@@ -70,14 +81,19 @@ describe('Login', () => {
       credentials: { local: { username: uuid(), password: uuid() } },
     };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     const updated = await client.updateOne(
       { id: created.id, ...update },
       { metadata },
     );
+
+    // Assert
     expect(updated).toEqual({ ...created, ...updated });
   });
 
   test('RemoveOne', async () => {
+    // Arrange
     const input = {
       platform: uuid(),
       platformLoginId: uuid(),
@@ -85,7 +101,11 @@ describe('Login', () => {
       credentials: { local: { username: uuid(), password: uuid() } },
     };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     await client.removeOne({ id: created.id }, { metadata });
+
+    // Assert
     await expect(client.findWhere(input, { metadata })).rejects.toThrow(
       'not found',
     );

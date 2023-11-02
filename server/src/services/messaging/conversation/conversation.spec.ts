@@ -1,3 +1,4 @@
+import * as intersection from 'lodash.intersection';
 import { createChannel, createClient, Metadata } from 'nice-grpc';
 import {
   ConversationServiceClient,
@@ -48,11 +49,16 @@ describe('Conversation', () => {
   });
 
   test('CreateOne + FindOne', async () => {
+    // Arrange
     const input: ConversationCreateOneInput = {
       participantIds: [uuid()],
     };
+
+    // Act
     const created = await client.createOne(input, { metadata });
     const found = await client.findOne({ id: created.id }, { metadata });
+
+    // Assert
     expect(found).toEqual({
       ...created,
       isTemp: false,
@@ -61,28 +67,39 @@ describe('Conversation', () => {
   });
 
   test('UpdateOne', async () => {
+    // Arrange
     const input = { participantIds: [uuid()] };
     const update = { participantIds: [uuid()] };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     const updated = await client.updateOne(
       { id: created.id, ...update },
       { metadata },
     );
+
+    // Assert
     expect(updated).toEqual({ ...created, ...updated });
   });
 
   test('RemoveOne', async () => {
+    // Arrange
     const input: ConversationCreateOneInput = {
       participantIds: [uuid()],
     };
     const created = await client.createOne(input, { metadata });
+
+    // Act
     await client.removeOne({ id: created.id }, { metadata });
+
+    // Assert
     await expect(
       client.findOne({ id: created.id }, { metadata }),
     ).rejects.toThrow('not found');
   });
 
   test('FindByParticipant', async () => {
+    // Arrange
     const start = Date.now();
     const participantId0 = uuid();
     const participantId1 = uuid();
@@ -96,6 +113,8 @@ describe('Conversation', () => {
         { metadata },
       );
     }
+
+    // Act
     const all = await client.findByParticipant(
       {
         filter: {
@@ -106,31 +125,46 @@ describe('Conversation', () => {
       },
       { metadata },
     );
+
+    // Assert
     expect(all.results.length).toEqual(4);
   });
 
   test('FindByPermissionIntegrityWarning', async () => {
-    const db = getArangoDb();
+    // Arrange
+    const db = await getArangoDb();
     const collection = db.collection('conversation');
     const participantId0 = uuid();
     const participantId1 = uuid();
     const input: ConversationCreateOneInput = {
       participantIds: [participantId0, participantId1],
     };
-    await collection.truncate();
+    const created = [];
     for (let i = 0; i < 4; i++) {
-      await collection.save({ ...input, permissionIntegrityWarning: true });
+      created.push(
+        await collection.save({ ...input, permissionIntegrityWarning: true }),
+      );
     }
+
+    // Act
     const cursor = clientInternal.findByPermissionIntegrityWarning({});
     const results = [];
     for await (const next of cursor) {
       results.push(next);
     }
-    expect(results.length).toEqual(4);
+
+    // Assert
+    expect(
+      intersection(
+        results.map((r) => r.id),
+        created.map((c) => c._id),
+      ).length,
+    ).toEqual(4);
   });
 
   test('Sync Permissions', async () => {
-    const db = getArangoDb();
+    // Arrange
+    const db = await getArangoDb();
     const permissionCollection = db.collection('permission');
     const participantId0 = uuid();
     const participantId1 = uuid();
@@ -148,8 +182,11 @@ describe('Conversation', () => {
       });
     }
 
+    // Act
     await clientInternal.updateOne({ id: created.id, ...input });
-    await sleep(100);
+    await sleep(500);
+
+    // Assert
     const findPermissions = await permissionclientInternal.findByEntity({
       filter: {
         entity: 'conversation',
@@ -164,5 +201,62 @@ describe('Conversation', () => {
     expect(
       findPermissions.results.map((permission) => permission.permittedEntityId),
     ).toEqual(input.participantIds);
+  });
+
+  test('FindTemps', async () => {
+    // Arrange
+    const db = await getArangoDb();
+    const collection = db.collection('conversation');
+    const participantId0 = uuid();
+    const participantId1 = uuid();
+    const input: ConversationCreateOneInput = {
+      participantIds: [participantId0, participantId1],
+    };
+    const created = [];
+    for (let i = 0; i < 4; i++) {
+      created.push(await collection.save({ ...input, isTemp: true }));
+    }
+
+    // Act
+    const cursor = clientInternal.findTemps({ millisAgo: -1 });
+    const results = [];
+    for await (const next of cursor) {
+      results.push(next);
+    }
+
+    // Assert
+    expect(
+      intersection(
+        results.map((r) => r.id),
+        created.map((c) => c._id),
+      ).length,
+    ).toEqual(4);
+  });
+
+  test('RemoveTemps', async () => {
+    // Arrange
+    const db = await getArangoDb();
+    const collection = db.collection('conversation');
+    const participantId0 = uuid();
+    const participantId1 = uuid();
+    const input: ConversationCreateOneInput = {
+      participantIds: [participantId0, participantId1],
+    };
+    const created = [];
+    for (let i = 0; i < 4; i++) {
+      created.push(await collection.save({ ...input, isTemp: true }));
+    }
+
+    // Act
+    await clientInternal.removeTemps({ millisAgo: -1 });
+    await sleep(500);
+
+    // Assert
+    const cursor = clientInternal.findTemps({ millisAgo: -1 });
+    const results = [];
+    for await (const next of cursor) {
+      results.push(next);
+    }
+    expect(results.length).toEqual(0);
   });
 });

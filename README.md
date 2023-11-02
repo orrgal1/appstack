@@ -3,6 +3,7 @@
 ## Prerequisites
 - Docker
 - Node 18
+- protoc
 
 ## Onboarding
 

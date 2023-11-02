@@ -38,10 +38,62 @@ describe('UserFollow', () => {
     metadata.set('jwt', accessToken);
   });
 
-  test('Follow + Unfollow', async () => {
+  test('Follow', async () => {
     // Arrange
+    const { accessToken: followerAccessToken, userId: followerUserId } =
+      await login(ports);
+    const followerMetadata = new Metadata({ jwt: followerAccessToken });
+    const { accessToken: followeeAccessToken, userId: followeeUserId } =
+      await login(ports);
+    const followeeMetadata = new Metadata({ jwt: followeeAccessToken });
+
     // Act
+    await client.createOne(
+      {
+        followerId: followerUserId,
+        followeeId: followeeUserId,
+      },
+      { metadata: followerMetadata },
+    );
+
     // Assert
+    const followers = await client.findFollowers(
+      {
+        filter: { followeeId: followeeUserId },
+        opts: { limit: 10 },
+      },
+      { metadata: followeeMetadata },
+    );
+    const followees = await client.findFollowees(
+      {
+        filter: { followerId: followerUserId },
+        opts: { limit: 10 },
+      },
+      { metadata: followerMetadata },
+    );
+
+    expect(followers.followers).toEqual([
+      {
+        createdAt: expect.any(Number),
+        followeeId: followeeUserId,
+        followerId: followerUserId,
+        id: expect.any(String),
+        updatedAt: expect.any(Number),
+      },
+    ]);
+    expect(followees.followees).toEqual([
+      {
+        createdAt: expect.any(Number),
+        followeeId: followeeUserId,
+        followerId: followerUserId,
+        id: expect.any(String),
+        updatedAt: expect.any(Number),
+      },
+    ]);
+  });
+
+  test('Unfollow', async () => {
+    // Arrange
     const { accessToken: followerAccessToken, userId: followerUserId } =
       await login(ports);
     const followerMetadata = new Metadata({ jwt: followerAccessToken });
@@ -56,39 +108,8 @@ describe('UserFollow', () => {
       },
       { metadata: followerMetadata },
     );
-    const followers = await client.findFollowers(
-      {
-        filter: { followeeId: followeeUserId },
-        opts: { limit: 10 },
-      },
-      { metadata: followeeMetadata },
-    );
-    expect(followers.followers).toEqual([
-      {
-        createdAt: expect.any(Number),
-        followeeId: followeeUserId,
-        followerId: followerUserId,
-        id: expect.any(String),
-        updatedAt: expect.any(Number),
-      },
-    ]);
-    const followees = await client.findFollowees(
-      {
-        filter: { followerId: followerUserId },
-        opts: { limit: 10 },
-      },
-      { metadata: followerMetadata },
-    );
-    expect(followees.followees).toEqual([
-      {
-        createdAt: expect.any(Number),
-        followeeId: followeeUserId,
-        followerId: followerUserId,
-        id: expect.any(String),
-        updatedAt: expect.any(Number),
-      },
-    ]);
 
+    // Act
     await client.removeOne(
       {
         id: created.id,
@@ -96,6 +117,7 @@ describe('UserFollow', () => {
       { metadata: followerMetadata },
     );
 
+    // Assert
     const noFollowers = await client.findFollowers(
       {
         filter: { followeeId: followeeUserId },
@@ -103,7 +125,6 @@ describe('UserFollow', () => {
       },
       { metadata: followeeMetadata },
     );
-    expect(noFollowers.followers).toEqual([]);
     const noFollowees = await client.findFollowees(
       {
         filter: { followerId: followerUserId },
@@ -111,13 +132,12 @@ describe('UserFollow', () => {
       },
       { metadata: followerMetadata },
     );
+    expect(noFollowers.followers).toEqual([]);
     expect(noFollowees.followees).toEqual([]);
   });
 
   test('FindFollowees: Paging', async () => {
     // Arrange
-    // Act
-    // Assert
     const { accessToken: followerAccessToken, userId: followerUserId } =
       await login(ports);
     const followerMetadata = new Metadata({ jwt: followerAccessToken });
@@ -132,6 +152,8 @@ describe('UserFollow', () => {
         { metadata: followerMetadata },
       );
     }
+
+    // Act
     const followees0 = await client.findFollowees(
       {
         filter: { followerId: followerUserId },
@@ -139,7 +161,6 @@ describe('UserFollow', () => {
       },
       { metadata: followerMetadata },
     );
-    expect(followees0.followees.length).toEqual(6);
     const followees1 = await client.findFollowees(
       {
         filter: { followerId: followerUserId },
@@ -147,13 +168,14 @@ describe('UserFollow', () => {
       },
       { metadata: followerMetadata },
     );
+
+    // Assert
+    expect(followees0.followees.length).toEqual(6);
     expect(followees1.followees.length).toEqual(4);
   });
 
   test('FindFollowers: Paging', async () => {
     // Arrange
-    // Act
-    // Assert
     const { accessToken: followeeAccessToken, userId: followeeUserId } =
       await login(ports);
     const followeeMetadata = new Metadata({ jwt: followeeAccessToken });
@@ -168,6 +190,8 @@ describe('UserFollow', () => {
         { metadata: followeeMetadata },
       );
     }
+
+    // Act
     const followers0 = await client.findFollowers(
       {
         filter: { followeeId: followeeUserId },
@@ -175,7 +199,6 @@ describe('UserFollow', () => {
       },
       { metadata: followeeMetadata },
     );
-    expect(followers0.followers.length).toEqual(6);
     const followers1 = await client.findFollowers(
       {
         filter: { followeeId: followeeUserId },
@@ -183,6 +206,9 @@ describe('UserFollow', () => {
       },
       { metadata: followeeMetadata },
     );
+
+    // Assert
+    expect(followers0.followers.length).toEqual(6);
     expect(followers1.followers.length).toEqual(4);
   });
 });

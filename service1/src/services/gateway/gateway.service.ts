@@ -12,13 +12,13 @@ export class GatewayService {
   extractMetadata(req: Request): Metadata {
     const jwt = (req.cookies || {})[process.env.GATEWAY_JWT_HEADER];
     const metadata = new Metadata();
-    metadata.set('jwt', jwt);
+    if (jwt) metadata.set('jwt', jwt);
     return metadata;
   }
 
   async invokeUnary(payload: GatewayPayload): Promise<any> {
     const { service, method, data, metadata } = payload;
-    const definition = clientLib[`${service}ServiceDefinition`];
+    const definition = clientLib[`${service}Definition`];
     const client = this.clientService.getServiceClient(definition);
     const result = await client[method](data, { metadata });
     return result;

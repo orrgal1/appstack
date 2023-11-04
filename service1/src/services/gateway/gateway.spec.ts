@@ -23,14 +23,14 @@ describe('Gateway', () => {
     if (!isE2E()) await shutdownComponents();
   });
 
-  test('HealthCheck', async () => {
+  test('User: FindOne', async () => {
     // Arrange
+    const { accessToken, userId } = await login(ports);
     const payload: GatewayBody = {
-      service: 'Health',
-      method: 'healthCheck',
-      data: {},
+      service: 'User',
+      method: 'findOne',
+      data: { id: userId },
     };
-    const { accessToken } = await login(ports);
 
     // Act
     const result = await axios.post(
@@ -44,6 +44,6 @@ describe('Gateway', () => {
     );
 
     // Assert
-    expect(result.data).toEqual({ ok: true });
+    expect(result.data.id).toEqual(userId);
   });
 });

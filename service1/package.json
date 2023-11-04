@@ -11,11 +11,10 @@
     "proto:combine": "cd src && node ../proto/protoCombine.js && cd .. && cp src/proto/combined.proto proto/combined.proto",
     "proto:compile": "protoc --plugin=$(pwd)/node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=snakeToCamel=true,outputClientImpl=false -I=./proto --ts_proto_out=./proto combined.proto",
     "proto:client": "cd proto && ../node_modules/.bin/grpc_tools_node_protoc --plugin=protoc-gen-ts_proto=../node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./client --ts_proto_opt=outputServices=nice-grpc,outputServices=generic-definitions,useExactTypes=false --proto_path=. combined.proto && cd .. && cp proto/client/combined.ts src/libs/client/index.ts",
-    "proto:react-client": "cd proto && ../node_modules/.bin/grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./client --grpc-web_out=import_style=typescript,mode=grpcwebtext:./client --proto_path=. combined.proto",
+    "proto:beapi": "cd proto && node generateBeapi.js && eslint --fix beapi",
     "proto:interfaces": "cd proto && node protoInterfaces.js && cd .. && eslint --fix proto/interfaces.ts && cp proto/interfaces.ts src/proto",
     "proto:build": "npm run proto:combine && npm run proto:compile && npm run proto:interfaces",
     "proto:build:client": "npm run proto:build && npm run proto:client",
-    "proto:build:react-client": "npm run proto:build && npm run proto:react-client",
     "start:ts": "ts-node src/main/index.ts",
     "setup:ts": "bash infra/setup.sh && ts-node infra/setup/runSetup.ts",
     "start": "nest start",
@@ -84,6 +83,10 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@babel/generator": "^7.23.0",
+    "@babel/parser": "^7.23.0",
+    "@babel/traverse": "^7.23.2",
+    "@babel/types": "^7.23.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",

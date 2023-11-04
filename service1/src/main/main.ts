@@ -133,6 +133,12 @@ const main = async (opts: {
       const http = await NestFactory.create(MainHttpModule, {
         logger: new JsonLoggerService(),
       });
+      http.enableCors({
+        origin: 'http://localhost:3002',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        allowedHeaders: 'Content-Type, Accept',
+        credentials: true,
+      });
       http.use(
         session({
           secret: process.env.SESSION_SECRET,

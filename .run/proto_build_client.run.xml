@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="proto:build:client" type="js.build_tools.npm" nameIsGenerated="true">
-    <package-json value="$PROJECT_DIR$/server/package.json" />
+    <package-json value="$PROJECT_DIR$/service1/package.json" />
     <command value="run" />
     <scripts>
       <script value="proto:build:client" />

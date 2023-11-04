@@ -178,7 +178,7 @@ message UserSearchResult {
     repeated User users = 2;
 }
 
-message HealthChekcResult {
+message HealthCheckResult {
     bool ok = 1;
 }
 
@@ -599,7 +599,7 @@ service UserService {
 }
 
 service HealthService {
-    rpc HealthCheck (google.protobuf.Empty) returns (HealthChekcResult) {}
+    rpc HealthCheck (google.protobuf.Empty) returns (HealthCheckResult) {}
 }
 
 service ConversationService {

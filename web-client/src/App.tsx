@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import GoogleLoginButton from './components/googleLoginButton';
-import { Dummy, DummyService, HealthChekcResult, HealthService } from './beapi';
+import { Dummy, DummyService, HealthCheckResult, HealthService } from './beapi';
 
 function App() {
   const healthService = new HealthService();
   const dummyService = new DummyService();
   const [healthResponse, setHealthResponse] =
-    useState<HealthChekcResult | null>(null);
+    useState<HealthCheckResult | null>(null);
   const [dummyResponse, setDummyResponse] = useState<Dummy | null>(null);
 
   useEffect(() => {

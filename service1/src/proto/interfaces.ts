@@ -183,7 +183,7 @@ export interface UserSearchResult {
   users: User[];
 }
 
-export interface HealthChekcResult {
+export interface HealthCheckResult {
   ok: boolean;
 }
 
@@ -604,7 +604,7 @@ export interface UserService {
 }
 
 export interface HealthService {
-  HealthCheck(request: Empty): Promise<HealthChekcResult>;
+  HealthCheck(request: Empty): Promise<HealthCheckResult>;
 }
 
 export interface ConversationService {

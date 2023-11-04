@@ -1,7 +1,7 @@
 /* eslint-disable */
-import type { CallContext, CallOptions } from "nice-grpc-common";
+import type {CallContext, CallOptions} from "nice-grpc-common";
 import * as _m0 from "protobufjs/minimal";
-import { Empty } from "./google/protobuf/empty";
+import {Empty} from "./google/protobuf/empty";
 import Long = require("long");
 
 export const protobufPackage = "main";
@@ -219,7 +219,7 @@ export interface UserSearchResult {
   users: User[];
 }
 
-export interface HealthChekcResult {
+export interface HealthCheckResult {
   ok: boolean;
 }
 
@@ -3231,22 +3231,22 @@ export const UserSearchResult = {
   },
 };
 
-function createBaseHealthChekcResult(): HealthChekcResult {
+function createBaseHealthCheckResult(): HealthCheckResult {
   return { ok: false };
 }
 
-export const HealthChekcResult = {
-  encode(message: HealthChekcResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const HealthCheckResult = {
+  encode(message: HealthCheckResult, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.ok === true) {
       writer.uint32(8).bool(message.ok);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): HealthChekcResult {
+  decode(input: _m0.Reader | Uint8Array, length?: number): HealthCheckResult {
     const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseHealthChekcResult();
+    const message = createBaseHealthCheckResult();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -3266,11 +3266,11 @@ export const HealthChekcResult = {
     return message;
   },
 
-  fromJSON(object: any): HealthChekcResult {
+  fromJSON(object: any): HealthCheckResult {
     return { ok: isSet(object.ok) ? Boolean(object.ok) : false };
   },
 
-  toJSON(message: HealthChekcResult): unknown {
+  toJSON(message: HealthCheckResult): unknown {
     const obj: any = {};
     if (message.ok === true) {
       obj.ok = message.ok;
@@ -3278,12 +3278,12 @@ export const HealthChekcResult = {
     return obj;
   },
 
-  create(base?: DeepPartial<HealthChekcResult>): HealthChekcResult {
-    return HealthChekcResult.fromPartial(base ?? {});
+  create(base?: DeepPartial<HealthCheckResult>): HealthCheckResult {
+    return HealthCheckResult.fromPartial(base ?? {});
   },
 
-  fromPartial(object: DeepPartial<HealthChekcResult>): HealthChekcResult {
-    const message = createBaseHealthChekcResult();
+  fromPartial(object: DeepPartial<HealthCheckResult>): HealthCheckResult {
+    const message = createBaseHealthCheckResult();
     message.ok = object.ok ?? false;
     return message;
   },
@@ -9407,7 +9407,7 @@ export const HealthServiceDefinition = {
       name: "HealthCheck",
       requestType: Empty,
       requestStream: false,
-      responseType: HealthChekcResult,
+      responseType: HealthCheckResult,
       responseStream: false,
       options: {},
     },
@@ -9415,11 +9415,11 @@ export const HealthServiceDefinition = {
 } as const;
 
 export interface HealthServiceImplementation<CallContextExt = {}> {
-  healthCheck(request: Empty, context: CallContext & CallContextExt): Promise<DeepPartial<HealthChekcResult>>;
+  healthCheck(request: Empty, context: CallContext & CallContextExt): Promise<DeepPartial<HealthCheckResult>>;
 }
 
 export interface HealthServiceClient<CallOptionsExt = {}> {
-  healthCheck(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): Promise<HealthChekcResult>;
+  healthCheck(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): Promise<HealthCheckResult>;
 }
 
 export type ConversationServiceDefinition = typeof ConversationServiceDefinition;

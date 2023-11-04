@@ -21,6 +21,7 @@ import { AllExceptionsFilter } from '../libs/exceptions/global.exception.filter'
 import { MainHttpModule } from './http/main.http.module';
 import { MainGrpcModule } from './grpc/main.grpc.module';
 import { MainWorkersModule } from './workers/main.workers.module';
+import * as cookieParser from 'cookie-parser';
 
 type Component = {
   key: string;
@@ -139,6 +140,7 @@ const main = async (opts: {
           saveUninitialized: false,
         }),
       );
+      http.use(cookieParser());
       http.use(passport.session());
       http.useGlobalFilters(new AllExceptionsFilter());
       http.useGlobalInterceptors(

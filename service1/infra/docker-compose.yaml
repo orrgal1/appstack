@@ -4,6 +4,7 @@ services:
     image: envoyproxy/envoy:v1.21-latest
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml -l debug
     ports:
       - "8080:8080" # The HTTP port that Envoy listens on
       - "9901:9901" # The admin interface of Envoy

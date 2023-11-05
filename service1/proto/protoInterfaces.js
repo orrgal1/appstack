@@ -1,3 +1,4 @@
+// TODO: move the proto util out of service1
 const fs = require('fs');
 const path = require('path');
 

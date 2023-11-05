@@ -599,6 +599,7 @@ export interface UserService {
   CreateOne(request: UserCreateOneInput): Promise<User>;
   UpdateOne(request: UserUpdateOneInput): Promise<User>;
   FindOne(request: UserFindOneInput): Promise<User>;
+  FindMe(request: Empty): Promise<User>;
   RemoveOne(request: UserRemoveOneInput): Promise<Empty>;
   Search(request: UserSearchInput): Promise<UserSearchResult>;
 }

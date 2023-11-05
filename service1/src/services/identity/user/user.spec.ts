@@ -68,6 +68,19 @@ describe('User', () => {
     expect(found).toEqual(created);
   });
 
+  test('FindMe', async () => {
+    // Arrange
+    const metadata = new Metadata();
+    const { accessToken, userId } = await login(ports);
+    metadata.set('jwt', accessToken);
+
+    // Act
+    const found = await client.findMe({}, { metadata });
+
+    // Assert
+    expect(found.id).toEqual(userId);
+  });
+
   test('UpdateOne', async () => {
     // Arrange
     const input = { name: uuid() };

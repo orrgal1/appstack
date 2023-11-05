@@ -12,6 +12,7 @@ import {
 import { UserLogic } from './user.logic';
 import {
   RpcAuthAssertInternalInterceptor,
+  RpcAuthenticatedUserId,
   RpcAuthEntityAssertReadableInterceptor,
   RpcAuthEntityAssertWriteableInterceptor,
   RpcAuthRequiredInterceptor,
@@ -33,6 +34,16 @@ export class UserController {
   @GrpcMethod('UserService', 'FindOne')
   async findOne(@Payload() input: UserFindOneInput): Promise<User> {
     const found = await this.logic.findOne(input);
+    if (!found) {
+      throw new RpcNotFoundException();
+    }
+    return found;
+  }
+
+  @UseInterceptors(RpcAuthRequiredInterceptor, RpcRateLimitReadInterceptor)
+  @GrpcMethod('UserService', 'FindMe')
+  async findMe(@RpcAuthenticatedUserId() userId: string): Promise<User> {
+    const found = await this.logic.findOne({ id: userId });
     if (!found) {
       throw new RpcNotFoundException();
     }

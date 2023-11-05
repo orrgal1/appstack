@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as _m0 from "protobufjs/minimal";
-import {Observable} from "rxjs";
-import {Empty} from "./google/protobuf/empty";
+import { Observable } from "rxjs";
+import { Empty } from "./google/protobuf/empty";
 import Long = require("long");
 
 export const protobufPackage = "main";
@@ -9279,6 +9279,7 @@ export interface UserService {
   CreateOne(request: UserCreateOneInput): Promise<User>;
   UpdateOne(request: UserUpdateOneInput): Promise<User>;
   FindOne(request: UserFindOneInput): Promise<User>;
+  FindMe(request: Empty): Promise<User>;
   RemoveOne(request: UserRemoveOneInput): Promise<Empty>;
   Search(request: UserSearchInput): Promise<UserSearchResult>;
 }

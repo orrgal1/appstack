@@ -594,6 +594,7 @@ service UserService {
     rpc CreateOne (UserCreateOneInput) returns (User) {}
     rpc UpdateOne (UserUpdateOneInput) returns (User) {}
     rpc FindOne (UserFindOneInput) returns (User) {}
+    rpc FindMe (google.protobuf.Empty) returns (User) {}
     rpc RemoveOne (UserRemoveOneInput) returns (google.protobuf.Empty) {}
     rpc Search (UserSearchInput) returns (UserSearchResult) {}
 }

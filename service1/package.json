@@ -1,5 +1,5 @@
 {
-  "name": "main-server",
+  "name": "service1",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -14,7 +14,7 @@
     "proto:beapi": "cd proto && node generateBeapi.js && eslint --fix beapi",
     "proto:interfaces": "cd proto && node protoInterfaces.js && cd .. && eslint --fix proto/interfaces.ts && cp proto/interfaces.ts src/proto",
     "proto:build": "npm run proto:combine && npm run proto:compile && npm run proto:interfaces",
-    "proto:build:client": "npm run proto:build && npm run proto:client",
+    "proto:build:client": "npm run proto:build && npm run proto:client && npm run proto:beapi",
     "start:ts": "ts-node src/main/index.ts",
     "setup:ts": "bash infra/setup.sh && ts-node infra/setup/runSetup.ts",
     "start": "nest start",

@@ -113,7 +113,6 @@ export class ConversationService implements OnModuleInit {
     }
   }
 
-  // TODO: test
   async *findTemps(
     input: ConversationFindTempsInput,
   ): AsyncGenerator<Conversation> {
@@ -133,7 +132,6 @@ export class ConversationService implements OnModuleInit {
     }
   }
 
-  // TODO: test
   async removeTemps(input: ConversationRemoveTempsInput): Promise<void> {
     const query = `
       FOR doc IN conversation

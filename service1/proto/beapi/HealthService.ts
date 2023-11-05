@@ -1,9 +1,9 @@
 import { Empty } from './google/protobuf/empty';
-import { postToUnary } from './utils';
-
 export interface HealthCheckResult {
   ok: boolean;
 }
+
+import { postToUnary } from './utils';
 
 export class HealthService {
   private readonly serviceName: string = 'HealthService';

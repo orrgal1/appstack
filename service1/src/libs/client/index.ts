@@ -1,7 +1,7 @@
 /* eslint-disable */
-import type {CallContext, CallOptions} from "nice-grpc-common";
+import type { CallContext, CallOptions } from "nice-grpc-common";
 import * as _m0 from "protobufjs/minimal";
-import {Empty} from "./google/protobuf/empty";
+import { Empty } from "./google/protobuf/empty";
 import Long = require("long");
 
 export const protobufPackage = "main";
@@ -9363,6 +9363,14 @@ export const UserServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    findMe: {
+      name: "FindMe",
+      requestType: Empty,
+      requestStream: false,
+      responseType: User,
+      responseStream: false,
+      options: {},
+    },
     removeOne: {
       name: "RemoveOne",
       requestType: UserRemoveOneInput,
@@ -9386,6 +9394,7 @@ export interface UserServiceImplementation<CallContextExt = {}> {
   createOne(request: UserCreateOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   updateOne(request: UserUpdateOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   findOne(request: UserFindOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
+  findMe(request: Empty, context: CallContext & CallContextExt): Promise<DeepPartial<User>>;
   removeOne(request: UserRemoveOneInput, context: CallContext & CallContextExt): Promise<DeepPartial<Empty>>;
   search(request: UserSearchInput, context: CallContext & CallContextExt): Promise<DeepPartial<UserSearchResult>>;
 }
@@ -9394,6 +9403,7 @@ export interface UserServiceClient<CallOptionsExt = {}> {
   createOne(request: DeepPartial<UserCreateOneInput>, options?: CallOptions & CallOptionsExt): Promise<User>;
   updateOne(request: DeepPartial<UserUpdateOneInput>, options?: CallOptions & CallOptionsExt): Promise<User>;
   findOne(request: DeepPartial<UserFindOneInput>, options?: CallOptions & CallOptionsExt): Promise<User>;
+  findMe(request: DeepPartial<Empty>, options?: CallOptions & CallOptionsExt): Promise<User>;
   removeOne(request: DeepPartial<UserRemoveOneInput>, options?: CallOptions & CallOptionsExt): Promise<Empty>;
   search(request: DeepPartial<UserSearchInput>, options?: CallOptions & CallOptionsExt): Promise<UserSearchResult>;
 }

@@ -70,6 +70,10 @@ export class UserService {
     return postToUnary<User>(this.serviceName, 'findOne', data);
   }
 
+  async findMe(data: Empty): Promise<User> {
+    return postToUnary<User>(this.serviceName, 'findMe', data);
+  }
+
   async removeOne(data: UserRemoveOneInput): Promise<Empty> {
     return postToUnary<Empty>(this.serviceName, 'removeOne', data);
   }

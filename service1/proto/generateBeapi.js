@@ -93,7 +93,7 @@ export async function postToUnary<T>(serviceName: string, methodName: string, da
     service: serviceName,
     method: methodName,
     data,
-  });
+  },{ withCredentials: true });
   return response.data;
 }
 `;

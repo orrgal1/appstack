@@ -1,14 +1,16 @@
-import axios from 'axios';
-
 export async function postToUnary<T>(
-  serviceName: string,
-  methodName: string,
-  data: any,
+    serviceName: string,
+    methodName: string,
+    data: any,
 ): Promise<T> {
-  const response = await axios.post('http://localhost:3000/gateway/unary', {
-    service: serviceName,
-    method: methodName,
-    data,
-  });
-  return response.data;
+    const response = await fetch('http://localhost:3000/gateway/unary', {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({
+            service: serviceName,
+            method: methodName,
+            data,
+        })
+    });
+    return await response.json();
 }

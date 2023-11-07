@@ -134,7 +134,7 @@ const main = async (opts: {
         logger: new JsonLoggerService(),
       });
       http.enableCors({
-        origin: 'http://localhost:3002',
+        origin: process.env.WEB_CLIENT_URL,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         allowedHeaders: 'Content-Type, Accept',
         credentials: true,

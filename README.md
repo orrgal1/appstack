@@ -1,4 +1,4 @@
-# Complete Backend Bootstrapper
+# App Stack
 
 ## Prerequisites
 - Docker
@@ -8,7 +8,7 @@
 ## Onboarding
 
 ```shell
-cd server
+cd service1
 npm i
 npm run setup:ts
 npm run test

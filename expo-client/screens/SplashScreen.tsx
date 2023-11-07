@@ -2,12 +2,9 @@ import React, { useEffect } from 'react';
 import { User, UserService } from '../beapi';
 import useMainStore from '../main/MainStore';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../main/RootStackParamList';
+import { NavScreens } from '../main/NavScreens';
 
-type SplashScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'Splash'
->;
+type SplashScreenNavigationProp = StackNavigationProp<NavScreens, 'Splash'>;
 
 interface SplashScreenProps {
   navigation: SplashScreenNavigationProp;

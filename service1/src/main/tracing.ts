@@ -56,7 +56,7 @@ export const otelSDK = () =>
     }),
     metricReader: new PrometheusExporter({
       host: '0.0.0.0',
-      port: 8081,
+      port: Number(process.env.METRICS_PORT),
       endpoint: '/metrics',
     }),
     spanProcessor,

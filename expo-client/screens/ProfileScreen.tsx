@@ -5,7 +5,7 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import useMainStore from '../main/MainStore';
 import { UserService } from '../beapi';
 
-export default function OnboardingInitialScreen() {
+export default function ProfileScreen() {
   const userService = new UserService();
 
   const { me, setMe } = useMainStore((state) => ({
@@ -20,7 +20,6 @@ export default function OnboardingInitialScreen() {
           id: me?.id,
           name: me?.name,
           email: me?.email,
-          onboardingFlags: { initial: true },
         })
         .then((result) => {
           setMe(result);

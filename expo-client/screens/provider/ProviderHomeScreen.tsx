@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import useMainStore from '../main/MainStore';
+import useMainStore from '../../main/MainStore';
 
 export default function ProviderHomeScreen() {
   const { me } = useMainStore((state) => ({

@@ -7,7 +7,7 @@ export interface UserCreateOneInput {
 }
 
 export interface OboardingFlags {
-  initial: number;
+  initial: boolean;
 }
 
 export interface User {

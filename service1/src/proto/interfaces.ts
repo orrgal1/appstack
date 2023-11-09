@@ -140,7 +140,7 @@ export interface User {
 }
 
 export interface OboardingFlags {
-  initial: number;
+  initial: boolean;
 }
 
 export interface UserCreateOneInput {

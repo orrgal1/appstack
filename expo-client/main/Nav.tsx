@@ -5,7 +5,8 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SplashScreen from '../screens/SplashScreen';
 import OnboardingInitialScreen from '../screens/OnboardingInitialScreen';
-import ProviderHomeScreen from '../screens/ProviderHomeScreen';
+import ProviderHomeScreen from '../screens/provider/ProviderHomeScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ export default function Nav() {
           name="OnboardingInitial"
           component={OnboardingInitialScreen}
         />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="ProviderHome" component={ProviderHomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>

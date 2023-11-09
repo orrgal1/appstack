@@ -176,7 +176,7 @@ export interface User {
 }
 
 export interface OboardingFlags {
-  initial: number;
+  initial: boolean;
 }
 
 export interface UserCreateOneInput {
@@ -2583,13 +2583,13 @@ export const User = {
 };
 
 function createBaseOboardingFlags(): OboardingFlags {
-  return { initial: 0 };
+  return { initial: false };
 }
 
 export const OboardingFlags = {
   encode(message: OboardingFlags, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.initial !== 0) {
-      writer.uint32(8).uint64(message.initial);
+    if (message.initial === true) {
+      writer.uint32(8).bool(message.initial);
     }
     return writer;
   },
@@ -2606,7 +2606,7 @@ export const OboardingFlags = {
             break;
           }
 
-          message.initial = longToNumber(reader.uint64() as Long);
+          message.initial = reader.bool();
           continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
@@ -2618,13 +2618,13 @@ export const OboardingFlags = {
   },
 
   fromJSON(object: any): OboardingFlags {
-    return { initial: isSet(object.initial) ? Number(object.initial) : 0 };
+    return { initial: isSet(object.initial) ? Boolean(object.initial) : false };
   },
 
   toJSON(message: OboardingFlags): unknown {
     const obj: any = {};
-    if (message.initial !== 0) {
-      obj.initial = Math.round(message.initial);
+    if (message.initial === true) {
+      obj.initial = message.initial;
     }
     return obj;
   },
@@ -2635,7 +2635,7 @@ export const OboardingFlags = {
 
   fromPartial(object: DeepPartial<OboardingFlags>): OboardingFlags {
     const message = createBaseOboardingFlags();
-    message.initial = object.initial ?? 0;
+    message.initial = object.initial ?? false;
     return message;
   },
 };

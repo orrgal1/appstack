@@ -135,7 +135,7 @@ message User {
 }
 
 message OboardingFlags {
-    uint64 initial = 1;
+    bool initial = 1;
 }
 
 message UserCreateOneInput {

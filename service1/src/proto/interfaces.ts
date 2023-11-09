@@ -136,12 +136,18 @@ export interface User {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
+}
+
+export interface OboardingFlags {
+  initial: number;
 }
 
 export interface UserCreateOneInput {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
 }
 
 export interface UserUpdateOneInput {
@@ -149,6 +155,7 @@ export interface UserUpdateOneInput {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
 }
 
 export interface UserFindOneInput {

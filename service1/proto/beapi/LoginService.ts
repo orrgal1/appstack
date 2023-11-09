@@ -66,27 +66,29 @@ import { postToUnary } from './utils';
 export class LoginService {
   private readonly serviceName: string = 'LoginService';
 
-  async createOne(data: LoginCreateOneInput): Promise<Login> {
+  async createOne(data: Partial<LoginCreateOneInput>): Promise<Login> {
     return postToUnary<Login>(this.serviceName, 'createOne', data);
   }
 
-  async findOne(data: LoginFindOneInput): Promise<Login> {
+  async findOne(data: Partial<LoginFindOneInput>): Promise<Login> {
     return postToUnary<Login>(this.serviceName, 'findOne', data);
   }
 
-  async findWhere(data: LoginFindWhereInput): Promise<Login> {
+  async findWhere(data: Partial<LoginFindWhereInput>): Promise<Login> {
     return postToUnary<Login>(this.serviceName, 'findWhere', data);
   }
 
-  async findByPlatformId(data: LoginFindByPlatformIdInput): Promise<Login> {
+  async findByPlatformId(
+    data: Partial<LoginFindByPlatformIdInput>,
+  ): Promise<Login> {
     return postToUnary<Login>(this.serviceName, 'findByPlatformId', data);
   }
 
-  async updateOne(data: LoginUpdateOneInput): Promise<Login> {
+  async updateOne(data: Partial<LoginUpdateOneInput>): Promise<Login> {
     return postToUnary<Login>(this.serviceName, 'updateOne', data);
   }
 
-  async removeOne(data: LoginRemoveOneInput): Promise<Empty> {
+  async removeOne(data: Partial<LoginRemoveOneInput>): Promise<Empty> {
     return postToUnary<Empty>(this.serviceName, 'removeOne', data);
   }
 }

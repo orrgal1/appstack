@@ -20,11 +20,11 @@ import { postToUnary } from './utils';
 export class WorkersService {
   private readonly serviceName: string = 'WorkersService';
 
-  async publishJob(data: PublishJobInput): Promise<PublishJobResult> {
+  async publishJob(data: Partial<PublishJobInput>): Promise<PublishJobResult> {
     return postToUnary<PublishJobResult>(this.serviceName, 'publishJob', data);
   }
 
-  async healthCheck(data: Empty): Promise<WorkersHealthCheckResult> {
+  async healthCheck(data: Partial<Empty>): Promise<WorkersHealthCheckResult> {
     return postToUnary<WorkersHealthCheckResult>(
       this.serviceName,
       'healthCheck',

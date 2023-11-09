@@ -172,12 +172,18 @@ export interface User {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
+}
+
+export interface OboardingFlags {
+  initial: number;
 }
 
 export interface UserCreateOneInput {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
 }
 
 export interface UserUpdateOneInput {
@@ -185,6 +191,7 @@ export interface UserUpdateOneInput {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
 }
 
 export interface UserFindOneInput {
@@ -2424,7 +2431,7 @@ export const LoginRemoveOneInput = {
 };
 
 function createBaseUser(): User {
-  return { id: "", createdAt: 0, updatedAt: 0, name: "", email: "", photo: "" };
+  return { id: "", createdAt: 0, updatedAt: 0, name: "", email: "", photo: "", onboardingFlags: undefined };
 }
 
 export const User = {
@@ -2446,6 +2453,9 @@ export const User = {
     }
     if (message.photo !== "") {
       writer.uint32(50).string(message.photo);
+    }
+    if (message.onboardingFlags !== undefined) {
+      OboardingFlags.encode(message.onboardingFlags, writer.uint32(58).fork()).ldelim();
     }
     return writer;
   },
@@ -2499,6 +2509,13 @@ export const User = {
 
           message.photo = reader.string();
           continue;
+        case 7:
+          if (tag !== 58) {
+            break;
+          }
+
+          message.onboardingFlags = OboardingFlags.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -2516,6 +2533,7 @@ export const User = {
       name: isSet(object.name) ? String(object.name) : "",
       email: isSet(object.email) ? String(object.email) : "",
       photo: isSet(object.photo) ? String(object.photo) : "",
+      onboardingFlags: isSet(object.onboardingFlags) ? OboardingFlags.fromJSON(object.onboardingFlags) : undefined,
     };
   },
 
@@ -2539,6 +2557,9 @@ export const User = {
     if (message.photo !== "") {
       obj.photo = message.photo;
     }
+    if (message.onboardingFlags !== undefined) {
+      obj.onboardingFlags = OboardingFlags.toJSON(message.onboardingFlags);
+    }
     return obj;
   },
 
@@ -2554,12 +2575,73 @@ export const User = {
     message.name = object.name ?? "";
     message.email = object.email ?? "";
     message.photo = object.photo ?? "";
+    message.onboardingFlags = (object.onboardingFlags !== undefined && object.onboardingFlags !== null)
+      ? OboardingFlags.fromPartial(object.onboardingFlags)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseOboardingFlags(): OboardingFlags {
+  return { initial: 0 };
+}
+
+export const OboardingFlags = {
+  encode(message: OboardingFlags, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.initial !== 0) {
+      writer.uint32(8).uint64(message.initial);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): OboardingFlags {
+    const reader = input instanceof _m0.Reader ? input : _m0.Reader.create(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOboardingFlags();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 8) {
+            break;
+          }
+
+          message.initial = longToNumber(reader.uint64() as Long);
+          continue;
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skipType(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): OboardingFlags {
+    return { initial: isSet(object.initial) ? Number(object.initial) : 0 };
+  },
+
+  toJSON(message: OboardingFlags): unknown {
+    const obj: any = {};
+    if (message.initial !== 0) {
+      obj.initial = Math.round(message.initial);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<OboardingFlags>): OboardingFlags {
+    return OboardingFlags.fromPartial(base ?? {});
+  },
+
+  fromPartial(object: DeepPartial<OboardingFlags>): OboardingFlags {
+    const message = createBaseOboardingFlags();
+    message.initial = object.initial ?? 0;
     return message;
   },
 };
 
 function createBaseUserCreateOneInput(): UserCreateOneInput {
-  return { name: "", email: "", photo: "" };
+  return { name: "", email: "", photo: "", onboardingFlags: undefined };
 }
 
 export const UserCreateOneInput = {
@@ -2572,6 +2654,9 @@ export const UserCreateOneInput = {
     }
     if (message.photo !== "") {
       writer.uint32(50).string(message.photo);
+    }
+    if (message.onboardingFlags !== undefined) {
+      OboardingFlags.encode(message.onboardingFlags, writer.uint32(58).fork()).ldelim();
     }
     return writer;
   },
@@ -2604,6 +2689,13 @@ export const UserCreateOneInput = {
 
           message.photo = reader.string();
           continue;
+        case 7:
+          if (tag !== 58) {
+            break;
+          }
+
+          message.onboardingFlags = OboardingFlags.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -2618,6 +2710,7 @@ export const UserCreateOneInput = {
       name: isSet(object.name) ? String(object.name) : "",
       email: isSet(object.email) ? String(object.email) : "",
       photo: isSet(object.photo) ? String(object.photo) : "",
+      onboardingFlags: isSet(object.onboardingFlags) ? OboardingFlags.fromJSON(object.onboardingFlags) : undefined,
     };
   },
 
@@ -2632,6 +2725,9 @@ export const UserCreateOneInput = {
     if (message.photo !== "") {
       obj.photo = message.photo;
     }
+    if (message.onboardingFlags !== undefined) {
+      obj.onboardingFlags = OboardingFlags.toJSON(message.onboardingFlags);
+    }
     return obj;
   },
 
@@ -2644,12 +2740,15 @@ export const UserCreateOneInput = {
     message.name = object.name ?? "";
     message.email = object.email ?? "";
     message.photo = object.photo ?? "";
+    message.onboardingFlags = (object.onboardingFlags !== undefined && object.onboardingFlags !== null)
+      ? OboardingFlags.fromPartial(object.onboardingFlags)
+      : undefined;
     return message;
   },
 };
 
 function createBaseUserUpdateOneInput(): UserUpdateOneInput {
-  return { id: "", name: "", email: "", photo: "" };
+  return { id: "", name: "", email: "", photo: "", onboardingFlags: undefined };
 }
 
 export const UserUpdateOneInput = {
@@ -2665,6 +2764,9 @@ export const UserUpdateOneInput = {
     }
     if (message.photo !== "") {
       writer.uint32(50).string(message.photo);
+    }
+    if (message.onboardingFlags !== undefined) {
+      OboardingFlags.encode(message.onboardingFlags, writer.uint32(58).fork()).ldelim();
     }
     return writer;
   },
@@ -2704,6 +2806,13 @@ export const UserUpdateOneInput = {
 
           message.photo = reader.string();
           continue;
+        case 7:
+          if (tag !== 58) {
+            break;
+          }
+
+          message.onboardingFlags = OboardingFlags.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -2719,6 +2828,7 @@ export const UserUpdateOneInput = {
       name: isSet(object.name) ? String(object.name) : "",
       email: isSet(object.email) ? String(object.email) : "",
       photo: isSet(object.photo) ? String(object.photo) : "",
+      onboardingFlags: isSet(object.onboardingFlags) ? OboardingFlags.fromJSON(object.onboardingFlags) : undefined,
     };
   },
 
@@ -2736,6 +2846,9 @@ export const UserUpdateOneInput = {
     if (message.photo !== "") {
       obj.photo = message.photo;
     }
+    if (message.onboardingFlags !== undefined) {
+      obj.onboardingFlags = OboardingFlags.toJSON(message.onboardingFlags);
+    }
     return obj;
   },
 
@@ -2749,6 +2862,9 @@ export const UserUpdateOneInput = {
     message.name = object.name ?? "";
     message.email = object.email ?? "";
     message.photo = object.photo ?? "";
+    message.onboardingFlags = (object.onboardingFlags !== undefined && object.onboardingFlags !== null)
+      ? OboardingFlags.fromPartial(object.onboardingFlags)
+      : undefined;
     return message;
   },
 };

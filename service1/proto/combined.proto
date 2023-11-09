@@ -131,12 +131,18 @@ message User {
     string name = 4;
     string email = 5;
     string photo = 6;
+    OboardingFlags onboardingFlags = 7;
+}
+
+message OboardingFlags {
+    uint64 initial = 1;
 }
 
 message UserCreateOneInput {
     string name = 4;
     string email = 5;
     string photo = 6;
+    OboardingFlags onboardingFlags = 7;
 }
 
 message UserUpdateOneInput {
@@ -144,6 +150,7 @@ message UserUpdateOneInput {
     string name = 4;
     string email = 5;
     string photo = 6;
+    OboardingFlags onboardingFlags = 7;
 }
 
 message UserFindOneInput {

@@ -185,36 +185,42 @@ import { postToUnary } from './utils';
 export class PermissionService {
   private readonly serviceName: string = 'PermissionService';
 
-  async createOne(data: PermissionCreateOneInput): Promise<Permission> {
+  async createOne(
+    data: Partial<PermissionCreateOneInput>,
+  ): Promise<Permission> {
     return postToUnary<Permission>(this.serviceName, 'createOne', data);
   }
 
-  async createMany(data: PermissionCreateManyInput): Promise<Permissions> {
+  async createMany(
+    data: Partial<PermissionCreateManyInput>,
+  ): Promise<Permissions> {
     return postToUnary<Permissions>(this.serviceName, 'createMany', data);
   }
 
-  async findOne(data: PermissionFindOneInput): Promise<Permission> {
+  async findOne(data: Partial<PermissionFindOneInput>): Promise<Permission> {
     return postToUnary<Permission>(this.serviceName, 'findOne', data);
   }
 
-  async findWhere(data: PermissionFindWhereInput): Promise<Permission> {
+  async findWhere(
+    data: Partial<PermissionFindWhereInput>,
+  ): Promise<Permission> {
     return postToUnary<Permission>(this.serviceName, 'findWhere', data);
   }
 
   async findWhereMany(
-    data: PermissionFindWhereManyInput,
+    data: Partial<PermissionFindWhereManyInput>,
   ): Promise<Permissions> {
     return postToUnary<Permissions>(this.serviceName, 'findWhereMany', data);
   }
 
   async findWhereOrStar(
-    data: PermissionFindWhereOrStarInput,
+    data: Partial<PermissionFindWhereOrStarInput>,
   ): Promise<Permission> {
     return postToUnary<Permission>(this.serviceName, 'findWhereOrStar', data);
   }
 
   async findByPermitted(
-    data: PermissionFindByPermittedInput,
+    data: Partial<PermissionFindByPermittedInput>,
   ): Promise<PermissionFindByPermittedResult> {
     return postToUnary<PermissionFindByPermittedResult>(
       this.serviceName,
@@ -224,7 +230,7 @@ export class PermissionService {
   }
 
   async findByEntity(
-    data: PermissionFindByEntityInput,
+    data: Partial<PermissionFindByEntityInput>,
   ): Promise<PermissionFindByEntityResult> {
     return postToUnary<PermissionFindByEntityResult>(
       this.serviceName,
@@ -234,7 +240,7 @@ export class PermissionService {
   }
 
   async findAllActions(
-    data: PermissionFindAllActionsInput,
+    data: Partial<PermissionFindAllActionsInput>,
   ): Promise<PermissionFindAllActionsResult> {
     return postToUnary<PermissionFindAllActionsResult>(
       this.serviceName,
@@ -244,7 +250,7 @@ export class PermissionService {
   }
 
   async validateOne(
-    data: PermissionValidateOneInput,
+    data: Partial<PermissionValidateOneInput>,
   ): Promise<PermissionValidateOneResult> {
     return postToUnary<PermissionValidateOneResult>(
       this.serviceName,
@@ -253,20 +259,22 @@ export class PermissionService {
     );
   }
 
-  async removeOne(data: PermissionRemoveOneInput): Promise<Empty> {
+  async removeOne(data: Partial<PermissionRemoveOneInput>): Promise<Empty> {
     return postToUnary<Empty>(this.serviceName, 'removeOne', data);
   }
 
-  async removeWhere(data: PermissionRemoveWhereInput): Promise<Empty> {
+  async removeWhere(data: Partial<PermissionRemoveWhereInput>): Promise<Empty> {
     return postToUnary<Empty>(this.serviceName, 'removeWhere', data);
   }
 
-  async removeWhereMany(data: PermissionRemoveWhereManyInput): Promise<Empty> {
+  async removeWhereMany(
+    data: Partial<PermissionRemoveWhereManyInput>,
+  ): Promise<Empty> {
     return postToUnary<Empty>(this.serviceName, 'removeWhereMany', data);
   }
 
   async removeAllActions(
-    data: PermissionRemoveAllActionsInput,
+    data: Partial<PermissionRemoveAllActionsInput>,
   ): Promise<Empty> {
     return postToUnary<Empty>(this.serviceName, 'removeAllActions', data);
   }

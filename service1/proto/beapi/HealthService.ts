@@ -8,7 +8,7 @@ import { postToUnary } from './utils';
 export class HealthService {
   private readonly serviceName: string = 'HealthService';
 
-  async healthCheck(data: Empty): Promise<HealthCheckResult> {
+  async healthCheck(data: Partial<Empty>): Promise<HealthCheckResult> {
     return postToUnary<HealthCheckResult>(
       this.serviceName,
       'healthCheck',

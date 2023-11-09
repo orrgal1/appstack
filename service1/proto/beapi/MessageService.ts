@@ -68,28 +68,28 @@ import { postToUnary } from './utils';
 export class MessageService {
   private readonly serviceName: string = 'MessageService';
 
-  async createOne(data: MessageCreateOneInput): Promise<Message> {
+  async createOne(data: Partial<MessageCreateOneInput>): Promise<Message> {
     return postToUnary<Message>(this.serviceName, 'createOne', data);
   }
 
-  async updateOne(data: MessageUpdateOneInput): Promise<Message> {
+  async updateOne(data: Partial<MessageUpdateOneInput>): Promise<Message> {
     return postToUnary<Message>(this.serviceName, 'updateOne', data);
   }
 
-  async findOne(data: MessageFindOneInput): Promise<Message> {
+  async findOne(data: Partial<MessageFindOneInput>): Promise<Message> {
     return postToUnary<Message>(this.serviceName, 'findOne', data);
   }
 
-  async findUnique(data: MessageFindUniqueInput): Promise<Message> {
+  async findUnique(data: Partial<MessageFindUniqueInput>): Promise<Message> {
     return postToUnary<Message>(this.serviceName, 'findUnique', data);
   }
 
-  async removeOne(data: MessageRemoveOneInput): Promise<Message> {
+  async removeOne(data: Partial<MessageRemoveOneInput>): Promise<Message> {
     return postToUnary<Message>(this.serviceName, 'removeOne', data);
   }
 
   async findByConversation(
-    data: MessageFindByConversationInput,
+    data: Partial<MessageFindByConversationInput>,
   ): Promise<MessageFindByConversationResult> {
     return postToUnary<MessageFindByConversationResult>(
       this.serviceName,

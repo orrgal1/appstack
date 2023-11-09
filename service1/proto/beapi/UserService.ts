@@ -3,6 +3,11 @@ export interface UserCreateOneInput {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
+}
+
+export interface OboardingFlags {
+  initial: number;
 }
 
 export interface User {
@@ -12,6 +17,7 @@ export interface User {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
 }
 
 export interface UserUpdateOneInput {
@@ -19,6 +25,7 @@ export interface UserUpdateOneInput {
   name: string;
   email: string;
   photo: string;
+  onboardingFlags: OboardingFlags | undefined;
 }
 
 export interface UserFindOneInput {
@@ -58,27 +65,27 @@ import { postToUnary } from './utils';
 export class UserService {
   private readonly serviceName: string = 'UserService';
 
-  async createOne(data: UserCreateOneInput): Promise<User> {
+  async createOne(data: Partial<UserCreateOneInput>): Promise<User> {
     return postToUnary<User>(this.serviceName, 'createOne', data);
   }
 
-  async updateOne(data: UserUpdateOneInput): Promise<User> {
+  async updateOne(data: Partial<UserUpdateOneInput>): Promise<User> {
     return postToUnary<User>(this.serviceName, 'updateOne', data);
   }
 
-  async findOne(data: UserFindOneInput): Promise<User> {
+  async findOne(data: Partial<UserFindOneInput>): Promise<User> {
     return postToUnary<User>(this.serviceName, 'findOne', data);
   }
 
-  async findMe(data: Empty): Promise<User> {
+  async findMe(data: Partial<Empty>): Promise<User> {
     return postToUnary<User>(this.serviceName, 'findMe', data);
   }
 
-  async removeOne(data: UserRemoveOneInput): Promise<Empty> {
+  async removeOne(data: Partial<UserRemoveOneInput>): Promise<Empty> {
     return postToUnary<Empty>(this.serviceName, 'removeOne', data);
   }
 
-  async search(data: UserSearchInput): Promise<UserSearchResult> {
+  async search(data: Partial<UserSearchInput>): Promise<UserSearchResult> {
     return postToUnary<UserSearchResult>(this.serviceName, 'search', data);
   }
 }

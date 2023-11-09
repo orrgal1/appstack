@@ -21,7 +21,11 @@ export default function SplashScreen({ navigation }: SplashScreenProps) {
       .findMe({})
       .then((result: User) => {
         setMe(result);
-        navigation.navigate('Home');
+        if (!result.onboardingFlags?.initial) {
+          navigation.navigate('OnboardingInitial');
+        } else {
+          navigation.navigate('Home');
+        }
       })
       .catch(() => {
         navigation.navigate('Login');

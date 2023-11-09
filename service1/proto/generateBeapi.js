@@ -107,7 +107,7 @@ let serviceNames = [];
 const generateServiceClass = (serviceName, methods, types) => {
   const methodStrings = methods.map(
     (method) => `
-    async ${method.name}(data: ${method.requestType}): Promise<${method.responseType}> {
+    async ${method.name}(data: Partial<${method.requestType}>): Promise<${method.responseType}> {
       return postToUnary<${method.responseType}>(this.serviceName, '${method.name}', data);
     }
   `,

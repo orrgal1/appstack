@@ -74,16 +74,16 @@ import { postToUnary } from './utils';
 export class UserFollowService {
   private readonly serviceName: string = 'UserFollowService';
 
-  async createOne(data: UserFollowCreateOneInput): Promise<Follower> {
+  async createOne(data: Partial<UserFollowCreateOneInput>): Promise<Follower> {
     return postToUnary<Follower>(this.serviceName, 'createOne', data);
   }
 
-  async removeOne(data: UserFollowRemoveOneInput): Promise<Follower> {
+  async removeOne(data: Partial<UserFollowRemoveOneInput>): Promise<Follower> {
     return postToUnary<Follower>(this.serviceName, 'removeOne', data);
   }
 
   async findFollowers(
-    data: UserFindFollowersInput,
+    data: Partial<UserFindFollowersInput>,
   ): Promise<UserFindFollowersResult> {
     return postToUnary<UserFindFollowersResult>(
       this.serviceName,
@@ -93,7 +93,7 @@ export class UserFollowService {
   }
 
   async findFollowees(
-    data: UserFindFolloweesInput,
+    data: Partial<UserFindFolloweesInput>,
   ): Promise<UserFindFolloweesResult> {
     return postToUnary<UserFindFolloweesResult>(
       this.serviceName,

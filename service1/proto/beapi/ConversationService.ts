@@ -65,24 +65,32 @@ import { postToUnary } from './utils';
 export class ConversationService {
   private readonly serviceName: string = 'ConversationService';
 
-  async createOne(data: ConversationCreateOneInput): Promise<Conversation> {
+  async createOne(
+    data: Partial<ConversationCreateOneInput>,
+  ): Promise<Conversation> {
     return postToUnary<Conversation>(this.serviceName, 'createOne', data);
   }
 
-  async updateOne(data: ConversationUpdateOneInput): Promise<Conversation> {
+  async updateOne(
+    data: Partial<ConversationUpdateOneInput>,
+  ): Promise<Conversation> {
     return postToUnary<Conversation>(this.serviceName, 'updateOne', data);
   }
 
-  async findOne(data: ConversationFindOneInput): Promise<Conversation> {
+  async findOne(
+    data: Partial<ConversationFindOneInput>,
+  ): Promise<Conversation> {
     return postToUnary<Conversation>(this.serviceName, 'findOne', data);
   }
 
-  async removeOne(data: ConversationRemoveOneInput): Promise<Conversation> {
+  async removeOne(
+    data: Partial<ConversationRemoveOneInput>,
+  ): Promise<Conversation> {
     return postToUnary<Conversation>(this.serviceName, 'removeOne', data);
   }
 
   async findByParticipant(
-    data: ConversationFindByParticipantInput,
+    data: Partial<ConversationFindByParticipantInput>,
   ): Promise<ConversationFindByParticipantResult> {
     return postToUnary<ConversationFindByParticipantResult>(
       this.serviceName,
@@ -91,7 +99,9 @@ export class ConversationService {
     );
   }
 
-  async findByPermissionIntegrityWarning(data: Empty): Promise<Conversation> {
+  async findByPermissionIntegrityWarning(
+    data: Partial<Empty>,
+  ): Promise<Conversation> {
     return postToUnary<Conversation>(
       this.serviceName,
       'findByPermissionIntegrityWarning',
@@ -99,11 +109,15 @@ export class ConversationService {
     );
   }
 
-  async findTemps(data: ConversationFindTempsInput): Promise<Conversation> {
+  async findTemps(
+    data: Partial<ConversationFindTempsInput>,
+  ): Promise<Conversation> {
     return postToUnary<Conversation>(this.serviceName, 'findTemps', data);
   }
 
-  async removeTemps(data: ConversationRemoveTempsInput): Promise<Empty> {
+  async removeTemps(
+    data: Partial<ConversationRemoveTempsInput>,
+  ): Promise<Empty> {
     return postToUnary<Empty>(this.serviceName, 'removeTemps', data);
   }
 }

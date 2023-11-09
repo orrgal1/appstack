@@ -11,7 +11,7 @@
     "proto:combine": "cd src && node ../proto/protoCombine.js && cd .. && cp src/proto/combined.proto proto/combined.proto",
     "proto:compile": "protoc --plugin=$(pwd)/node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=snakeToCamel=true,outputClientImpl=false -I=./proto --ts_proto_out=./proto combined.proto",
     "proto:client": "cd proto && ../node_modules/.bin/grpc_tools_node_protoc --plugin=protoc-gen-ts_proto=../node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./client --ts_proto_opt=outputServices=nice-grpc,outputServices=generic-definitions,useExactTypes=false --proto_path=. combined.proto && cd .. && cp proto/client/combined.ts src/libs/client/index.ts",
-    "proto:beapi": "cd proto && node generateBeapi.js && eslint --fix beapi",
+    "proto:beapi": "cd proto && node generateBeapi.js && eslint --fix beapi && cp -r beapi/* ../../expo-client/beapi/services/service1",
     "proto:interfaces": "cd proto && node protoInterfaces.js && cd .. && eslint --fix proto/interfaces.ts && cp proto/interfaces.ts src/proto",
     "proto:build": "npm run proto:combine && npm run proto:compile && npm run proto:interfaces",
     "proto:build:client": "npm run proto:build && npm run proto:client && npm run proto:beapi",

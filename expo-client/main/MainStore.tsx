@@ -6,6 +6,7 @@ type MainStore = {
   me: User | null;
   setMe: (user: User) => void;
 };
+
 const useMainStore = create(
   persist<MainStore>(
     (set) => ({
